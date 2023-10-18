@@ -1,0 +1,94 @@
+.icon {
+    height: auto;
+    width: 26px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    display: block;
+    
+}
+  
+.tableHeader, .tableBody, .tableFooter {
+    display: block;
+    
+}
+
+.tableHeader {
+    font-weight: bold;
+    font-size: 16px;
+    background-color: #1d2d55;
+    color: #c3ac82;
+}
+  
+.tableHRow, .tableRow, .tableFRow {
+    display: flex;
+    width: auto;
+    min-width: 130mm;
+    
+}
+
+.tableHRow {
+    border: 1px solid black;
+}
+  
+.tableRow {
+    white-space: nowrap;
+    background-color: #ebf6ff;  
+    color: #1d2d55;
+    transition: 0.3s ease-out;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+
+}
+
+:hover.tableRow {
+    background-color: #b3bedb;
+    /* cursor: pointer; */
+    /* white-space: normal; */
+}
+/* :active.tableRow {
+    background-color: #1d2d55;
+    color: #c3ac82;
+    cursor: pointer;
+} */
+
+.tableCell, .tableBodyCell {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+
+}
+
+.tableCell {
+    padding: 15px;
+}
+
+.tableBodyCell {
+    border-bottom: 1px solid #1d2d55;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tableFooter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+}
+  
+.tableFRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+  
+.buttonTem {
+    margin: 0 10px;
+    background-color: #1d2d55;
+    padding: 3px;
+    border-radius: 6px;
+}
+  
