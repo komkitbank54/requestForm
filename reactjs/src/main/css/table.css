@@ -88,6 +88,25 @@
     padding: 3px;
     border-radius: 6px;
 }
+
+.pagination-numbers {
+    transition: transform 0.3s ease-out;
+  }
+  
+  .slide-left {
+    transform: translateX(-50%); /* Adjust based on the desired slide amount */
+  }
+  
+  .slide-right {
+    transform: translateX(50%);
+  }
+  
+  .pagination-container {
+    display: flex;
+    overflow: hidden; /* This ensures numbers outside the visible area are hidden */
+  }
+  
+
 /* :hover.tableRow {
     cursor: pointer;
     white-space: normal;

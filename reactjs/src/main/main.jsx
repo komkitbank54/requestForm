@@ -1,3 +1,4 @@
+// main.jsx
 import React, { useEffect, useState } from 'react'
 import Table from './components/table'
 import './fonts/fonts.css';
@@ -18,8 +19,8 @@ function Mainpage() {
     <>
       <section>
         {/* table */}
-        <div className='w-[70%]'>
-          <Table data={data}/>
+        <div className='w-[50%]'>
+          <Table data={data} setData={setData}/>
         </div>
       </section>
     </>

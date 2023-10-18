@@ -1,19 +1,22 @@
 // table.jsx
-
 import React, { useEffect, useState } from 'react';
 import '../css/table.css';
 import '../fonts/fonts.css'
+import DeleteModal from './deleteModal';
+import Pagination from './pagination';
 
-function Table({data = [], resetPagination }) {
+function Table({data = [], resetPagination, setData }) {
 
+    // ทำให้เริ่มต้นหน้า 1 ตลอด
     useEffect(() => {
         setCurrentPage(1);
       }, [resetPagination]);
-
     const [currentPage, setCurrentPage] = useState(1);
     
+    // ข้อมูลต่อ 1 หน้า
     const itemsPerPage = 10;
     
+    // เพิ่มหน้าใหม่ เมื่อเกิน 10 ข้อมูล
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
@@ -35,31 +38,35 @@ function Table({data = [], resetPagination }) {
       setCurrentPage(pageNum);
     };
 
-    // Render pagination numbers
-    const renderPaginationNumbers = () => {
-        let numbers = [];
+  
+  // delete
+  const [showModal, setShowModal] = useState(false);  // <-- State to control the modal
+  const [itemToDelete, setItemToDelete] = useState(null);  // <-- State to hold the item to be deleted
 
-        for(let i = 1; i <= totalPages; i++) {
-            numbers.push(
-              <>
-                <div className='p-1'>
-                  <span 
-                      key={i}
-                      onClick={() => handlePageClick(i)}
-                      className={`ease-in-out duration-300 bg-white rounded-[20px] p-2 cursor-pointer ${currentPage === i ? 'font-bold text-[22px]' : ''}`}
-                  >
-                      {i}
-                  </span>
-                </div>
-              </>
-            );
-        }
+  const handleDeleteClick = (item) => {
+      setItemToDelete(item);
+      setShowModal(true);
+  };
 
-        return numbers;
-    };
+  const handleConfirmDelete = () => {
+      fetch(`http://localhost:3000/delete?id=${itemToDelete.id}`, {  // <-- Adjust the URL if needed
+          method: 'DELETE'
+      })
+      .then(response => {
+          if (response.ok) {
+              setShowModal(false);
+              // Refresh data or filter out the deleted item here
+              setData(prevData => prevData.filter(i => i.id !== itemToDelete.id));
+          } else {
+              console.error('Failed to delete item.');
+          }
+      });
+  };
+
+
     
   return (
-    <div className="table ">
+    <div className="table">
       <div className="tableHeader">
         <div className="tableHRow">
           {/* <div className="tableCell">id</div> */}
@@ -86,27 +93,25 @@ function Table({data = [], resetPagination }) {
             <div className="tableBodyCell flex justify-center space-x-6">
                 <img src={require('../img/pdf.png')} className='icon' alt="pdf"/>
                 <img src={require('../img/edit.png')} className='icon' alt="edit"/>
-                <img src={require('../img/bin.png')} className='icon' alt="delete"/>
+                <img src={require('../img/bin.png')} className='icon' alt="delete" onClick={() => handleDeleteClick(item)}/> {/* <-- Add onClick event */}
             </div>
           </div>
         ))}
       </div>
       <div className='tableFooter'>
           <div className='tableFRow'>
-            <button onClick={handlePrevPage} disabled={currentPage === 1} className='mr-2'>
-                {currentPage === 1 
-                    ? <img className='w-6 h-6' src={require('../img/cantBack.png')} alt='cantback'/>
-                    : <img className='w-6 h-6' src={require('../img/back.png')} alt='back'/>}
-            </button>
-            {/* Render pagination numbers here */}
-            {renderPaginationNumbers()}
-            <button onClick={handleNextPage} disabled={currentPage === totalPages} className='ml-2'>
-                {currentPage === totalPages 
-                    ? <img className='w-6 h-6' src={require('../img/cantNext.png')} alt='cantnext'/>
-                    : <img className='w-6 h-6' src={require('../img/next.png')} alt='next'/>}
-            </button>
+            <Pagination 
+                currentPage={currentPage} 
+                totalPages={totalPages} 
+                handlePrevPage={handlePrevPage}
+                handleNextPage={handleNextPage}
+                handlePageClick={handlePageClick}/>
           </div>
       </div>
+      <DeleteModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          onConfirm={handleConfirmDelete}/>
     </div>
   )
 }
