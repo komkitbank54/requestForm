@@ -6,6 +6,7 @@ function Mainpage() {
   const [data, setData] = useState([]);
   console.log(data)
 
+  //fetch data
   useEffect(() => {
     fetch('http://localhost:3000/show')
       .then(response => response.json())
@@ -14,9 +15,14 @@ function Mainpage() {
   }, []);
 
   return (
-    <div>
-      <Table data={data}/> {/* Pass data to Table */}
-    </div>
+    <>
+      <section>
+        {/* table */}
+        <div className='w-[70%]'>
+          <Table data={data}/>
+        </div>
+      </section>
+    </>
   )
 }
 
