@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Table from './components/table'
+import './fonts/fonts.css';
 
 function Mainpage() {
   const [data, setData] = useState([]);
