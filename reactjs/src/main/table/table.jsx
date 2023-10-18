@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import '../css/table.css';
 import '../fonts/fonts.css'
-import DeleteModal from './deleteModal';
-import Pagination from './pagination';
+import DeleteModal from './components/deleteModal';
+import Pagination from './components/pagination';
 
 function Table({data = [], resetPagination, setData }) {
 
