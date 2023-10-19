@@ -43,7 +43,7 @@ app.post('/add', (req, res) => {
             @changeToolInfo, @scodeName, @scodeFromVersion, @scodeToVersion, @etc, @changeCoz,
             @researchRel, @researchRef, @changeEff, @manaName, @manaRank, @mana2Name, @mana2Rank,
             @reqFinishDate, @implementPlan, @changeTest, @testInfo, @rollbackPlan, @rollbackInfo,
-            @userContactID, @conteactOther, @headDepaName, @headDepaApprove, @headDepaComment,
+            @userContactID, @conteactOther, @headDepaName, 'Unapproved', @headDepaComment,
             @headDepaDate, @headITName, @headITEsti, @headITEstiComment, @headITDate, @divisionName,
             @divisionComment, @divisionDate, @refITName1, @refITName2, @refITName3, @refITApprove,
             @refITComment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,
@@ -238,7 +238,7 @@ app.put('/approve', async (req, res) => {
     const updateQuery = `
         UPDATE [dbo].[changeform]
         SET 
-            [headDepaApprove] = @headDepaApprove,
+            [headDepaApprove] = @headDepaApprove
         WHERE id = @id`;
 
     try {
@@ -246,7 +246,7 @@ app.put('/approve', async (req, res) => {
         const request = new sql.Request(pool);
         
         request.input('id', sql.Int, id);
-        request.input('headDepaApprove', sql.DateTime, req.body.headDepaApprove);
+        request.input('headDepaApprove', sql.VarChar, req.body.headDepaApprove);
         
         const result = await request.query(updateQuery);
 

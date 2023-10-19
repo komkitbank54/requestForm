@@ -5,6 +5,7 @@
 .icon {
     height: auto;
     width: 26px;
+    transition: all 0.3s;
 }
 
 .table {

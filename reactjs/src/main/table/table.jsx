@@ -1,9 +1,13 @@
 // table.jsx
+
 import React, { useEffect, useState } from 'react';
-import '../css/table.css';
-import '../fonts/fonts.css';
 import DeleteModal from './components/deleteModal';
 import Pagination from './components/pagination';
+import AddModal from './components/addModal';
+
+//Import css
+import '../css/table.css';
+import '../fonts/fonts.css';
 
 function Table({ data = [], resetPagination, setData }) {
 
@@ -29,6 +33,38 @@ function Table({ data = [], resetPagination, setData }) {
     const handlePageClick = (pageNum) => {
         setCurrentPage(pageNum);
     };
+
+    // Add
+    const [showAddModal, setShowAddModal] = useState(false);
+
+    const handleAddClick = (item) => {
+        setShowAddModal(true);
+    };
+
+    // Approve
+    const handleApproveClick = (item) => {
+        let approveValue = item.headDepaApprove === 'Approved' ? 'Unapproved' : 'Approved';
+        fetch('http://localhost:3000/approve', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: item.id,
+                headDepaApprove: approveValue,
+            }),
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.message === 'Record updated successfully!') {
+                setData(prevData => prevData.map(i => i.id === item.id ? { ...i, headDepaApprove: approveValue } : i));
+            } else {
+                console.error('Failed to approve item.', result.message);
+            }
+        })
+        .catch(err => console.error('Error:', err));
+    };
+
 
 
     // Delete
@@ -59,7 +95,7 @@ function Table({ data = [], resetPagination, setData }) {
                 <div className="tableHRow">
                     {['ชื่อผู้ร้องขอ', 'ตำแหน่ง', 'ฝ่ายงาน', 'วันที่ขอใช้งาน', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
                     <div className='tableCell flex justify-center'>
-                        <botton className="flex px-2 rounded-lg">
+                        <botton className="flex px-2 rounded-lg" onClick={() => handleAddClick()}>
                             <img src={require('../img/add.png')} className='h-[22px] w-[22px]' alt="add" />
                             <label className='pl-1'>Add</label>
                         </botton>
@@ -75,7 +111,13 @@ function Table({ data = [], resetPagination, setData }) {
                         <div className="tableBodyCell">{item.jobRank}</div>
                         <div className="tableBodyCell">{item.jobGroup}</div>
                         <div className="tableBodyCell">{item.useDate}</div>
-                        <div className="tableBodyCell">{item.headDepaApprove}</div>
+                        <div className="tableBodyCell flex justify-center">
+                            <botton className="cursor-pointer icon" onClick={() => handleApproveClick(item)}>
+                              <img src={require(item.headDepaApprove === 'Approved' ? '../img/approved.png' :'../img/unapproved.png')} className='' 
+                                alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Unapproved'} />
+                            </botton>
+                            {item.headDepaApprove}
+                        </div>
                         <div className="tableBodyCell flex justify-center space-x-6">
                             <img src={require('../img/pdf.png')} className='icon' alt="pdf" />
                             <img src={require('../img/edit.png')} className='icon' alt="edit" />
@@ -97,7 +139,7 @@ function Table({ data = [], resetPagination, setData }) {
                     handlePageClick={handlePageClick}
                 />
             </div>
-
+            <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)}/>
             <DeleteModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleConfirmDelete} />
         </div>
     );
