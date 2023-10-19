@@ -17,7 +17,6 @@
 .tableHeader, .tableBody, .tableFooter {
     display: block;
     width: auto;
-    min-width: 210mm;
 }
 
 .tableBody {

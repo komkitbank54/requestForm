@@ -227,7 +227,38 @@ app.put('/edit', async (req, res) => {
     }
 });
 
+// Approve
+app.put('/approve', async (req, res) => {
+    const id = req.body.id;
 
+    if (!id) {
+        return res.status(400).send({ message: 'id is required in request body.' });
+    }
+
+    const updateQuery = `
+        UPDATE [dbo].[changeform]
+        SET 
+            [headDepaApprove] = @headDepaApprove,
+        WHERE id = @id`;
+
+    try {
+        const pool = await poolPromise;
+        const request = new sql.Request(pool);
+        
+        request.input('id', sql.Int, id);
+        request.input('headDepaApprove', sql.DateTime, req.body.headDepaApprove);
+        
+        const result = await request.query(updateQuery);
+
+        if (result.rowsAffected[0] === 0) {
+            res.status(404).send({ message: 'Record not found' });
+        } else {
+            res.status(200).send({ message: 'Record updated successfully!' });
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
 
 // Delete
 app.delete('/delete', async (req, res) => {
