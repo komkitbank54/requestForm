@@ -11,8 +11,19 @@ import '../fonts/fonts.css';
 
 function Table({ data = [], resetPagination, setData }) {
 
-    const ITEMS_PER_PAGE = 10;
+    // value
+    const [formData, setFormData] = useState({
+        requestName: '',
+        requestSurname: '',
+        jobRank: '',
+        jobGroup: '',
+        requestPhone: '',
+        requestEmail: '',
+        useDate: '',
+        changeLengh: ''
+      });
 
+    const ITEMS_PER_PAGE = 10;
     // Page
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
@@ -34,12 +45,6 @@ function Table({ data = [], resetPagination, setData }) {
         setCurrentPage(pageNum);
     };
 
-    // Add
-    const [showAddModal, setShowAddModal] = useState(false);
-
-    const handleAddClick = (item) => {
-        setShowAddModal(true);
-    };
 
     // Approve
     const handleApproveClick = (item) => {
@@ -65,7 +70,23 @@ function Table({ data = [], resetPagination, setData }) {
         .catch(err => console.error('Error:', err));
     };
 
+    // Add
+    const [showAddModal, setShowAddModal] = useState(false);
 
+    const handleAddClick = (item) => {
+        setShowAddModal(true);
+    };
+    const handleConfirmAdd = () => {
+        setData(prevData => [...prevData, formData]);
+        alert(` ชื่อ: ${formData.requestName}\n
+                นามสกุล: ${formData.requestSurname}\n
+                ตำแหน่ง: ${formData.jobRank}\n
+                ฝ่ายงาน: ${formData.jobGroup}\n
+                วันที่ขอใช้งาน: ${formData.useDate}\n
+                สถานะ: ${formData.changeLengh}`);
+        
+        // setShowAddModal(false);
+    }
 
     // Delete
     const [showModal, setShowModal] = useState(false);
@@ -95,7 +116,7 @@ function Table({ data = [], resetPagination, setData }) {
                 <div className="tableHRow">
                     {['ชื่อผู้ร้องขอ', 'ตำแหน่ง', 'ฝ่ายงาน', 'วันที่ขอใช้งาน', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
                     <div className='tableCell flex justify-center'>
-                        <botton className="flex px-2 rounded-lg" onClick={() => handleAddClick()}>
+                        <botton className="cursor-pointer flex px-2 rounded-lg" onClick={() => handleAddClick()}>
                             <img src={require('../img/add.png')} className='h-[22px] w-[22px]' alt="add" />
                             <label className='pl-1'>Add</label>
                         </botton>
@@ -139,7 +160,7 @@ function Table({ data = [], resetPagination, setData }) {
                     handlePageClick={handlePageClick}
                 />
             </div>
-            <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)}/>
+            <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
             <DeleteModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleConfirmDelete} />
         </div>
     );

@@ -27,7 +27,7 @@ app.post('/add', (req, res) => {
     const query = `
         INSERT INTO [dbo].[changeform](
             [requestDate], [requestName], [requestSurname], [jobRank], [jobGroup], [requestPhone],
-            [requestEmail], [useDate], [changeLengh], [lenghInfo], [changeType], [changeTool],
+            [requestEmail], [useDate], [changeLengh], [changeType], [changeTool],
             [changeToolInfo], [scodeName], [scodeFromVersion], [scodeToVersion], [etc], [changeCoz],
             [researchRel], [researchRef], [changeEff], [manaName], [manaRank], [mana2Name], [mana2Rank],
             [reqFinishDate], [implementPlan], [changeTest], [testInfo], [rollbackPlan], [rollbackInfo],
@@ -39,7 +39,7 @@ app.post('/add', (req, res) => {
         )
         VALUES(
             @requestDate, @requestName, @requestSurname, @jobRank, @jobGroup, @requestPhone,
-            @requestEmail, @useDate, @changeLengh, @lenghInfo, @changeType, @changeTool,
+            @requestEmail, @useDate, @changeLengh, @changeType, @changeTool,
             @changeToolInfo, @scodeName, @scodeFromVersion, @scodeToVersion, @etc, @changeCoz,
             @researchRel, @researchRef, @changeEff, @manaName, @manaRank, @mana2Name, @mana2Rank,
             @reqFinishDate, @implementPlan, @changeTest, @testInfo, @rollbackPlan, @rollbackInfo,
@@ -55,7 +55,7 @@ app.post('/add', (req, res) => {
         requestDate: sql.DateTime, requestName: sql.NVarChar, requestSurname: sql.NVarChar,
         jobRank: sql.NVarChar, jobGroup: sql.NVarChar, requestPhone: sql.NVarChar,
         requestEmail: sql.NVarChar, useDate: sql.DateTime, changeLengh: sql.NVarChar,
-        lenghInfo: sql.NVarChar, changeType: sql.NVarChar, changeTool: sql.NVarChar,
+        changeType: sql.NVarChar, changeTool: sql.NVarChar,
         changeToolInfo: sql.NVarChar, scodeName: sql.NVarChar, scodeFromVersion: sql.NVarChar,
         scodeToVersion: sql.NVarChar, etc: sql.NVarChar, changeCoz: sql.NVarChar,
         researchRel: sql.NVarChar, researchRef: sql.NVarChar, changeEff: sql.NVarChar,
@@ -104,7 +104,6 @@ app.put('/edit', async (req, res) => {
             [requestEmail] = @requestEmail,
             [useDate] = @useDate,
             [changeLengh] = @changeLengh,
-            [lenghInfo] = @lenghInfo,
             [changeType] = @changeType,
             [changeTool] = @changeTool,
             [changeToolInfo] = @changeToolInfo,
@@ -167,7 +166,6 @@ app.put('/edit', async (req, res) => {
         request.input('requestEmail', sql.NVarChar, req.body.requestEmail);
         request.input('useDate', sql.Date, req.body.useDate);
         request.input('changeLengh', sql.NVarChar, req.body.changeLengh);
-        request.input('lenghInfo', sql.NVarChar, req.body.lenghInfo);
         request.input('changeType', sql.NVarChar, req.body.changeType);
         request.input('changeTool', sql.NVarChar, req.body.changeTool);
         request.input('changeToolInfo', sql.NVarChar, req.body.changeToolInfo);
