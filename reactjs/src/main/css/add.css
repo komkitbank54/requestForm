@@ -1,0 +1,10 @@
+
+.input-ect {
+    width: 100px;
+    height: 35px;
+}
+
+.input-bew {
+    display: flex;
+    justify-content: center;
+}
