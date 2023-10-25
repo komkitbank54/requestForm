@@ -2,7 +2,7 @@
 import '../../css/input.css'
 
 
-function InputField({ label, name, value, onChange, placeholder}) {
+function InputField({ label, name, value, onChange, placeholder, addClass}) {
 
   return (
     <>
@@ -13,12 +13,12 @@ function InputField({ label, name, value, onChange, placeholder}) {
               type="text"
               name={name}
               value={value}
-              className="inputfield"
+              className={"inputfield "+ addClass}
               onChange={onChange}
               placeholder={placeholder}
             />
         </div>
-        <label className='pr-3'></label>
+
       </div>
     </>
   );

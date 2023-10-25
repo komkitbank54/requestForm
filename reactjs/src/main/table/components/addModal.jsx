@@ -1,6 +1,7 @@
 // addModal.jsx
 import React, { useState , useEffect , forwardRef } from 'react';
 import { RadioWithoutInput, RadioWithInput } from './checkbox';
+
 import DatePicker from "react-datepicker";
 import InputField from './input';
 import moment from 'moment';
@@ -51,14 +52,33 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     };
 
     // input
-    const defaultInput = (label, name, placeholder) => (
+    const defaultInput = (label, name, placeholder, addClass) => (
         <InputField 
             label={label} 
             name={name} 
             value={formData[name]}
             placeholder={placeholder}
             onChange={handleChange}
-        />
+            addClass={addClass} />
+    );
+
+    // Checkbox ที่ไม่มี input
+    const presetRadio = (groupName, fieldName, label, value) => (
+        <RadioWithoutInput 
+            groupName={groupName}
+            fieldName={fieldName}
+            label={label}
+            value={value}
+            setFormData={setFormData} />
+    );
+
+    // Checkbox ที่มี input
+    const customRadio = (groupName, fieldName, label) => (
+        <RadioWithInput 
+            groupName={groupName}
+            fieldName={fieldName}
+            label={label}
+            setFormData={setFormData} />
     );
 
     // เวลา
@@ -87,15 +107,15 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                 {/* Header */}
                 <button className='absolute top-3 right-4' onClick={onClose}>X</button>
                 <div className="flex justify-between font-bold text-[20px]">
-                    <p>กรอกข้อมูล</p>
+                    <p>แบบฟอร์มร้องขอการเปลี่ยนแปลง</p>
                     <p className="mr-5">{currentDateTime}</p>
                 </div>
                 {/* Step 1 */}
                 {currentStep === 1 && (
                     <>
                     <div className=''>
-                        <label className='font-semibold'>Step 1 - ข้อมูลผู้ร้องขอ</label>
-                            <div className='input-bew mt-3'>
+                        <header className='font-semibold mt-1'>ส่วนที่ 1 - ข้อมูลผู้ร้องขอ</header>
+                            <div className='input-bew'>
                                 {defaultInput("ชื่อ", "requestName", "จอร์น")}
                                 {defaultInput("นามสกุล", "requestSurname", "สมิธ")}
                             </div>
@@ -108,7 +128,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                 {defaultInput("อีเมลล์", "requestEmail", "example@outlook.co.th")}
                             </div>
                             <div className='input-bew'>
-                                <div>
+                                <div className=''>
                                     วันที่ต้องการใช้งาน<br/>
                                     <DatePicker
                                         showIcon
@@ -126,18 +146,21 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                     />
                                 </div>
                                 <div>
-                                    <div>ขอบข่ายการเปลี่ยนแปลง</div>
+                                    <div className=''>ขอบข่ายการเปลี่ยนแปลง</div>
                                     <div className="pt-2">
-                                        <RadioWithoutInput 
+                                        {presetRadio("changeLengh", "changeLengh", "GCAP", "GCAP")}
+                                        {customRadio("changeLengh", "changeLengh", "อื่นๆ")}
+                                        {/* <RadioWithoutInput 
                                             groupName="group1"
                                             fieldName="changeLengh"
-                                            label="GCAP" value="GCAP"
+                                            label="GCAP"
+                                            value="GCAP"
                                             setFormData={setFormData} />
                                         <RadioWithInput 
                                             groupName="group1"
                                             fieldName="changeLengh"
                                             label="อื่นๆ"
-                                            setFormData={setFormData} />
+                                            setFormData={setFormData} /> */}
                                     </div>
                                 </div>
                             </div>
@@ -148,24 +171,36 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                 {currentStep === 2 && (
                     <>
                         <div className=''>
-                            <label className='font-semibold'>Step 2 - รายละเอียดการขอเปลี่ยนแปลง</label>
-                                <div className='input-bew mt-3'>
-                                    ประเภทการเปลี่ยนแปลง
-                                </div>
-                                <div>
-                                <RadioWithoutInput 
-                                    groupName="group2"
-                                    fieldName="changeType"
-                                    label="การเปลี่ยนแปลงแบบปกติ"
-                                    value="normal"
-                                    setFormData={setFormData} />
-                                <RadioWithoutInput 
-                                    groupName="group2"
-                                    fieldName="changeType"
-                                    label="การเปลี่ยนแปลงแบบฉุกเฉิน "
-                                    value="urgency"
-                                    setFormData={setFormData} />
-                                </div>
+                            <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
+                            <header className='input-bew mt-3'>
+                                ประเภทการเปลี่ยนแปลง
+                            </header>
+                            <div className='flex space-x-[46px]'>
+                                {presetRadio("changeType", "changeType", "การเปลี่ยนแปลงแบบปกติ", "normal")}
+                                {presetRadio("changeType", "changeType", "การเปลี่ยนแปลงแบบฉุกเฉิน", "urgency")}
+                            </div>
+                            <header className='input-bew'>
+                                อุปกรณ์ที่จะเปลี่ยนแปลง
+                            </header>
+                            <div className='flex'>
+                                {presetRadio("changeTool", "changeTool", "อุปกรณ์เครือข่าย", "local")}
+                                {presetRadio("changeTool", "changeTool", "อุปกรณ์แม่ข่าย", "server")}
+                            </div>
+                            <div className=''>
+                                {defaultInput("", "changeToolInfo", "รายละเอียด", "inputLarge")}
+                            </div>
+                            <div className='flex space-x-6 mt-4'>
+                                <span className='flex mb-auto items-center'>
+                                    {defaultInput("โปรแกรม / ซอร์สโค้ด", "scodeName", "ชื่อระบบ", "inputScode")}
+                                </span>
+                                <span className='flex'>
+                                    {defaultInput("จากเวอร์ชั่น", "scodeFromVersion", "เก่า", "inputScodeVer")}
+                                    {defaultInput("เป็นเวอร์ชั่น", "scodeToVersion", "ใหม่", "inputScodeVer")}
+                                </span>
+                            </div>
+                            <div className='mt-4'>
+                                {defaultInput("อื่นๆ เพิ่มเติม", "etc", "ระบุ.....", "inputLarge",)}
+                            </div>
                         </div>
                     </>
                 )}

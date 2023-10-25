@@ -27,6 +27,21 @@
     height: 35px;
 }
 
+.inputLarge {
+    width: 450px;
+    height: 42px;
+}
+
+.inputScode {
+    width: 180px;
+    height: 42px;
+}
+
+.inputScodeVer {
+    width: 100px;
+    height: 42px;
+}
+
 input {
     outline: none;
     margin: 0;

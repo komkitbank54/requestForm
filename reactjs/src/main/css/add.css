@@ -1,4 +1,5 @@
 .input-bew {
+    margin-top: 16px;
     display: flex; /* ใช้ flexbox สำหรับการจัดวาง */
     justify-content: space-between; /* แยก input ให้เท่าๆกัน */
 }

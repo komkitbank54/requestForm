@@ -19,7 +19,7 @@ export const RadioWithoutInput = ({ fieldName, label, value, setFormData, groupN
                 value={value}
                 onChange={handleChange}
             />
-            <label>{label}</label>
+            <label className='ml-1'>{label}</label>
         </div>
     );
 };
@@ -61,7 +61,7 @@ export const RadioWithInput = ({ fieldName, label, setFormData, groupName }) => 
                 name={groupName}
                 onChange={handleRadioChange}
             />
-            <label>{label}</label>
+            <label className='ml-1'>{label}</label>
             <input 
                 type="text" 
                 onChange={handleInputChange} 
