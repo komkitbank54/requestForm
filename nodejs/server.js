@@ -80,7 +80,16 @@ app.post('/add', (req, res) => {
 
     request.query(query, (err) => {
         if (err) return res.status(500).send(err);
-        res.status(201).send({ message: 'Record added successfully!' });
+
+        // After a successful insertion, retrieve the last inserted id
+        request.query('SELECT @@IDENTITY AS id', (err, result) => {
+            if (err) return res.status(500).send(err);
+
+            const newId = result.recordset[0].id;
+
+            // Return the id to the frontend
+            res.status(201).send({ message: 'Record added successfully!', id: newId });
+        });
     });
 });
 
