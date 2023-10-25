@@ -20,6 +20,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.key === 'Escape') {
+                setCurrentStep(1);
                 onClose();
             }
         };
@@ -30,13 +31,20 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
         };
     }, [onClose]);
 
+    // action เมื่อกดปิด
+    const onCloseHandle = () => {
+        setCurrentStep(1);
+        onClose();
+    }
+
     // คลิกข้างนอกเพื่อออก
     const handleOutsideClick = (event) => {
         if (event.target === event.currentTarget) {
-            onClose();
+            onCloseHandle();
         }
     };
-
+    
+    
     // isOpen check
     if (!isOpen) {
         return null;
@@ -105,7 +113,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center' onClick={handleOutsideClick}>
             <div className='relative bg-white p-4 rounded-md w-[550px] h-[500px]'>
                 {/* Header */}
-                <button className='absolute top-3 right-4' onClick={onClose}>X</button>
+                <button className='absolute top-3 right-4' onClick={onCloseHandle}>X</button>
                 <div className="flex justify-between font-bold text-[20px]">
                     <p>แบบฟอร์มร้องขอการเปลี่ยนแปลง</p>
                     <p className="mr-5">{currentDateTime}</p>
@@ -150,17 +158,6 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                     <div className="pt-2">
                                         {presetRadio("changeLengh", "changeLengh", "GCAP", "GCAP")}
                                         {customRadio("changeLengh", "changeLengh", "อื่นๆ")}
-                                        {/* <RadioWithoutInput 
-                                            groupName="group1"
-                                            fieldName="changeLengh"
-                                            label="GCAP"
-                                            value="GCAP"
-                                            setFormData={setFormData} />
-                                        <RadioWithInput 
-                                            groupName="group1"
-                                            fieldName="changeLengh"
-                                            label="อื่นๆ"
-                                            setFormData={setFormData} /> */}
                                     </div>
                                 </div>
                             </div>
@@ -204,6 +201,10 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                         </div>
                     </>
                 )}
+                {currentStep === 3 && (
+                    <>
+                    </>
+                )}
                 {/* Footer */}
                     {currentStep === 1 && (
                         <button onClick={nextPage} className='absolute bottom-2 right-2 px-3 py-2 bg-blue-500 text-white rounded-md'>
@@ -211,6 +212,18 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                         </button>
                     )}
                     {currentStep === 2 && (
+                        <>
+                            <div className='absolute bottom-2 right-2 flex space-x-1'>
+                                <button onClick={prevPage} className='px-2 py-2 bg-blue-500 text-white rounded-md'>
+                                    ย้อนกลับ
+                                </button>
+                                <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
+                                    ต่อไป
+                                </button>
+                            </div>
+                        </>
+                    )}
+                    {currentStep === 3 && (
                         <>
                             <div className='absolute bottom-2 right-2 flex space-x-1'>
                                 <button onClick={prevPage} className=' px-2 py-2 bg-blue-500 text-white rounded-md'>
