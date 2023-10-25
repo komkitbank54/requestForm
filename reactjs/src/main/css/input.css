@@ -15,11 +15,16 @@
     -moz-transition: all .4s ease;
     transition: all .4s ease;
     width: 220px;
-    height: 46px;
+    height: 42px;
 }
 
 .inputfield:disabled {
     background: #dfdfdf;
+}
+
+.inputRadioSize {
+    width: 100px;
+    height: 35px;
 }
 
 input {

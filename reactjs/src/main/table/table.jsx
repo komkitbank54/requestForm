@@ -20,7 +20,8 @@ function Table({ data = [], resetPagination, setData }) {
         requestPhone: '',
         requestEmail: '',
         useDate: '',
-        changeLengh: ''
+        changeLengh: '',
+        changeType: ''
       });
 
     const ITEMS_PER_PAGE = 10;
@@ -83,7 +84,9 @@ function Table({ data = [], resetPagination, setData }) {
                 ตำแหน่ง: ${formData.jobRank}\n
                 ฝ่ายงาน: ${formData.jobGroup}\n
                 วันที่ขอใช้งาน: ${formData.useDate}\n
-                สถานะ: ${formData.changeLengh}`);
+                สถานะ: ${formData.changeLengh}\n
+                รูปแบบ: ${formData.changeType}`);
+                
         
         // setShowAddModal(false);
     }

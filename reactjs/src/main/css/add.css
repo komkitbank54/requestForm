@@ -1,10 +1,8 @@
-
-.input-ect {
-    width: 100px;
-    height: 35px;
+.input-bew {
+    display: flex; /* ใช้ flexbox สำหรับการจัดวาง */
+    justify-content: space-between; /* แยก input ให้เท่าๆกัน */
 }
 
-.input-bew {
-    display: flex;
-    justify-content: center;
+.input-bew > div {
+    width: 48%; /* กำหนดให้ครอบคลุมร้อยละ 48 ของพื้นที่ทั้งหมด เพื่อให้มีพื้นที่ความห่างระหว่าง input ด้วย space-x-4 */
 }

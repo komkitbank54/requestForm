@@ -1,4 +1,6 @@
+// addModal.jsx
 import React, { useState , useEffect , forwardRef } from 'react';
+import { RadioWithoutInput, RadioWithInput } from './checkbox';
 import DatePicker from "react-datepicker";
 import InputField from './input';
 import moment from 'moment';
@@ -10,8 +12,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     const [startDate, setStartDate] = useState(formData.useDate || new Date());
-    const [selectedOption, setSelectedOption] = useState(formData.changeLengh || '');
-    const [etcValue, setEtcValue] = useState('');
     const [currentStep, setCurrentStep] = useState(1);
 
     
@@ -71,23 +71,6 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
         </button>
     ));
 
-    // เช็ค value gcap / etc.
-    const handleOptionChange = (e) => {
-        setSelectedOption(e.target.value);
-        if (e.target.value === 'gcap') {
-            setEtcValue('');
-            setFormData(prevState => ({
-                ...prevState,
-                changeLengh: 'gcap',
-            }));
-        } else {
-            setFormData(prevState => ({
-                ...prevState,
-                changeLengh: etcValue,
-            }));
-        }
-    }
-
     // หน้าต่อไป
     const nextPage = () => {
         setCurrentStep(prev => prev + 1);
@@ -112,83 +95,53 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                     <>
                     <div className=''>
                         <label className='font-semibold'>Step 1 - ข้อมูลผู้ร้องขอ</label>
-                            <div className='input-bew space-x-4 mt-3'>
+                            <div className='input-bew mt-3'>
                                 {defaultInput("ชื่อ", "requestName", "จอร์น")}
                                 {defaultInput("นามสกุล", "requestSurname", "สมิธ")}
                             </div>
-                            <div className='input-bew space-x-4'>
+                            <div className='input-bew'>
                                 {defaultInput("ตำแหน่ง", "jobRank", "Manager")}
                                 {defaultInput("ฝ่าย", "jobGroup", "IT")}
                             </div>
-                            <div className='input-bew space-x-4'>
+                            <div className='input-bew'>
                                 {defaultInput("เบอร์", "requestPhone", "081 234 5678")}
                                 {defaultInput("อีเมลล์", "requestEmail", "example@outlook.co.th")}
                             </div>
-                            <div className='input-bew space-x-4'>
-                            <div>
-                                วันที่ต้องการใช้งาน<br/>
-                                <DatePicker
-                                    showIcon
-                                    selected={startDate}
-                                    onChange={(date) => {
-                                        setStartDate(date);
-                                        const formattedDate = moment(date).format("DD/MM/YYYY");
-                                        setFormData(prevState => ({
-                                            ...prevState,
-                                            useDate: formattedDate,
-                                        }));
-                                    }}
-                                    customInput={<ExampleCustomInput />}
-                                    dateFormat="dd/MM/yyyy"
-                                />
-                            </div>
-                            <div>
-                                <div>ขอบข่ายการเปลี่ยนแปลง</div>
-                                <div className="pt-2">
-                                    <label>
-                                        <input
-                                            type="radio"
-                                            value="gcap"
-                                            checked={selectedOption === 'gcap'}
-                                            onChange={handleOptionChange}
-                                        />
-                                        GCAP
-                                    </label>
-                                    <label>
-                                        <input
-                                            type="radio"
-                                            value={etcValue}
-                                            checked={selectedOption !== 'gcap'}
-                                            onChange={handleOptionChange}
-                                        />
-                                        อื่นๆ
-                                    </label>
-                                    {selectedOption !== 'gcap' ? (
-                                        <input
-                                            type="text"
-                                            className="inputfield input-ect"
-                                            placeholder="ระบุ..."
-                                            value={etcValue}
-                                            onChange={(e) => {
-                                                setEtcValue(e.target.value);
-                                                setFormData(prevState => ({
-                                                    ...prevState,
-                                                    changeLengh: e.target.value,
-                                                }));
-                                            }}
-                                        />
-                                    ):
-                                        <input
-                                            type="text"
-                                            className="inputfield input-ect"
-                                            placeholder="ระบุ..."
-                                            disabled
-                                        />
-                                    }
+                            <div className='input-bew'>
+                                <div>
+                                    วันที่ต้องการใช้งาน<br/>
+                                    <DatePicker
+                                        showIcon
+                                        selected={startDate}
+                                        onChange={(date) => {
+                                            setStartDate(date);
+                                            const formattedDate = moment(date).format("DD/MM/YYYY");
+                                            setFormData(prevState => ({
+                                                ...prevState,
+                                                useDate: formattedDate,
+                                            }));
+                                        }}
+                                        customInput={<ExampleCustomInput />}
+                                        dateFormat="dd/MM/yyyy"
+                                    />
+                                </div>
+                                <div>
+                                    <div>ขอบข่ายการเปลี่ยนแปลง</div>
+                                    <div className="pt-2">
+                                        <RadioWithoutInput 
+                                            groupName="group1"
+                                            fieldName="changeLengh"
+                                            label="GCAP" value="GCAP"
+                                            setFormData={setFormData} />
+                                        <RadioWithInput 
+                                            groupName="group1"
+                                            fieldName="changeLengh"
+                                            label="อื่นๆ"
+                                            setFormData={setFormData} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     </>
                 )}
                 {/* Step 2 */}
@@ -196,6 +149,23 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                     <>
                         <div className=''>
                             <label className='font-semibold'>Step 2 - รายละเอียดการขอเปลี่ยนแปลง</label>
+                                <div className='input-bew mt-3'>
+                                    ประเภทการเปลี่ยนแปลง
+                                </div>
+                                <div>
+                                <RadioWithoutInput 
+                                    groupName="group2"
+                                    fieldName="changeType"
+                                    label="การเปลี่ยนแปลงแบบปกติ"
+                                    value="normal"
+                                    setFormData={setFormData} />
+                                <RadioWithoutInput 
+                                    groupName="group2"
+                                    fieldName="changeType"
+                                    label="การเปลี่ยนแปลงแบบฉุกเฉิน "
+                                    value="urgency"
+                                    setFormData={setFormData} />
+                                </div>
                         </div>
                     </>
                 )}

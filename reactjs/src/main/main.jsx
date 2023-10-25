@@ -19,7 +19,7 @@ function Mainpage() {
     <>
       <section>
         {/* table */}
-        <div className='w-[70%]'>
+        <div className='w-auto'>
           <Table data={data} setData={setData}/>
         </div>
       </section>
