@@ -31,8 +31,8 @@ app.post('/add', (req, res) => {
             [changeToolInfo], [scodeName], [scodeFromVersion], [scodeToVersion], [etc], [changeCoz],
             [researchRel], [researchRef], [changeEff], [manaName], [manaRank], [mana2Name], [mana2Rank],
             [reqFinishDate], [implementPlan], [changeTest], [testInfo], [rollbackPlan], [rollbackInfo],
-            [userContactID], [conteactOther], [headDepaName], [headDepaApprove], [headDepaComment],
-            [headDepaDate], [headITName], [headITEsti], [headITEstiComment], [headITDate], [divisionName],
+            [userContact], [headDepaName], [headDepaApprove], [headDepaComment],
+            [headDepaDate], [headITName], [headITApprove], [headITEsti], [headITEstiComment], [headITDate], [divisionName],
             [divisionComment], [divisionDate], [refITName1], [refITName2], [refITName3], [refITApprove],
             [refITComment], [actualDate], [finishDate], [changeStatue], [changeResult], [userChange],
             [userChangeDate], [changeResName]
@@ -43,8 +43,8 @@ app.post('/add', (req, res) => {
             @changeToolInfo, @scodeName, @scodeFromVersion, @scodeToVersion, @etc, @changeCoz,
             @researchRel, @researchRef, @changeEff, @manaName, @manaRank, @mana2Name, @mana2Rank,
             @reqFinishDate, @implementPlan, @changeTest, @testInfo, @rollbackPlan, @rollbackInfo,
-            @userContactID, @conteactOther, @headDepaName, 'Unapproved', @headDepaComment,
-            @headDepaDate, @headITName, @headITEsti, @headITEstiComment, @headITDate, @divisionName,
+            @userContact, @headDepaName, 'Unapproved', @headDepaComment,
+            @headDepaDate, @headITName, @headITApprove, @headITEsti, @headITEstiComment, @headITDate, @divisionName,
             @divisionComment, @divisionDate, @refITName1, @refITName2, @refITName3, @refITApprove,
             @refITComment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,
             @userChangeDate, @changeResName
@@ -52,9 +52,9 @@ app.post('/add', (req, res) => {
 
     // List all fields and their types
     const fields = {
-        requestDate: sql.DateTime, requestName: sql.NVarChar, requestSurname: sql.NVarChar,
+        requestDate: sql.SmallDateTime, requestName: sql.NVarChar, requestSurname: sql.NVarChar,
         jobRank: sql.NVarChar, jobGroup: sql.NVarChar, requestPhone: sql.NVarChar,
-        requestEmail: sql.NVarChar, useDate: sql.DateTime, changeLengh: sql.NVarChar,
+        requestEmail: sql.NVarChar, useDate: sql.Date, changeLengh: sql.NVarChar,
         changeType: sql.NVarChar, changeTool: sql.NVarChar,
         changeToolInfo: sql.NVarChar, scodeName: sql.NVarChar, scodeFromVersion: sql.NVarChar,
         scodeToVersion: sql.NVarChar, etc: sql.NVarChar, changeCoz: sql.NVarChar,
@@ -62,9 +62,9 @@ app.post('/add', (req, res) => {
         manaName: sql.NVarChar, manaRank: sql.NVarChar, mana2Name: sql.NVarChar,
         mana2Rank: sql.NVarChar, reqFinishDate: sql.NVarChar, implementPlan: sql.NVarChar,
         changeTest: sql.NVarChar, testInfo: sql.NVarChar, rollbackPlan: sql.NVarChar,
-        rollbackInfo: sql.NVarChar, userContactID: sql.NVarChar, conteactOther: sql.NVarChar,
+        rollbackInfo: sql.NVarChar, userContact: sql.NVarChar,
         headDepaName: sql.NVarChar, headDepaApprove: sql.NVarChar, headDepaComment: sql.NVarChar,
-        headDepaDate: sql.DateTime, headITName: sql.NVarChar, headITEsti: sql.NVarChar,
+        headDepaDate: sql.DateTime, headITName: sql.NVarChar, headITApprove: sql.NVarChar, headITEsti: sql.NVarChar,
         headITEstiComment: sql.NVarChar, headITDate: sql.DateTime, divisionName: sql.NVarChar,
         divisionComment: sql.NVarChar, divisionDate: sql.NVarChar, refITName1: sql.NVarChar,
         refITName2: sql.NVarChar, refITName3: sql.NVarChar, refITApprove: sql.NVarChar,
@@ -80,16 +80,7 @@ app.post('/add', (req, res) => {
 
     request.query(query, (err) => {
         if (err) return res.status(500).send(err);
-
-        // After a successful insertion, retrieve the last inserted id
-        request.query('SELECT @@IDENTITY AS id', (err, result) => {
-            if (err) return res.status(500).send(err);
-
-            const newId = result.recordset[0].id;
-
-            // Return the id to the frontend
-            res.status(201).send({ message: 'Record added successfully!', id: newId });
-        });
+        res.status(201).send({ message: 'Record added successfully!' });
     });
 });
 
@@ -134,8 +125,7 @@ app.put('/edit', async (req, res) => {
             [testInfo] = @testInfo,
             [rollbackPlan] = @rollbackPlan,
             [rollbackInfo] = @rollbackInfo,
-            [userContactID] = @userContactID,
-            [conteactOther] = @conteactOther,
+            [userContact] = @userContact,
             [headDepaName] = @headDepaName,
             [headDepaApprove] = @headDepaApprove,
             [headDepaComment] = @headDepaComment,
@@ -196,8 +186,7 @@ app.put('/edit', async (req, res) => {
         request.input('testInfo', sql.NVarChar, req.body.testInfo);
         request.input('rollbackPlan', sql.NVarChar, req.body.rollbackPlan);
         request.input('rollbackInfo', sql.NVarChar, req.body.rollbackInfo);
-        request.input('userContactID', sql.NVarChar, req.body.userContactID);
-        request.input('conteactOther', sql.NVarChar, req.body.conteactOther);
+        request.input('userContact', sql.NVarChar, req.body.userContact);
         request.input('headDepaName', sql.NVarChar, req.body.headDepaName);
         request.input('headDepaApprove', sql.NVarChar, req.body.headDepaApprove);
         request.input('headDepaComment', sql.NVarChar, req.body.headDepaComment);

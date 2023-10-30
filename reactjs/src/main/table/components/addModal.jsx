@@ -57,6 +57,10 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
             ...prevState,
             [name]: value
         }));
+        setFormData(prevState => ({
+            ...prevState,
+            requestDate: currentDateFormat
+        }));
     };
 
     // input
@@ -92,8 +96,8 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     // เวลา
     moment.locale('th'); // <--- เวลาตามประเทศ
     const currentDateTime = moment().format('DD MMMM YYYY');
-
-    const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
+    const currentDateFormat = moment().format('YYYY-MM-DD h:mm:ss');
+    const CustomInput = forwardRef(({ value, onClick }, ref) => (
         <button className="inputfield" onClick={onClick} ref={ref}>
             {value}
         </button>
@@ -118,7 +122,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                     <p>แบบฟอร์มร้องขอการเปลี่ยนแปลง</p>
                     <p className="mr-5">{currentDateTime}</p>
                 </div>
-                {/* Step 1 */}
+                {/* Page 1 */}
                 {currentStep === 1 && (
                     <>
                     <div className=''>
@@ -143,13 +147,13 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                         selected={startDate}
                                         onChange={(date) => {
                                             setStartDate(date);
-                                            const formattedDate = moment(date).format("DD/MM/YYYY");
+                                            const formattedDate = moment(date).format("YYYY-MM-DD");
                                             setFormData(prevState => ({
                                                 ...prevState,
                                                 useDate: formattedDate,
                                             }));
                                         }}
-                                        customInput={<ExampleCustomInput />}
+                                        customInput={<CustomInput />}
                                         dateFormat="dd/MM/yyyy"
                                     />
                                 </div>
@@ -164,7 +168,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                         </div>
                     </>
                 )}
-                {/* Step 2 */}
+                {/* Page 2 */}
                 {currentStep === 2 && (
                     <>
                         <div className=''>
@@ -201,8 +205,151 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                         </div>
                     </>
                 )}
+                {/* Page 3 */}
                 {currentStep === 3 && (
                     <>
+                        <div className=''>
+                            <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
+                            <div className='flex space-x-[46px] mt-4'>
+                                {defaultInput("สาเหตุที่ต้องเปลี่ยนแปลง", "changeCoz", "( . . ใช้งานไม่ได้ . . )", "inputLarge",)}
+                            </div>
+                            <div className='flex space-x-[46px] mt-4'>
+                                {defaultInput("โครงงานที่เกี่ยวข้อง (ถ้ามี)", "researchRel", "ชื่อโครงงาน")}
+                                {defaultInput("อ้างอิง", "researchRef", "เอกสารใบคำร้อง")}
+                            </div>
+                            <div className='flex space-x-[46px] mt-4'>
+                                {defaultInput("ความเสี่ยงและผลกระทบที่อาจเกิดจากการเปลี่ยนแปลง", "changeEff", "( . . ไฟดับ . . )", "inputLarge",)}
+                            </div>
+                            <div className='flex space-x-[46px] mt-4'>
+                                <div className='space-y-1'>
+                                    {defaultInput("ชื่อผู้ดำเนินการ", "manaName", "1.", "inputSmall")}
+                                    {defaultInput("", "manaRank", "2.", "inputSmall")}
+                                </div>
+                                <div className='space-y-1'>
+                                    {defaultInput("ตำแหน่ง", "mana2Name", "", "inputSmall")}
+                                    {defaultInput("", "mana2Rank", "", "inputSmall")}
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
+                {/* Page 4 */}
+                {currentStep === 4 && (
+                    <>
+                        <div className=''>
+                            <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
+                            <div className='mt-4'>
+                                วันที่คาดว่าจะดำเนินการ<br/>
+                                <DatePicker
+                                    showIcon
+                                    selected={startDate}
+                                    onChange={(date) => {
+                                        setStartDate(date);
+                                        const formatReqFinishDate = moment(date).format("YYYY-MM-DD");
+                                        setFormData(prevState => ({
+                                            ...prevState,
+                                            reqFinishDate: formatReqFinishDate,
+                                        }));
+                                    }}
+                                    customInput={<CustomInput />}
+                                    dateFormat="dd/MM/yyyy"
+                                />
+                            </div>
+                            <div className='mt-4'>
+                                {defaultInput("แผนการเปลี่ยนแปลง", "implementPlan", "", "inputLarge")}
+                            </div>
+                            <div className='mt-4'>
+                                <header>การทดสอบก่อนดำเนินการเปลี่ยนแปลง</header>
+                                <div className='flex'>
+                                    {presetRadio("changeTest", "changeTest", "มี", "1")}
+                                    {presetRadio("changeTest", "changeTest", "ไม่มี", "2")}
+                                </div>
+                                {defaultInput("", "testInfo", "ข้อมูลเพิ่มเติม", "inputLarge",)}
+                            </div>
+                            <div className='mt-4'>
+                                {defaultInput("ขั้นตอนการนำระบบกลับคืน(Rollback Plan) ในกรณีที่การเปลี่ยนแปลงไม่สำเร็จ", "rollbackPlan", "รายละเอียดอ้างอิง", "inputLarge",)}
+                            </div>
+                        </div>
+                    </>
+                )}
+                {/* Page 5 */}
+                {currentStep === 5 && (
+                    <>
+                        <div className=''>
+                            <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
+                            <div className="mt-4">
+                                <header>
+                                    ช่องทางสื่อสารถึงผู้ใช้ระบบ
+                                </header>
+                                <div className='flex items-center'>
+                                    {presetRadio("userContact", "userContact", "Email", "email")}
+                                    {presetRadio("userContact", "userContact", "Internet", "internet")}
+                                    {presetRadio("userContact", "userContact", "โทรศัพท์", "phone")}
+                                    {presetRadio("userContact", "userContact", "Fax", "fax")}
+                                    {customRadio("userContact", "userContact", "อื่นๆ")}
+                                </div>
+                            </div>
+                            <div className='mt-4'>
+                                <header>
+                                    หัวหน้าส่วนงาน
+                                </header>
+                                <div className='flex space-x-2'>
+                                    {defaultInput("", "headDepaName", "ชื่อ-นามสกุล",)}
+                                    <DatePicker
+                                        selected={startDate}
+                                        onChange={(date) => {
+                                            setStartDate(date);
+                                            const formattedDate = moment(date).format("YYYY-MM-DD");
+                                            setFormData(prevState => ({
+                                                ...prevState,
+                                                headDepaDate: formattedDate,
+                                            }));
+                                        }}
+                                        disabled
+                                        customInput={<CustomInput />}
+                                        placeholderText=""
+                                    />
+                                </div>
+                                <div className='mt-2 flex items-center'>
+                                    {presetRadio("headDepaApprove", "headDepaApprove", "อนุมัติ", "Approve")}
+                                    {presetRadio("headDepaApprove", "headDepaApprove", "ไม่อนุมัติ", "Deny")}
+                                    {defaultInput("", "headDepaComment", "เหตุผล",)}
+                                </div>
+                            </div>
+                            <div className='mt-4'>
+                                <header>
+                                    หัวหน้าฝ่ายเทคโนโลยีสารสนเทศ
+                                </header>
+                                <div className='flex space-x-2'>
+                                    {defaultInput("", "headITName", "ชื่อ-นามสกุล",)}
+                                    <DatePicker
+                                        selected={startDate}
+                                        onChange={(date) => {
+                                            setStartDate(date);
+                                            const formattedDate = moment(date).format("YYYY-MM-DD");
+                                            setFormData(prevState => ({
+                                                ...prevState,
+                                                headITDate: formattedDate,
+                                            }));
+                                        }}
+                                        disabled
+                                        customInput={<CustomInput />}
+                                        placeholderText=""
+                                    />
+                                </div>
+                                <div className='ml-2 mt-2 flex items-center'>
+                                    <header>ประเมินความเสี่ยง</header>
+                                    {presetRadio("headITEsti", "headITEsti", "ต่ำ", "low")}
+                                    {presetRadio("headITEsti", "headITEsti", "กลาง", "Medium")}
+                                    {presetRadio("headITEsti", "headITEsti", "สูง", "high")}
+                                </div>
+                                <div className='mt-2 flex items-center'>
+                                    {presetRadio("headITApprove", "headITApprove", "อนุมัติ", "Approve")}
+                                    {presetRadio("headITApprove", "headITApprove", "ไม่อนุมัติ", "Deny")}
+                                    {defaultInput("", "headITEstiComment", "เพิ่มเติม",)}
+                                </div>
+                            </div>
+                        </div>
                     </>
                 )}
                 {/* Footer */}
@@ -224,6 +371,30 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                         </>
                     )}
                     {currentStep === 3 && (
+                        <>
+                            <div className='absolute bottom-2 right-2 flex space-x-1'>
+                                <button onClick={prevPage} className='px-2 py-2 bg-blue-500 text-white rounded-md'>
+                                    ย้อนกลับ
+                                </button>
+                                <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
+                                    ต่อไป
+                                </button>
+                            </div>
+                        </>
+                    )}
+                    {currentStep === 4 && (
+                        <>
+                            <div className='absolute bottom-2 right-2 flex space-x-1'>
+                                <button onClick={prevPage} className='px-2 py-2 bg-blue-500 text-white rounded-md'>
+                                    ย้อนกลับ
+                                </button>
+                                <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
+                                    ต่อไป
+                                </button>
+                            </div>
+                        </>
+                    )}
+                    {currentStep === 5 && (
                         <>
                             <div className='absolute bottom-2 right-2 flex space-x-1'>
                                 <button onClick={prevPage} className=' px-2 py-2 bg-blue-500 text-white rounded-md'>

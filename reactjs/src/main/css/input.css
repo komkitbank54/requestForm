@@ -32,6 +32,11 @@
     height: 42px;
 }
 
+.inputSmall {
+    width: 220px;
+    height: 35px;
+}
+
 .inputScode {
     width: 180px;
     height: 42px;

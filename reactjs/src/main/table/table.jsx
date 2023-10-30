@@ -4,15 +4,25 @@ import React, { useEffect, useState } from 'react';
 import DeleteModal from './components/deleteModal';
 import Pagination from './components/pagination';
 import AddModal from './components/addModal';
+import moment from 'moment';
 
 //Import css
 import '../css/table.css';
 import '../fonts/fonts.css';
 
-function Table({ data = [], resetPagination, setData }) {
+function Table({resetPagination}) {
+    const [data, setData] = useState([]);
+    //fetch data
+    useEffect(() => {
+      fetch('http://localhost:3000/show')
+        .then(response => response.json())
+        .then(data => setData(data))
+        .catch(err => console.error('Error fetching data:', err));
+    }, []);
 
     // value
     const [formData, setFormData] = useState({
+        requestDate: '',
         requestName: '',
         requestSurname: '',
         jobRank: '',
@@ -21,7 +31,13 @@ function Table({ data = [], resetPagination, setData }) {
         requestEmail: '',
         useDate: '',
         changeLengh: '',
-        changeType: ''
+        changeType: '',
+        changeTool: '',
+        changeToolInfo: '',
+        scodeName: '',
+        scodeFromVersion: '',
+        scodeToVersion: '',
+        etc: ''
       });
 
     const ITEMS_PER_PAGE = 10;
@@ -78,17 +94,23 @@ function Table({ data = [], resetPagination, setData }) {
         setShowAddModal(true);
     };
     const handleConfirmAdd = () => {
-        setData(prevData => [...prevData, formData]);
-        alert(` ชื่อ: ${formData.requestName}\n
-                นามสกุล: ${formData.requestSurname}\n
-                ตำแหน่ง: ${formData.jobRank}\n
-                ฝ่ายงาน: ${formData.jobGroup}\n
-                วันที่ขอใช้งาน: ${formData.useDate}\n
-                สถานะ: ${formData.changeLengh}\n
-                รูปแบบ: ${formData.changeType}`);
-                
-        
-        // setShowAddModal(false);
+        fetch('http://localhost:3000/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.message === 'Record added successfully!') {
+                setData(prevData => [...prevData, formData]);
+                setShowAddModal(false);
+            } else {
+                console.error('Failed to add record.', result.message);
+            }
+        })
+        .catch(err => console.error('Error:', err));
     }
 
     // Delete
@@ -119,10 +141,10 @@ function Table({ data = [], resetPagination, setData }) {
                 <div className="tableHRow">
                     {['ชื่อผู้ร้องขอ', 'ตำแหน่ง', 'ฝ่ายงาน', 'วันที่ขอใช้งาน', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
                     <div className='tableCell flex justify-center'>
-                        <botton className="cursor-pointer flex px-2 rounded-lg" onClick={() => handleAddClick()}>
+                        <button className="cursor-pointer flex px-2 rounded-lg" onClick={() => handleAddClick()}>
                             <img src={require('../img/add.png')} className='h-[22px] w-[22px]' alt="add" />
                             <label className='pl-1'>Add</label>
-                        </botton>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -131,23 +153,24 @@ function Table({ data = [], resetPagination, setData }) {
             <div className="tableBody shadow-lg">
                 {currentItems.map(item => (
                     <div className="tableRow" key={item.id}>
+                        {/* {item.id} */}
                         <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
                         <div className="tableBodyCell">{item.jobRank}</div>
                         <div className="tableBodyCell">{item.jobGroup}</div>
-                        <div className="tableBodyCell">{item.useDate}</div>
+                        <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
                         <div className="tableBodyCell flex justify-center">
-                            <botton className="cursor-pointer icon" onClick={() => handleApproveClick(item)}>
+                            <button className="cursor-pointer icon" onClick={() => handleApproveClick(item)}>
                               <img src={require(item.headDepaApprove === 'Approved' ? '../img/approved.png' :'../img/unapproved.png')} className='' 
                                 alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Unapproved'} />
-                            </botton>
+                            </button>
                             {item.headDepaApprove}
                         </div>
                         <div className="tableBodyCell flex justify-center space-x-6">
                             <img src={require('../img/pdf.png')} className='icon' alt="pdf" />
                             <img src={require('../img/edit.png')} className='icon' alt="edit" />
-                            <botton className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleDeleteClick(item)}>
-                              <img src={require('../img/bin.png')} className='' alt="delete" />
-                            </botton>
+                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleDeleteClick(item)}>
+                              <img src={require('../img/bin.png')} className='icon' alt="delete" />
+                            </button>
                         </div>
                     </div>
                 ))}
