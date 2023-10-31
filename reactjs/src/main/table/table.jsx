@@ -12,13 +12,22 @@ import '../fonts/fonts.css';
 
 function Table({resetPagination}) {
     const [data, setData] = useState([]);
-    //fetch data
+    //Show fetch data
     useEffect(() => {
       fetch('http://localhost:3000/show')
         .then(response => response.json())
         .then(data => setData(data))
         .catch(err => console.error('Error fetching data:', err));
     }, []);
+
+    // const RefreshData = () => {
+    //     useEffect(() => {
+    //         fetch('http://localhost:3000/show')
+    //           .then(response => response.json())
+    //           .then(data => setData(data))
+    //           .catch(err => console.error('Error fetching data:', err));
+    //       }, []);
+    // }
 
     // value
     const [formData, setFormData] = useState({
@@ -37,8 +46,48 @@ function Table({resetPagination}) {
         scodeName: '',
         scodeFromVersion: '',
         scodeToVersion: '',
-        etc: ''
-      });
+        etc: '',
+        changeCoz: '',
+        researchRel: '',
+        researchRef: '',
+        changeEff: '',
+        manaName: '',
+        manaRank: '',
+        mana2Name: '',
+        mana2Rank: '',
+        reqFinishDate: '',
+        implementPlan: '',
+        changeTest: '',
+        testInfo: '',
+        rollbackPlan: '',
+        // rollbackInfo: '',
+        userContact: '',
+        headDepaName: '',
+        // headDepaApprove: '',
+        headDepaComment: '',
+        headDepaDate: '',
+        headITName: '',
+        headITApprove: '',
+        headITEsti: '',
+        headITEstiComment: '',
+        headITDate: '',
+        divisionName: '',
+        divisionComment: '',
+        divisionDate: '',
+        refITName1: '',
+        refITName2: '',
+        refITName3: '',
+        refITApprove: ''
+        // refITComment: ''
+        // actualDate: '',
+        // finishDate: '',
+        // changeStatue: '',
+        // changeResult: '',
+        // userChange: '',
+        // userChangeDate: '',
+        // changeResName: ''
+    });
+    
 
     const ITEMS_PER_PAGE = 10;
     // Page
@@ -65,7 +114,7 @@ function Table({resetPagination}) {
 
     // Approve
     const handleApproveClick = (item) => {
-        let approveValue = item.headDepaApprove === 'Approved' ? 'Unapproved' : 'Approved';
+        let approveValue = item.headDepaApprove === 'Approved' ? 'Denied' : 'Approved';
         fetch('http://localhost:3000/approve', {
             method: 'PUT',
             headers: {
@@ -158,12 +207,14 @@ function Table({resetPagination}) {
                         <div className="tableBodyCell">{item.jobRank}</div>
                         <div className="tableBodyCell">{item.jobGroup}</div>
                         <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
-                        <div className="tableBodyCell flex justify-center">
-                            <button className="cursor-pointer icon" onClick={() => handleApproveClick(item)}>
+                        <div className="tableBodyCell flex justify-center relative">
+                            <button className="cursor-pointer icon absolute left-2" onClick={() => handleApproveClick(item)}>
                               <img src={require(item.headDepaApprove === 'Approved' ? '../img/approved.png' :'../img/unapproved.png')} className='' 
-                                alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Unapproved'} />
+                                alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Denied'} />
                             </button>
-                            {item.headDepaApprove}
+                            <span className=''>
+                                {item.headDepaApprove}
+                            </span>
                         </div>
                         <div className="tableBodyCell flex justify-center space-x-6">
                             <img src={require('../img/pdf.png')} className='icon' alt="pdf" />

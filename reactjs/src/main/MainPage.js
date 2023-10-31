@@ -3,7 +3,7 @@ import React from 'react'
 import Table from './table/table'
 import './fonts/fonts.css';
 
-function Mainpage() {
+function MainPage() {
 
 
   return (
@@ -18,4 +18,4 @@ function Mainpage() {
   )
 }
 
-export default Mainpage;
+export default MainPage;

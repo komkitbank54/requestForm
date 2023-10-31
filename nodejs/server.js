@@ -21,6 +21,17 @@ app.get('/show', async (req, res) => {
     }
 });
 
+// Show User
+app.get('/user', async (req, res) => {
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request().query('SELECT * FROM [dbo].[user_changeform]');
+        res.status(200).send(result.recordset);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
 // Add
 app.post('/add', (req, res) => {
     const request = new sql.Request();
@@ -43,7 +54,7 @@ app.post('/add', (req, res) => {
             @changeToolInfo, @scodeName, @scodeFromVersion, @scodeToVersion, @etc, @changeCoz,
             @researchRel, @researchRef, @changeEff, @manaName, @manaRank, @mana2Name, @mana2Rank,
             @reqFinishDate, @implementPlan, @changeTest, @testInfo, @rollbackPlan, @rollbackInfo,
-            @userContact, @headDepaName, 'Unapproved', @headDepaComment,
+            @userContact, @headDepaName, 'Pending', @headDepaComment,
             @headDepaDate, @headITName, @headITApprove, @headITEsti, @headITEstiComment, @headITDate, @divisionName,
             @divisionComment, @divisionDate, @refITName1, @refITName2, @refITName3, @refITApprove,
             @refITComment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,

@@ -12,10 +12,16 @@ import '../../css/add.css';
 import "react-datepicker/dist/react-datepicker.css";
 
 function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
-    const [startDate, setStartDate] = useState(formData.useDate || new Date());
+    const [dates, setDates] = useState({
+        useDate: formData.useDate || new Date(),
+        reqFinishDate: formData.reqFinishDate || new Date(),
+        // headDepaDate: formData.headDepaDate || new Date(),
+        // headITDate: formData.headITDate || new Date(),
+        // divisionDate: formData.divisionDate || new Date(),
+        // refITApproveDate: formData.refITApproveDate || new Date()
+    });
     const [currentStep, setCurrentStep] = useState(1);
 
-    
     // กด ESC เพื่อปิด add-modal
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -59,7 +65,11 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
         }));
         setFormData(prevState => ({
             ...prevState,
-            requestDate: currentDateFormat
+            requestDate: currentDateFormat,
+            headDepaDate: currentDateFormat,
+            headITDate: currentDateFormat,
+            divisionDate: currentDateFormat,
+            refITApproveDate: currentDateFormat
         }));
     };
 
@@ -81,7 +91,8 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
             fieldName={fieldName}
             label={label}
             value={value}
-            setFormData={setFormData} />
+            setFormData={setFormData}
+            />
     );
 
     // Checkbox ที่มี input
@@ -94,14 +105,31 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     );
 
     // เวลา
-    moment.locale('th'); // <--- เวลาตามประเทศ
+    moment.locale('th');
     const currentDateTime = moment().format('DD MMMM YYYY');
     const currentDateFormat = moment().format('YYYY-MM-DD h:mm:ss');
     const CustomInput = forwardRef(({ value, onClick }, ref) => (
-        <button className="inputfield" onClick={onClick} ref={ref}>
-            {value}
+        <button className="relative inputfield flex items-center justify-center" onClick={onClick} ref={ref}>
+            <div className='absolute left-2'>
+                <img src={require('../../img/calendar.png')} className='icon' alt="edit" />
+            </div>
+            <div className='font-semibold'>
+                {value}
+            </div>
         </button>
     ));
+    // Function to handle date changes
+    const handleDateChange = (dateKey, dateValue) => {
+        setDates(prevDates => ({
+            ...prevDates,
+            [dateKey]: dateValue
+        }));
+        const formattedDate = moment(dateValue).format("YYYY-MM-DD");
+        setFormData(prevState => ({
+            ...prevState,
+            [dateKey]: formattedDate,
+        }));
+    };
 
     // หน้าต่อไป
     const nextPage = () => {
@@ -143,16 +171,8 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                 <div className=''>
                                     วันที่ต้องการใช้งาน<br/>
                                     <DatePicker
-                                        showIcon
-                                        selected={startDate}
-                                        onChange={(date) => {
-                                            setStartDate(date);
-                                            const formattedDate = moment(date).format("YYYY-MM-DD");
-                                            setFormData(prevState => ({
-                                                ...prevState,
-                                                useDate: formattedDate,
-                                            }));
-                                        }}
+                                        selected={dates.useDate}
+                                        onChange={(date) => handleDateChange('useDate', date)}
                                         customInput={<CustomInput />}
                                         dateFormat="dd/MM/yyyy"
                                     />
@@ -223,10 +243,10 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                             <div className='flex space-x-[46px] mt-4'>
                                 <div className='space-y-1'>
                                     {defaultInput("ชื่อผู้ดำเนินการ", "manaName", "1.", "inputSmall")}
-                                    {defaultInput("", "manaRank", "2.", "inputSmall")}
+                                    {defaultInput("", "mana2Name", "2.", "inputSmall")}
                                 </div>
                                 <div className='space-y-1'>
-                                    {defaultInput("ตำแหน่ง", "mana2Name", "", "inputSmall")}
+                                    {defaultInput("ตำแหน่ง", "manaRank", "", "inputSmall")}
                                     {defaultInput("", "mana2Rank", "", "inputSmall")}
                                 </div>
                             </div>
@@ -241,16 +261,8 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                             <div className='mt-4'>
                                 วันที่คาดว่าจะดำเนินการ<br/>
                                 <DatePicker
-                                    showIcon
-                                    selected={startDate}
-                                    onChange={(date) => {
-                                        setStartDate(date);
-                                        const formatReqFinishDate = moment(date).format("YYYY-MM-DD");
-                                        setFormData(prevState => ({
-                                            ...prevState,
-                                            reqFinishDate: formatReqFinishDate,
-                                        }));
-                                    }}
+                                    selected={dates.reqFinishDate}
+                                    onChange={(date) => handleDateChange('reqFinishDate', date)}
                                     customInput={<CustomInput />}
                                     dateFormat="dd/MM/yyyy"
                                 />
@@ -295,20 +307,14 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                 </header>
                                 <div className='flex space-x-2'>
                                     {defaultInput("", "headDepaName", "ชื่อ-นามสกุล",)}
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={(date) => {
-                                            setStartDate(date);
-                                            const formattedDate = moment(date).format("YYYY-MM-DD");
-                                            setFormData(prevState => ({
-                                                ...prevState,
-                                                headDepaDate: formattedDate,
-                                            }));
-                                        }}
-                                        disabled
-                                        customInput={<CustomInput />}
-                                        placeholderText=""
-                                    />
+                                    <button className="relative inputfield flex items-center justify-center" disabled>
+                                        <div className='absolute left-2'>
+                                            <img src={require('../../img/calendar.png')} className='icon' alt="edit" />
+                                        </div>
+                                        <div className='font-semibold'>
+                                            {currentDateTime}
+                                        </div>
+                                    </button>
                                 </div>
                                 <div className='mt-2 flex items-center'>
                                     {presetRadio("headDepaApprove", "headDepaApprove", "อนุมัติ", "Approve")}
@@ -322,20 +328,14 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                 </header>
                                 <div className='flex space-x-2'>
                                     {defaultInput("", "headITName", "ชื่อ-นามสกุล",)}
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={(date) => {
-                                            setStartDate(date);
-                                            const formattedDate = moment(date).format("YYYY-MM-DD");
-                                            setFormData(prevState => ({
-                                                ...prevState,
-                                                headITDate: formattedDate,
-                                            }));
-                                        }}
-                                        disabled
-                                        customInput={<CustomInput />}
-                                        placeholderText=""
-                                    />
+                                    <button className="relative inputfield flex items-center justify-center" disabled>
+                                        <div className='absolute left-2'>
+                                            <img src={require('../../img/calendar.png')} className='icon' alt="edit" />
+                                        </div>
+                                        <div className='font-semibold'>
+                                            {currentDateTime}
+                                        </div>
+                                    </button>
                                 </div>
                                 <div className='ml-2 mt-2 flex items-center'>
                                     <header>ประเมินความเสี่ยง</header>
@@ -352,60 +352,77 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                         </div>
                     </>
                 )}
+                {/* Page 6 */}
+                {currentStep === 6 && (
+                    <>
+                        <div className=''>
+                            <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
+                            <div className='mt-4'>
+                                <header>
+                                    ฝ่ายกำกับภายใน
+                                </header>
+                                <div className='flex space-x-2'>
+                                    {defaultInput("", "divisionName", "ชื่อ-นามสกุล",)}
+                                    <button className="relative inputfield flex items-center justify-center" disabled>
+                                        <div className='absolute left-2'>
+                                            <img src={require('../../img/calendar.png')} className='icon' alt="edit" />
+                                        </div>
+                                        <div className='font-semibold'>
+                                            {currentDateTime}
+                                        </div>
+                                    </button>
+                                </div>
+                                <div className='mt-2 flex items-center'>
+                                    {defaultInput("", "divisionComment", "ความเห็น", "inputLarge")}
+                                </div>
+                            </div>
+                            <div className='mt-4'>
+                                <header>
+                                    คณะกรรมการด้านความมั่นคงปลอดภัยเทคโนโลยีสารสนเทศ<br/>
+                                    <label className='font-semibold'>(กรณีที่มีความเสี่ยงด้านความมั่นคงปลอดภัยเทคโนโลยีสารสนเทศในระดับสูง)</label>
+                                </header>
+                                <div className='flex space-x-2 items-center'>
+                                    <div className='flex pr-20'>
+                                        {presetRadio("refITApprove", "refITApprove", "อนุมัติ", "Approve")}
+                                        {presetRadio("refITApprove", "refITApprove", "ไม่อนุมัติ", "Deny")}
+                                    </div>
+                                    <button className="relative inputfield flex items-center justify-center" disabled>
+                                        <div className='absolute left-2'>
+                                            <img src={require('../../img/calendar.png')} className='icon' alt="edit" />
+                                        </div>
+                                        <div className='font-semibold'>
+                                            {currentDateTime}
+                                        </div>
+                                    </button>
+                                </div>
+                                <div className='flex'>
+                                    <div className='space-y-1'>
+                                        {defaultInput("ชื่อ", "refITName1", "1.", "inputSmall")}
+                                        {defaultInput("", "refITName2", "2.", "inputSmall")}
+                                        {defaultInput("", "refITName3", "3-.", "inputSmall")}
+                                    </div>        
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
                 {/* Footer */}
-                    {currentStep === 1 && (
-                        <button onClick={nextPage} className='absolute bottom-2 right-2 px-3 py-2 bg-blue-500 text-white rounded-md'>
-                            ต่อไป
+                <div className='absolute bottom-2 right-2 flex space-x-1'>
+                    {currentStep > 1 && (
+                        <button onClick={prevPage} className='px-2 py-2 bg-blue-500 text-white rounded-md'>
+                            ย้อนกลับ
                         </button>
                     )}
-                    {currentStep === 2 && (
-                        <>
-                            <div className='absolute bottom-2 right-2 flex space-x-1'>
-                                <button onClick={prevPage} className='px-2 py-2 bg-blue-500 text-white rounded-md'>
-                                    ย้อนกลับ
-                                </button>
-                                <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
-                                    ต่อไป
-                                </button>
-                            </div>
-                        </>
+                    {currentStep < 6 ? (
+                        <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
+                            ต่อไป
+                        </button>
+                    ) : (
+                        <button onClick={onConfirm} className='px-2 py-2 bg-green-500 text-white rounded-md'>
+                            ยืนยัน
+                        </button>
                     )}
-                    {currentStep === 3 && (
-                        <>
-                            <div className='absolute bottom-2 right-2 flex space-x-1'>
-                                <button onClick={prevPage} className='px-2 py-2 bg-blue-500 text-white rounded-md'>
-                                    ย้อนกลับ
-                                </button>
-                                <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
-                                    ต่อไป
-                                </button>
-                            </div>
-                        </>
-                    )}
-                    {currentStep === 4 && (
-                        <>
-                            <div className='absolute bottom-2 right-2 flex space-x-1'>
-                                <button onClick={prevPage} className='px-2 py-2 bg-blue-500 text-white rounded-md'>
-                                    ย้อนกลับ
-                                </button>
-                                <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
-                                    ต่อไป
-                                </button>
-                            </div>
-                        </>
-                    )}
-                    {currentStep === 5 && (
-                        <>
-                            <div className='absolute bottom-2 right-2 flex space-x-1'>
-                                <button onClick={prevPage} className=' px-2 py-2 bg-blue-500 text-white rounded-md'>
-                                    ย้อนกลับ
-                                </button>
-                                <button onClick={onConfirm} className='px-2 py-2 bg-green-500 text-white rounded-md'>
-                                    ยืนยัน
-                                </button>
-                            </div>
-                        </>
-                    )}
+                </div>
             </div>
         </div>
     );

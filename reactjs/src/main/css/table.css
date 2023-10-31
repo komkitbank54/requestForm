@@ -20,7 +20,7 @@
 }
 
 .tableBody {
-    transition: height 0.5s ease-out; /* ปรับเวลาเป็นค่าที่คุณต้องการ */
+    transition: height 0.5s ease-out;
 }
 
 
