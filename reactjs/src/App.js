@@ -3,9 +3,9 @@ import React, { useContext } from 'react'; // เพิ่มการนำเ�
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { UserProvider, UserContext } from './context/UserContext'; // แก้ไขการนำเข้า UserContext
 import Login from './components/Login';
-import MainPage from './main/MainPage';
-import AdminPage from './main/AdminPage';
-import StaffPage from './main/StaffPage';
+import UserPage from './page/UserPage';
+import AdminPage from './page/AdminPage';
+import StaffPage from './page/StaffPage';
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<PrivateRoute role="admin" component={AdminPage} />} />
           <Route path="/staff" element={<PrivateRoute role="staff" component={StaffPage} />} />
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={<UserPage />} />
         </Routes>
       </Router>
     </UserProvider>

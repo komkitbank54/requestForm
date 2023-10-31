@@ -42,14 +42,14 @@ function Pagination({ currentPage, totalPages, handlePrevPage, handleNextPage, h
             <div className='tableFRow'>
                 <button onClick={handlePrevPage} disabled={currentPage === 1} className='mr-2'>
                     {currentPage === 1 
-                        ? <img className='w-6 h-6' src={require('../../img/cantBack.png')} alt='cantback'/>
-                        : <img className='w-6 h-6' src={require('../../img/back.png')} alt='back'/>}
+                        ? <img className='w-6 h-6' src={require('../img/cantBack.png')} alt='cantback'/>
+                        : <img className='w-6 h-6' src={require('../img/back.png')} alt='back'/>}
                 </button>
                 {renderPaginationNumbers()}
                 <button onClick={handleNextPage} disabled={currentPage === totalPages} className='ml-2'>
                     {currentPage === totalPages 
-                        ? <img className='w-6 h-6' src={require('../../img/cantNext.png')} alt='cantnext'/>
-                        : <img className='w-6 h-6' src={require('../../img/next.png')} alt='next'/>}
+                        ? <img className='w-6 h-6' src={require('../img/cantNext.png')} alt='cantnext'/>
+                        : <img className='w-6 h-6' src={require('../img/next.png')} alt='next'/>}
                 </button>
             </div>
         </div>

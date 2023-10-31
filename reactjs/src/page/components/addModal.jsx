@@ -8,7 +8,7 @@ import moment from 'moment';
 import 'moment/locale/th';
 
 // import css
-import '../../css/add.css';
+import '../css/add.css';
 import "react-datepicker/dist/react-datepicker.css";
 
 function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
@@ -111,7 +111,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     const CustomInput = forwardRef(({ value, onClick }, ref) => (
         <button className="relative inputfield flex items-center justify-center" onClick={onClick} ref={ref}>
             <div className='absolute left-2'>
-                <img src={require('../../img/calendar.png')} className='icon' alt="edit" />
+                <img src={require('../img/calendar.png')} className='icon' alt="edit" />
             </div>
             <div className='font-semibold'>
                 {value}
@@ -309,7 +309,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                     {defaultInput("", "headDepaName", "ชื่อ-นามสกุล",)}
                                     <button className="relative inputfield flex items-center justify-center" disabled>
                                         <div className='absolute left-2'>
-                                            <img src={require('../../img/calendar.png')} className='icon' alt="edit" />
+                                            <img src={require('../img/calendar.png')} className='icon' alt="edit" />
                                         </div>
                                         <div className='font-semibold'>
                                             {currentDateTime}
@@ -330,7 +330,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                     {defaultInput("", "headITName", "ชื่อ-นามสกุล",)}
                                     <button className="relative inputfield flex items-center justify-center" disabled>
                                         <div className='absolute left-2'>
-                                            <img src={require('../../img/calendar.png')} className='icon' alt="edit" />
+                                            <img src={require('../img/calendar.png')} className='icon' alt="edit" />
                                         </div>
                                         <div className='font-semibold'>
                                             {currentDateTime}
@@ -365,7 +365,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                     {defaultInput("", "divisionName", "ชื่อ-นามสกุล",)}
                                     <button className="relative inputfield flex items-center justify-center" disabled>
                                         <div className='absolute left-2'>
-                                            <img src={require('../../img/calendar.png')} className='icon' alt="edit" />
+                                            <img src={require('../img/calendar.png')} className='icon' alt="edit" />
                                         </div>
                                         <div className='font-semibold'>
                                             {currentDateTime}
@@ -388,7 +388,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                     </div>
                                     <button className="relative inputfield flex items-center justify-center" disabled>
                                         <div className='absolute left-2'>
-                                            <img src={require('../../img/calendar.png')} className='icon' alt="edit" />
+                                            <img src={require('../img/calendar.png')} className='icon' alt="edit" />
                                         </div>
                                         <div className='font-semibold'>
                                             {currentDateTime}

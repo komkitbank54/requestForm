@@ -7,10 +7,10 @@ import AddModal from './components/addModal';
 import moment from 'moment';
 
 //Import css
-import '../css/table.css';
-import '../fonts/fonts.css';
+import './css/table.css';
+import './fonts/fonts.css';
 
-function Table({resetPagination}) {
+function AdminPage({resetPagination}) {
     const [data, setData] = useState([]);
     //Show fetch data
     useEffect(() => {
@@ -191,7 +191,7 @@ function Table({resetPagination}) {
                     {['ชื่อผู้ร้องขอ', 'ตำแหน่ง', 'ฝ่ายงาน', 'วันที่ขอใช้งาน', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
                     <div className='tableCell flex justify-center'>
                         <button className="cursor-pointer flex px-2 rounded-lg" onClick={() => handleAddClick()}>
-                            <img src={require('../img/add.png')} className='h-[22px] w-[22px]' alt="add" />
+                            <img src={require('./img/add.png')} className='h-[22px] w-[22px]' alt="add" />
                             <label className='pl-1'>Add</label>
                         </button>
                     </div>
@@ -209,7 +209,7 @@ function Table({resetPagination}) {
                         <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
                         <div className="tableBodyCell flex justify-center relative">
                             <button className="cursor-pointer icon absolute left-2" onClick={() => handleApproveClick(item)}>
-                              <img src={require(item.headDepaApprove === 'Approved' ? '../img/approved.png' :'../img/unapproved.png')} className='' 
+                              <img src={require(item.headDepaApprove === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='' 
                                 alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Denied'} />
                             </button>
                             <span className=''>
@@ -217,10 +217,10 @@ function Table({resetPagination}) {
                             </span>
                         </div>
                         <div className="tableBodyCell flex justify-center space-x-6">
-                            <img src={require('../img/pdf.png')} className='icon' alt="pdf" />
-                            <img src={require('../img/edit.png')} className='icon' alt="edit" />
+                            <img src={require('./img/pdf.png')} className='icon' alt="pdf" />
+                            <img src={require('./img/edit.png')} className='icon' alt="edit" />
                             <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleDeleteClick(item)}>
-                              <img src={require('../img/bin.png')} className='icon' alt="delete" />
+                              <img src={require('./img/bin.png')} className='icon' alt="delete" />
                             </button>
                         </div>
                     </div>
@@ -243,4 +243,4 @@ function Table({resetPagination}) {
     );
 }
 
-export default Table;
+export default AdminPage;

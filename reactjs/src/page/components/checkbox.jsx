@@ -3,8 +3,8 @@
 import React from 'react';
 
 //import css
-import '../../css/add.css';
-import '../../css/input.css';
+import '../css/add.css';
+import '../css/input.css';
 
 export const RadioWithoutInput = ({ fieldName, label, value, setFormData, groupName }) => {
     const handleChange = (e) => {

@@ -1,5 +1,5 @@
 // input.jsx
-import '../../css/input.css'
+import '../css/input.css'
 
 
 function InputField({ label, name, value, onChange, placeholder, addClass}) {
