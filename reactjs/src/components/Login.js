@@ -1,28 +1,72 @@
 // src/components/Login.js
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // นำเข้า useNavigate
 import { UserContext } from '../context/UserContext';
 
-function Login() {
+//import css
+import '../page/css/input.css'
+import '../page/css/button.css'
+
+function Login({ isOpen, onClose, onConfirm }) {
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate(); // สร้างตัวแปร navigate
+
+    // กด ESC เพื่อปิด Login Modal
+    useEffect(() => {
+      const handleKeyDown = (event) => {
+          if (event.key === 'Escape') {
+              onClose();
+          }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+          window.removeEventListener('keydown', handleKeyDown);
+      };
+  }, [onClose]);
+
+  // action เมื่อกดปิด
+  const onCloseHandle = () => {
+      onClose();
+  }
+
+  // คลิกข้างนอกเพื่อออก
+  const handleOutsideClick = (event) => {
+      if (event.target === event.currentTarget) {
+          onCloseHandle();
+      }
+  };
+
+  if (!isOpen) {
+    return null;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch('http://localhost:3000/user');
       const users = await response.json();
-      const user = users.find((u) => u.userName === username && u.password === password);
+      const user = users.find((u) => u.username === username && u.password === password);
 
-      if (user) {
-        setUser({ userName: user.userName, role: user.position });
+        if (user) {
+          localStorage.setItem('userid', user.userid);
+          localStorage.setItem('prefix', user.prefix);
+          localStorage.setItem('firstname', user.firstname);
+          localStorage.setItem('surname', user.surname);
+          localStorage.setItem('position', user.position);
+          setUser({ username: user.username, role: user.position });
         // ตรวจสอบ role และเปลี่ยนเส้นทางผู้ใช้
-        if (user.position === 'admin') {
-          navigate('/admin');
-        } else if (user.position === 'staff') {
-          navigate('/staff');
+        if (user.position === 'it') {
+          navigate('/it');
+        } else if (user.position === 'manager') {
+          navigate('/manager');
+        } else if (user.position === 'supervision') {
+          navigate('/supervision');
+        } else if (user.position === 'director') {
+          navigate('/director');
         } else {
           navigate('/');
         }
@@ -36,12 +80,17 @@ function Login() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button type="submit">Login</button>
-      </form>
+    <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center' onClick={handleOutsideClick}>
+      <div className='relative bg-white p-4 rounded-md'>
+        <button className='absolute top-3 right-4' onClick={onCloseHandle}>X</button>
+        <form onSubmit={handleSubmit}>
+          <div className='items-center m-4'>
+            <input className='inputfield' type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} /><br/>
+            <input className='inputfield' type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} /><br/>
+            <button type="submit" className=''>Login</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -46,7 +46,7 @@ app.post('/add', (req, res) => {
             [headDepaDate], [headITName], [headITApprove], [headITEsti], [headITEstiComment], [headITDate], [divisionName],
             [divisionComment], [divisionDate], [refITName1], [refITName2], [refITName3], [refITApprove],
             [refITComment], [actualDate], [finishDate], [changeStatue], [changeResult], [userChange],
-            [userChangeDate], [changeResName]
+            [userChangeDate], [changeResName], [approveStatus]
         )
         VALUES(
             @requestDate, @requestName, @requestSurname, @jobRank, @jobGroup, @requestPhone,
@@ -58,30 +58,30 @@ app.post('/add', (req, res) => {
             @headDepaDate, @headITName, @headITApprove, @headITEsti, @headITEstiComment, @headITDate, @divisionName,
             @divisionComment, @divisionDate, @refITName1, @refITName2, @refITName3, @refITApprove,
             @refITComment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,
-            @userChangeDate, @changeResName
+            @userChangeDate, @changeResName, 'รอผู้ดำเนินการ'
         )`;
 
     // List all fields and their types
     const fields = {
-        requestDate: sql.SmallDateTime, requestName: sql.NVarChar, requestSurname: sql.NVarChar,
-        jobRank: sql.NVarChar, jobGroup: sql.NVarChar, requestPhone: sql.NVarChar,
-        requestEmail: sql.NVarChar, useDate: sql.Date, changeLengh: sql.NVarChar,
-        changeType: sql.NVarChar, changeTool: sql.NVarChar,
-        changeToolInfo: sql.NVarChar, scodeName: sql.NVarChar, scodeFromVersion: sql.NVarChar,
-        scodeToVersion: sql.NVarChar, etc: sql.NVarChar, changeCoz: sql.NVarChar,
-        researchRel: sql.NVarChar, researchRef: sql.NVarChar, changeEff: sql.NVarChar,
-        manaName: sql.NVarChar, manaRank: sql.NVarChar, mana2Name: sql.NVarChar,
-        mana2Rank: sql.NVarChar, reqFinishDate: sql.NVarChar, implementPlan: sql.NVarChar,
-        changeTest: sql.NVarChar, testInfo: sql.NVarChar, rollbackPlan: sql.NVarChar,
-        rollbackInfo: sql.NVarChar, userContact: sql.NVarChar,
-        headDepaName: sql.NVarChar, headDepaApprove: sql.NVarChar, headDepaComment: sql.NVarChar,
-        headDepaDate: sql.DateTime, headITName: sql.NVarChar, headITApprove: sql.NVarChar, headITEsti: sql.NVarChar,
-        headITEstiComment: sql.NVarChar, headITDate: sql.DateTime, divisionName: sql.NVarChar,
-        divisionComment: sql.NVarChar, divisionDate: sql.NVarChar, refITName1: sql.NVarChar,
-        refITName2: sql.NVarChar, refITName3: sql.NVarChar, refITApprove: sql.NVarChar,
-        refITComment: sql.NVarChar, actualDate: sql.DateTime, finishDate: sql.DateTime,
-        changeStatue: sql.NVarChar, changeResult: sql.NVarChar, userChange: sql.NVarChar,
-        userChangeDate: sql.DateTime, changeResName: sql.NVarChar
+        requestDate: sql.SmallDateTime, requestName: sql.VarChar, requestSurname: sql.VarChar,
+        jobRank: sql.VarChar, jobGroup: sql.VarChar, requestPhone: sql.VarChar,
+        requestEmail: sql.VarChar, useDate: sql.Date, changeLengh: sql.VarChar,
+        changeType: sql.VarChar, changeTool: sql.VarChar,
+        changeToolInfo: sql.VarChar, scodeName: sql.VarChar, scodeFromVersion: sql.VarChar,
+        scodeToVersion: sql.VarChar, etc: sql.VarChar, changeCoz: sql.VarChar,
+        researchRel: sql.VarChar, researchRef: sql.VarChar, changeEff: sql.VarChar,
+        manaName: sql.VarChar, manaRank: sql.VarChar, mana2Name: sql.VarChar,
+        mana2Rank: sql.VarChar, reqFinishDate: sql.VarChar, implementPlan: sql.VarChar,
+        changeTest: sql.VarChar, testInfo: sql.VarChar, rollbackPlan: sql.VarChar,
+        rollbackInfo: sql.VarChar, userContact: sql.VarChar,
+        headDepaName: sql.VarChar, headDepaApprove: sql.VarChar, headDepaComment: sql.VarChar,
+        headDepaDate: sql.DateTime, headITName: sql.VarChar, headITApprove: sql.VarChar, headITEsti: sql.VarChar,
+        headITEstiComment: sql.VarChar, headITDate: sql.DateTime, divisionName: sql.VarChar,
+        divisionComment: sql.VarChar, divisionDate: sql.VarChar, refITName1: sql.VarChar,
+        refITName2: sql.VarChar, refITName3: sql.VarChar, refITApprove: sql.VarChar,
+        refITComment: sql.VarChar, actualDate: sql.DateTime, finishDate: sql.DateTime,
+        changeStatue: sql.VarChar, changeResult: sql.VarChar, userChange: sql.VarChar,
+        userChangeDate: sql.DateTime, changeResName: sql.VarChar, approveStatus: sql.VarChar
     };
 
     // Add inputs for all fields dynamically
@@ -93,6 +93,67 @@ app.post('/add', (req, res) => {
         if (err) return res.status(500).send(err);
         res.status(201).send({ message: 'Record added successfully!' });
     });
+});
+
+// IT Process
+app.put('/itprocess', async (req, res) => {
+    const id = req.body.id;
+
+    if (!id) {
+        return res.status(400).send({ message: 'id is required in request body.' });
+    }
+
+    const updateQuery = `
+        UPDATE [dbo].[changeform]
+        SET 
+            [manaName] = @manaName,
+            [manaRank] = @manaRank,
+            [mana2Name] = @mana2Name,
+            [reqFinishDate] = @reqFinishDate,
+            [implementPlan] = @implementPlan,
+            [changeTest] = @changeTest,
+            [testInfo] = @testInfo,
+            [rollbackPlan] = @rollbackPlan,
+            [rollbackInfo] = @rollbackInfo,
+            [userContact] = @userContact,
+            [headDepaName] = @headDepaName,
+            [headDepaDate] = @headDepaDate,
+            [headDepaApprove] = @headDepaApprove,
+            [headDepaComment] = @headDepaComment,
+            [approveStatus] = 'รอหัวหน้าฝ่ายอนุมัติ'
+        WHERE id = @id`;
+
+    try {
+        const pool = await poolPromise;
+        const request = new sql.Request(pool);
+        
+        request.input('id', sql.Int, id);
+        request.input('manaName', sql.VarChar, req.body.manaName);
+        request.input('manaRank', sql.VarChar, req.body.manaRank);
+        request.input('mana2Name', sql.VarChar, req.body.mana2Name);
+        request.input('reqFinishDate', sql.Date, req.body.reqFinishDate);
+        request.input('implementPlan', sql.VarChar, req.body.implementPlan);
+        request.input('changeTest', sql.VarChar, req.body.changeTest);
+        request.input('testInfo', sql.VarChar, req.body.testInfo);
+        request.input('rollbackPlan', sql.VarChar, req.body.rollbackPlan);
+        request.input('rollbackInfo', sql.VarChar, req.body.rollbackInfo);
+        request.input('userContact', sql.VarChar, req.body.userContact);
+        request.input('headDepaName', sql.VarChar, req.body.headDepaName);
+        request.input('headDepaDate', sql.Date, req.body.headDepaDate);
+        request.input('headDepaApprove', sql.VarChar, req.body.headDepaApprove);
+        request.input('headDepaComment', sql.VarChar, req.body.headDepaComment);
+        request.input('approveStatus', sql.VarChar, req.body.approveStatus);
+        
+        const result = await request.query(updateQuery);
+
+        if (result.rowsAffected[0] === 0) {
+            res.status(404).send({ message: 'Record not found' });
+        } else {
+            res.status(200).send({ message: 'Record updated successfully!' });
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
 });
 
 // Edit
@@ -168,59 +229,59 @@ app.put('/edit', async (req, res) => {
         
         request.input('id', sql.Int, id);
         request.input('requestDate', sql.DateTime, req.body.requestDate);
-        request.input('requestName', sql.NVarChar, req.body.requestName);
-        request.input('requestSurname', sql.NVarChar, req.body.requestSurname);
-        request.input('jobRank', sql.NVarChar, req.body.jobRank);
-        request.input('jobGroup', sql.NVarChar, req.body.jobGroup);
-        request.input('requestPhone', sql.NVarChar, req.body.requestPhone);
-        request.input('requestEmail', sql.NVarChar, req.body.requestEmail);
+        request.input('requestName', sql.VarChar, req.body.requestName);
+        request.input('requestSurname', sql.VarChar, req.body.requestSurname);
+        request.input('jobRank', sql.VarChar, req.body.jobRank);
+        request.input('jobGroup', sql.VarChar, req.body.jobGroup);
+        request.input('requestPhone', sql.VarChar, req.body.requestPhone);
+        request.input('requestEmail', sql.VarChar, req.body.requestEmail);
         request.input('useDate', sql.Date, req.body.useDate);
-        request.input('changeLengh', sql.NVarChar, req.body.changeLengh);
-        request.input('changeType', sql.NVarChar, req.body.changeType);
-        request.input('changeTool', sql.NVarChar, req.body.changeTool);
-        request.input('changeToolInfo', sql.NVarChar, req.body.changeToolInfo);
-        request.input('scodeName', sql.NVarChar, req.body.scodeName);
-        request.input('scodeFromVersion', sql.NVarChar, req.body.scodeFromVersion);
-        request.input('scodeToVersion', sql.NVarChar, req.body.scodeToVersion);
-        request.input('etc', sql.NVarChar, req.body.etc);
-        request.input('changeCoz', sql.NVarChar, req.body.changeCoz);
-        request.input('researchRel', sql.NVarChar, req.body.researchRel);
-        request.input('researchRef', sql.NVarChar, req.body.researchRef);
-        request.input('changeEff', sql.NVarChar, req.body.changeEff);
-        request.input('manaName', sql.NVarChar, req.body.manaName);
-        request.input('manaRank', sql.NVarChar, req.body.manaRank);
-        request.input('mana2Name', sql.NVarChar, req.body.mana2Name);
-        request.input('mana2Rank', sql.NVarChar, req.body.mana2Rank);
+        request.input('changeLengh', sql.VarChar, req.body.changeLengh);
+        request.input('changeType', sql.VarChar, req.body.changeType);
+        request.input('changeTool', sql.VarChar, req.body.changeTool);
+        request.input('changeToolInfo', sql.VarChar, req.body.changeToolInfo);
+        request.input('scodeName', sql.VarChar, req.body.scodeName);
+        request.input('scodeFromVersion', sql.VarChar, req.body.scodeFromVersion);
+        request.input('scodeToVersion', sql.VarChar, req.body.scodeToVersion);
+        request.input('etc', sql.VarChar, req.body.etc);
+        request.input('changeCoz', sql.VarChar, req.body.changeCoz);
+        request.input('researchRel', sql.VarChar, req.body.researchRel);
+        request.input('researchRef', sql.VarChar, req.body.researchRef);
+        request.input('changeEff', sql.VarChar, req.body.changeEff);
+        request.input('manaName', sql.VarChar, req.body.manaName);
+        request.input('manaRank', sql.VarChar, req.body.manaRank);
+        request.input('mana2Name', sql.VarChar, req.body.mana2Name);
+        request.input('mana2Rank', sql.VarChar, req.body.mana2Rank);
         request.input('reqFinishDate', sql.Date, req.body.reqFinishDate);
-        request.input('implementPlan', sql.NVarChar, req.body.implementPlan);
-        request.input('changeTest', sql.NVarChar, req.body.changeTest);
-        request.input('testInfo', sql.NVarChar, req.body.testInfo);
-        request.input('rollbackPlan', sql.NVarChar, req.body.rollbackPlan);
-        request.input('rollbackInfo', sql.NVarChar, req.body.rollbackInfo);
-        request.input('userContact', sql.NVarChar, req.body.userContact);
-        request.input('headDepaName', sql.NVarChar, req.body.headDepaName);
-        request.input('headDepaApprove', sql.NVarChar, req.body.headDepaApprove);
-        request.input('headDepaComment', sql.NVarChar, req.body.headDepaComment);
+        request.input('implementPlan', sql.VarChar, req.body.implementPlan);
+        request.input('changeTest', sql.VarChar, req.body.changeTest);
+        request.input('testInfo', sql.VarChar, req.body.testInfo);
+        request.input('rollbackPlan', sql.VarChar, req.body.rollbackPlan);
+        request.input('rollbackInfo', sql.VarChar, req.body.rollbackInfo);
+        request.input('userContact', sql.VarChar, req.body.userContact);
+        request.input('headDepaName', sql.VarChar, req.body.headDepaName);
+        request.input('headDepaApprove', sql.VarChar, req.body.headDepaApprove);
+        request.input('headDepaComment', sql.VarChar, req.body.headDepaComment);
         request.input('headDepaDate', sql.Date, req.body.headDepaDate);
-        request.input('headITName', sql.NVarChar, req.body.headITName);
-        request.input('headITEsti', sql.NVarChar, req.body.headITEsti);
-        request.input('headITEstiComment', sql.NVarChar, req.body.headITEstiComment);
+        request.input('headITName', sql.VarChar, req.body.headITName);
+        request.input('headITEsti', sql.VarChar, req.body.headITEsti);
+        request.input('headITEstiComment', sql.VarChar, req.body.headITEstiComment);
         request.input('headITDate', sql.Date, req.body.headITDate);
-        request.input('divisionName', sql.NVarChar, req.body.divisionName);
-        request.input('divisionComment', sql.NVarChar, req.body.divisionComment);
+        request.input('divisionName', sql.VarChar, req.body.divisionName);
+        request.input('divisionComment', sql.VarChar, req.body.divisionComment);
         request.input('divisionDate', sql.Date, req.body.divisionDate);
-        request.input('refITName1', sql.NVarChar, req.body.refITName1);
-        request.input('refITName2', sql.NVarChar, req.body.refITName2);
-        request.input('refITName3', sql.NVarChar, req.body.refITName3);
-        request.input('refITApprove', sql.NVarChar, req.body.refITApprove);
-        request.input('refITComment', sql.NVarChar, req.body.refITComment);
+        request.input('refITName1', sql.VarChar, req.body.refITName1);
+        request.input('refITName2', sql.VarChar, req.body.refITName2);
+        request.input('refITName3', sql.VarChar, req.body.refITName3);
+        request.input('refITApprove', sql.VarChar, req.body.refITApprove);
+        request.input('refITComment', sql.VarChar, req.body.refITComment);
         request.input('actualDate', sql.Date, req.body.actualDate);
         request.input('finishDate', sql.Date, req.body.finishDate);
-        request.input('changeStatue', sql.NVarChar, req.body.changeStatue);
-        request.input('changeResult', sql.NVarChar, req.body.changeResult);
-        request.input('userChange', sql.NVarChar, req.body.userChange);
+        request.input('changeStatue', sql.VarChar, req.body.changeStatue);
+        request.input('changeResult', sql.VarChar, req.body.changeResult);
+        request.input('userChange', sql.VarChar, req.body.userChange);
         request.input('userChangeDate', sql.Date, req.body.userChangeDate);
-        request.input('changeResName', sql.NVarChar, req.body.changeResName);
+        request.input('changeResName', sql.VarChar, req.body.changeResName);
         
         const result = await request.query(updateQuery);
 

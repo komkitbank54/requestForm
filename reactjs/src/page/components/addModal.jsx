@@ -3,7 +3,7 @@ import React, { useState , useEffect , forwardRef } from 'react';
 import { RadioWithoutInput, RadioWithInput } from './checkbox';
 
 import DatePicker from "react-datepicker";
-import InputField from './input';
+import { InputField } from './input';
 import moment from 'moment';
 import 'moment/locale/th';
 
@@ -204,8 +204,8 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                 อุปกรณ์ที่จะเปลี่ยนแปลง
                             </header>
                             <div className='flex'>
-                                {presetRadio("changeTool", "changeTool", "อุปกรณ์เครือข่าย", "local")}
-                                {presetRadio("changeTool", "changeTool", "อุปกรณ์แม่ข่าย", "server")}
+                                {presetRadio("changeTool", "changeTool", "อุปกรณ์เครือข่าย (Local)", "local")}
+                                {presetRadio("changeTool", "changeTool", "อุปกรณ์แม่ข่าย (Server)", "server")}
                             </div>
                             <div className=''>
                                 {defaultInput("", "changeToolInfo", "รายละเอียด", "inputLarge")}
@@ -240,88 +240,14 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                             <div className='flex space-x-[46px] mt-4'>
                                 {defaultInput("ความเสี่ยงและผลกระทบที่อาจเกิดจากการเปลี่ยนแปลง", "changeEff", "( . . ไฟดับ . . )", "inputLarge",)}
                             </div>
-                            <div className='flex space-x-[46px] mt-4'>
-                                <div className='space-y-1'>
-                                    {defaultInput("ชื่อผู้ดำเนินการ", "manaName", "1.", "inputSmall")}
-                                    {defaultInput("", "mana2Name", "2.", "inputSmall")}
-                                </div>
-                                <div className='space-y-1'>
-                                    {defaultInput("ตำแหน่ง", "manaRank", "", "inputSmall")}
-                                    {defaultInput("", "mana2Rank", "", "inputSmall")}
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
-                {/* Page 4 */}
-                {currentStep === 4 && (
-                    <>
-                        <div className=''>
-                            <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
-                            <div className='mt-4'>
-                                วันที่คาดว่าจะดำเนินการ<br/>
-                                <DatePicker
-                                    selected={dates.reqFinishDate}
-                                    onChange={(date) => handleDateChange('reqFinishDate', date)}
-                                    customInput={<CustomInput />}
-                                    dateFormat="dd/MM/yyyy"
-                                />
-                            </div>
-                            <div className='mt-4'>
-                                {defaultInput("แผนการเปลี่ยนแปลง", "implementPlan", "", "inputLarge")}
-                            </div>
-                            <div className='mt-4'>
-                                <header>การทดสอบก่อนดำเนินการเปลี่ยนแปลง</header>
-                                <div className='flex'>
-                                    {presetRadio("changeTest", "changeTest", "มี", "1")}
-                                    {presetRadio("changeTest", "changeTest", "ไม่มี", "2")}
-                                </div>
-                                {defaultInput("", "testInfo", "ข้อมูลเพิ่มเติม", "inputLarge",)}
-                            </div>
-                            <div className='mt-4'>
-                                {defaultInput("ขั้นตอนการนำระบบกลับคืน(Rollback Plan) ในกรณีที่การเปลี่ยนแปลงไม่สำเร็จ", "rollbackPlan", "รายละเอียดอ้างอิง", "inputLarge",)}
-                            </div>
                         </div>
                     </>
                 )}
                 {/* Page 5 */}
-                {currentStep === 5 && (
+                {currentStep === 4 && (
                     <>
                         <div className=''>
                             <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
-                            <div className="mt-4">
-                                <header>
-                                    ช่องทางสื่อสารถึงผู้ใช้ระบบ
-                                </header>
-                                <div className='flex items-center'>
-                                    {presetRadio("userContact", "userContact", "Email", "email")}
-                                    {presetRadio("userContact", "userContact", "Internet", "internet")}
-                                    {presetRadio("userContact", "userContact", "โทรศัพท์", "phone")}
-                                    {presetRadio("userContact", "userContact", "Fax", "fax")}
-                                    {customRadio("userContact", "userContact", "อื่นๆ")}
-                                </div>
-                            </div>
-                            <div className='mt-4'>
-                                <header>
-                                    หัวหน้าส่วนงาน
-                                </header>
-                                <div className='flex space-x-2'>
-                                    {defaultInput("", "headDepaName", "ชื่อ-นามสกุล",)}
-                                    <button className="relative inputfield flex items-center justify-center" disabled>
-                                        <div className='absolute left-2'>
-                                            <img src={require('../img/calendar.png')} className='icon' alt="edit" />
-                                        </div>
-                                        <div className='font-semibold'>
-                                            {currentDateTime}
-                                        </div>
-                                    </button>
-                                </div>
-                                <div className='mt-2 flex items-center'>
-                                    {presetRadio("headDepaApprove", "headDepaApprove", "อนุมัติ", "Approve")}
-                                    {presetRadio("headDepaApprove", "headDepaApprove", "ไม่อนุมัติ", "Deny")}
-                                    {defaultInput("", "headDepaComment", "เหตุผล",)}
-                                </div>
-                            </div>
                             <div className='mt-4'>
                                 <header>
                                     หัวหน้าฝ่ายเทคโนโลยีสารสนเทศ
@@ -353,7 +279,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                     </>
                 )}
                 {/* Page 6 */}
-                {currentStep === 6 && (
+                {currentStep === 5 && (
                     <>
                         <div className=''>
                             <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
@@ -413,7 +339,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                             ย้อนกลับ
                         </button>
                     )}
-                    {currentStep < 6 ? (
+                    {currentStep < 5 ? (
                         <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
                             ต่อไป
                         </button>

@@ -1,16 +1,16 @@
-// table.jsx
+//ITPage.js
 
 import React, { useEffect, useState } from 'react';
-import DeleteModal from './components/deleteModal';
 import Pagination from './components/pagination';
 import AddModal from './components/addModal';
+import ItProcessModal from './components/itProcess';
 import moment from 'moment';
 
 //Import css
 import './css/table.css';
 import './fonts/fonts.css';
 
-function AdminPage({resetPagination}) {
+function ITPage({resetPagination}) {
     const [data, setData] = useState([]);
     //Show fetch data
     useEffect(() => {
@@ -20,37 +20,7 @@ function AdminPage({resetPagination}) {
         .catch(err => console.error('Error fetching data:', err));
     }, []);
 
-    // const RefreshData = () => {
-    //     useEffect(() => {
-    //         fetch('http://localhost:3000/show')
-    //           .then(response => response.json())
-    //           .then(data => setData(data))
-    //           .catch(err => console.error('Error fetching data:', err));
-    //       }, []);
-    // }
-
-    // value
     const [formData, setFormData] = useState({
-        requestDate: '',
-        requestName: '',
-        requestSurname: '',
-        jobRank: '',
-        jobGroup: '',
-        requestPhone: '',
-        requestEmail: '',
-        useDate: '',
-        changeLengh: '',
-        changeType: '',
-        changeTool: '',
-        changeToolInfo: '',
-        scodeName: '',
-        scodeFromVersion: '',
-        scodeToVersion: '',
-        etc: '',
-        changeCoz: '',
-        researchRel: '',
-        researchRef: '',
-        changeEff: '',
         manaName: '',
         manaRank: '',
         mana2Name: '',
@@ -60,32 +30,11 @@ function AdminPage({resetPagination}) {
         changeTest: '',
         testInfo: '',
         rollbackPlan: '',
-        // rollbackInfo: '',
         userContact: '',
         headDepaName: '',
-        // headDepaApprove: '',
         headDepaComment: '',
         headDepaDate: '',
-        headITName: '',
-        headITApprove: '',
-        headITEsti: '',
-        headITEstiComment: '',
-        headITDate: '',
-        divisionName: '',
-        divisionComment: '',
-        divisionDate: '',
-        refITName1: '',
-        refITName2: '',
-        refITName3: '',
-        refITApprove: ''
-        // refITComment: ''
-        // actualDate: '',
-        // finishDate: '',
-        // changeStatue: '',
-        // changeResult: '',
-        // userChange: '',
-        // userChangeDate: '',
-        // changeResName: ''
+        approveStatus: ''
     });
     
 
@@ -162,38 +111,77 @@ function AdminPage({resetPagination}) {
         .catch(err => console.error('Error:', err));
     }
 
-    // Delete
-    const [showModal, setShowModal] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState(null);
+    // It Process
+    const [showITModal, setShowITModal] = useState(false);
 
-    const handleDeleteClick = (item) => {
-        setItemToDelete(item);
-        setShowModal(true);
+    const handleITClick = (item) => {
+        setFormData(item);
+        setShowITModal(true);
     };
 
-    const handleConfirmDelete = () => {
-        fetch(`http://localhost:3000/delete?id=${itemToDelete.id}`, { method: 'DELETE' })
-        .then(response => {
-            if (response.ok) {
-                setShowModal(false);
-                setData(prevData => prevData.filter(i => i.id !== itemToDelete.id));
+    const handleConfirmIT = () => {
+        fetch('http://localhost:3000/itprocess', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.message === 'Record updated successfully!') {
+                // Update the data state with the new edited data
+                setData(prevData => prevData.map(i => i.id === formData.id ? formData : i));
+                setShowITModal(false);
             } else {
-                console.error('Failed to delete item.');
+                console.error('Failed to edit record.', result.message);
             }
-        });
+        })
+        .catch(err => console.error('Error:', err));
     };
 
     return (
+        <>
+        <div className='flex justify-between shadow-lg bg-[#0e235c] text-[#f1c40f]'>
+            <header className='m-4 font-bold text-[28px]'>
+                การร้องขอการเปลี่ยนแปลง (IT)
+            </header>
+            {/* <img src={require('./img/user.png')} alt='user' className='items-center h-[76px]'/> */}
+        </div>
+        <div className='flex my-8 relative'>
+            <div className='bg-green-500  p-3 shadow-lg m-4 w-[150px] text-center'>
+                <label className='font-semibold text-[20px]'>Total Request</label>
+                <br/>
+                <label className='font-bold text-[32px] text-white'>32</label>
+            </div>
+            <div className='bg-green-200  p-3 shadow-lg m-4 w-[150px] text-center'>
+                <label className='font-semibold text-[20px]'>Approved</label>
+                <br/>
+                <label className='font-bold text-[32px] text-green-600'>10</label>
+            </div>
+            <div className='bg-amber-100  p-3 shadow-lg m-4 w-[150px] text-center'>
+                    <label className='font-semibold text-[20px]'>Pending</label>
+                    <br/>
+                    <label className='font-bold text-[32px] text-amber-600'>12</label>
+                </div>
+            <div className='bg-red-100  p-3 shadow-lg m-4 w-[150px] text-center'>
+                <label className='font-semibold text-[20px]'>Denied</label>
+                <br/>
+                <label className='font-bold text-[32px] text-red-600'>10</label>
+            </div>
+            <div className='absolute right-4 bottom-0'>
+                <button className="userAddBtn items-center" onClick={() => handleAddClick()}>
+                    <img src={require('./img/add.png')} className='h-[22px] w-[22px]' alt="add" />
+                    กรอกข้อมูลร้องขอการเปลี่ยนแปลง
+                </button>
+            </div>
+        </div>
         <div className="table">
             {/* Table Header */}
             <div className="tableHeader">
                 <div className="tableHRow">
-                    {['ชื่อผู้ร้องขอ', 'ตำแหน่ง', 'ฝ่ายงาน', 'วันที่ขอใช้งาน', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
+                    {['ชื่อผู้ร้องขอ', 'ตำแหน่ง', 'ประเภทการเปลี่ยนแปลง', 'ผู้ดำเนินงาน', 'วันที่ต้องการใช้งาน', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
                     <div className='tableCell flex justify-center'>
-                        <button className="cursor-pointer flex px-2 rounded-lg" onClick={() => handleAddClick()}>
-                            <img src={require('./img/add.png')} className='h-[22px] w-[22px]' alt="add" />
-                            <label className='pl-1'>Add</label>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -202,25 +190,24 @@ function AdminPage({resetPagination}) {
             <div className="tableBody shadow-lg">
                 {currentItems.map(item => (
                     <div className="tableRow" key={item.id}>
-                        {/* {item.id} */}
+                        {item.id}
                         <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
                         <div className="tableBodyCell">{item.jobRank}</div>
-                        <div className="tableBodyCell">{item.jobGroup}</div>
+                        <div className="tableBodyCell">{item.changeType}</div>
+                        <div className="tableBodyCell">{item.manaName}</div>
                         <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
                         <div className="tableBodyCell flex justify-center relative">
                             <button className="cursor-pointer icon absolute left-2" onClick={() => handleApproveClick(item)}>
-                              <img src={require(item.headDepaApprove === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='' 
-                                alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Denied'} />
+                              {/* <img src={require(item.approveStatus === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='' 
+                                alt={item.approveStatus === 'Approved' ? 'Approved' : 'Denied'} /> */}
                             </button>
                             <span className=''>
-                                {item.headDepaApprove}
+                                {item.approveStatus}
                             </span>
                         </div>
                         <div className="tableBodyCell flex justify-center space-x-6">
-                            <img src={require('./img/pdf.png')} className='icon' alt="pdf" />
-                            <img src={require('./img/edit.png')} className='icon' alt="edit" />
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleDeleteClick(item)}>
-                              <img src={require('./img/bin.png')} className='icon' alt="delete" />
+                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)}>
+                                <img src={require('./img/submit.png')} className='icon' alt="submit" />
                             </button>
                         </div>
                     </div>
@@ -238,9 +225,10 @@ function AdminPage({resetPagination}) {
                 />
             </div>
             <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
-            <DeleteModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleConfirmDelete} />
+            <ItProcessModal isOpen={showITModal} onClose={() => setShowITModal(false)} onConfirm={handleConfirmIT} formData={formData} setFormData={setFormData}/>
         </div>
+        </>
     );
 }
 
-export default AdminPage;
+export default ITPage;

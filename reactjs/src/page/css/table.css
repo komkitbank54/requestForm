@@ -37,8 +37,8 @@
 }
 
 .tableHRow {
-    border-bottom: 1px solid black;
-    background-color: rgb(225, 255, 255);
+    background-color: #0e235c;
+    color: #f1c40f;
 }
   
 .tableRow {
@@ -46,8 +46,12 @@
     transition: 0.3s ease-out;
 }
 
+.tableRow:nth-child(odd) {
+    background-color: #a1b4e7;
+}
+
 .tableRow:nth-child(even) {
-    background-color: rgb(244, 255, 255);
+    background-color: #c2cff5;
 }
 
 .tableCell, .tableBodyCell {
@@ -62,7 +66,6 @@
 }
 
 .tableBodyCell {
-    border-bottom: 1px solid #c9c9c9;
     overflow: hidden;
     text-overflow: ellipsis;
 }

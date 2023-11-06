@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Pagination from './components/pagination';
 import AddModal from './components/addModal';
 import moment from 'moment';
+import Login from '../components/Login';
 
 //Import css
 import './css/table.css';
@@ -111,6 +112,12 @@ function UserPage({resetPagination}) {
         setCurrentPage(pageNum);
     };
 
+    // Login
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const handleLoginClick = (item) => {
+        setShowLoginModal(true);
+    };
+
     // Add
     const [showAddModal, setShowAddModal] = useState(false);
 
@@ -139,11 +146,41 @@ function UserPage({resetPagination}) {
 
     return (
         <>
-            <div className='flex justify-center'>
-                <button className="userAddBtn" onClick={() => handleAddClick()}>
-                    <img src={require('./img/add.png')} className='h-[22px] w-[22px]' alt="add" />
-                    กรอกข้อมูลร้องขอการเปลี่ยนแปลง
+            <div className='flex justify-between shadow-lg bg-[#0e235c] text-[#f1c40f]'>
+                <header className='m-4 font-bold text-[28px]'>
+                    การร้องขอการเปลี่ยนแปลง
+                </header>
+                <button className="loginAddBtn items-center" onClick={() => handleLoginClick()}>
+                    Login
                 </button>
+            </div>
+            <div className='flex my-8 relative'>
+                <div className='bg-green-500  p-3 shadow-lg m-4 w-[150px] text-center'>
+                    <label className='font-semibold text-[20px]'>Total Request</label>
+                    <br/>
+                    <label className='font-bold text-[32px] text-white'>32</label>
+                </div>
+                <div className='bg-green-200  p-3 shadow-lg m-4 w-[150px] text-center'>
+                    <label className='font-semibold text-[20px]'>Approved</label>
+                    <br/>
+                    <label className='font-bold text-[32px] text-green-600'>10</label>
+                </div>
+                <div className='bg-amber-100  p-3 shadow-lg m-4 w-[150px] text-center'>
+                    <label className='font-semibold text-[20px]'>Pending</label>
+                    <br/>
+                    <label className='font-bold text-[32px] text-amber-600'>12</label>
+                </div>
+                <div className='bg-red-100  p-3 shadow-lg m-4 w-[150px] text-center'>
+                    <label className='font-semibold text-[20px]'>Denied</label>
+                    <br/>
+                    <label className='font-bold text-[32px] text-red-600'>10</label>
+                </div>
+                <div className='absolute right-4 bottom-0'>
+                    <button className="userAddBtn items-center" onClick={() => handleAddClick()}>
+                        <img src={require('./img/add.png')} className='h-[22px] w-[22px]' alt="add" />
+                        กรอกข้อมูลร้องขอการเปลี่ยนแปลง
+                    </button>
+                </div>
             </div>
             <div className="table">
                 {/* Table Header */}
@@ -163,10 +200,10 @@ function UserPage({resetPagination}) {
                             <div className="tableBodyCell">{moment(item.requestDate).format('DD/MM/YYYY')}</div>
                             <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
                             <div className="tableBodyCell flex justify-center relative">
-                                <img src={require(item.headDepaApprove === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='icon' 
-                                alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Denied'} />
+                                {/* <img src={require(item.headDepaApprove === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='icon' 
+                                alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Denied'} /> */}
                                 <span className=''>
-                                    {item.headDepaApprove}
+                                    {item.approveStatus}
                                 </span>
                             </div>
                         </div>
@@ -183,6 +220,7 @@ function UserPage({resetPagination}) {
                         handlePageClick={handlePageClick}
                     />
                 </div>
+                <Login isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
                 <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
             </div>
         </>
