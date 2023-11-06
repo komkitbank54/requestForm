@@ -156,6 +156,49 @@ app.put('/itprocess', async (req, res) => {
     }
 });
 
+// Manager Approve
+app.put('/mngapprove', async (req, res) => {
+    const id = req.body.id;
+
+    if (!id) {
+        return res.status(400).send({ message: 'id is required in request body.' });
+    }
+
+    const updateQuery = `
+        UPDATE [dbo].[changeform]
+        SET 
+            [headITName] = @headITName,
+            [headITApprove] = @headITApprove,
+            [headITEsti] = @headITEsti,
+            [headITEstiComment] = @headITEstiComment,
+            [headITDate] = @headITDate,
+            [approveStatus] = 'รอฝ่ายกำกับภายในอนุมัติ'
+        WHERE id = @id`;
+
+    try {
+        const pool = await poolPromise;
+        const request = new sql.Request(pool);
+        
+        request.input('id', sql.Int, id);
+        request.input('headITName', sql.VarChar, req.body.headITName);
+        request.input('headITApprove', sql.VarChar, req.body.headITApprove);
+        request.input('headITEsti', sql.VarChar, req.body.headITEsti);
+        request.input('headITEstiComment', sql.VarChar, req.body.headITEstiComment);
+        request.input('headITDate', sql.Date, req.body.headITDate);
+        request.input('approveStatus', sql.VarChar, req.body.approveStatus);
+        
+        const result = await request.query(updateQuery);
+
+        if (result.rowsAffected[0] === 0) {
+            res.status(404).send({ message: 'Record not found' });
+        } else {
+            res.status(200).send({ message: 'Record updated successfully!' });
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
 // Edit
 app.put('/edit', async (req, res) => {
     const id = req.body.id;

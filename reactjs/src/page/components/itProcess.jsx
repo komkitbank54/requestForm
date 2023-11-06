@@ -152,14 +152,14 @@ function ItProcessModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                 {/* Header */}
                 <button className='absolute top-3 right-4' onClick={onCloseHandle}>X</button>
                 <div className="flex justify-between font-bold text-[20px]">
-                    <p>แบบฟอร์มร้องขอการเปลี่ยนแปลง</p>
+                    <p>ขั้นตอนดำเนินการ</p>
                     <p className="mr-5">{currentDateTime}</p>
                 </div>
                 {/* Page 1 */}
                 {currentStep === 1 && (
                     <>
                         <div className=''>
-                            <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
+                            <header className='font-semibold mt-1'>ส่วนที่ 1 - รายละเอียดการดำเนินการ</header>
                             <div className='input-bew'>
                                 <div>
                                     {manageInput("ชื่อผู้ดำเนินการ", "manaName")}
@@ -194,7 +194,7 @@ function ItProcessModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                 {/* Page 5 */}
                 {currentStep === 2 && (
                     <>
-                        <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
+                        <header className='font-semibold mt-1'>ส่วนที่ 1 - รายละเอียดการดำเนินการ</header>
                         <div className='mt-4'>
                             {defaultInput("ขั้นตอนการนำระบบกลับคืน(Rollback Plan) ในกรณีที่การเปลี่ยนแปลงไม่สำเร็จ", "rollbackPlan", "รายละเอียดอ้างอิง", "inputLarge",)}
                         </div>

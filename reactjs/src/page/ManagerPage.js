@@ -5,6 +5,7 @@ import DeleteModal from './components/deleteModal';
 import Pagination from './components/pagination';
 import AddModal from './components/addModal';
 import ItProcessModal from './components/itProcess';
+import ManagerApproveModal from './components/managerApprove';
 import moment from 'moment';
 
 //Import css
@@ -59,31 +60,6 @@ function ManagerPage({resetPagination}) {
 
     const handlePageClick = (pageNum) => {
         setCurrentPage(pageNum);
-    };
-
-
-    // Approve
-    const handleApproveClick = (item) => {
-        let approveValue = item.headDepaApprove === 'Approved' ? 'Denied' : 'Approved';
-        fetch('http://localhost:3000/approve', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                id: item.id,
-                headDepaApprove: approveValue,
-            }),
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.message === 'Record updated successfully!') {
-                setData(prevData => prevData.map(i => i.id === item.id ? { ...i, headDepaApprove: approveValue } : i));
-            } else {
-                console.error('Failed to approve item.', result.message);
-            }
-        })
-        .catch(err => console.error('Error:', err));
     };
 
     // Add
@@ -141,6 +117,35 @@ function ManagerPage({resetPagination}) {
         .catch(err => console.error('Error:', err));
     };
 
+    // Manager Approve
+    const [showManagerApproveModal, setShowManagerApproveModal] = useState(false);
+
+    const handleApproveClick = (item) => {
+        setFormData(item);
+        setShowManagerApproveModal(true);
+    };
+
+    const handleConfirmManager = () => {
+        fetch('http://localhost:3000/mngapprove', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.message === 'Record updated successfully!') {
+                // Update the data state with the new edited data
+                setData(prevData => prevData.map(i => i.id === formData.id ? formData : i));
+                setShowManagerApproveModal(false);
+            } else {
+                console.error('Failed to edit record.', result.message);
+            }
+        })
+        .catch(err => console.error('Error:', err));
+    };
+
     // Delete
     const [showModal, setShowModal] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
@@ -166,7 +171,7 @@ function ManagerPage({resetPagination}) {
         <>
         <div className='flex justify-between shadow-lg bg-[#0e235c] text-[#f1c40f]'>
             <header className='m-4 font-bold text-[28px]'>
-                การร้องขอการเปลี่ยนแปลง (IT)
+                การร้องขอการเปลี่ยนแปลง (Manager)
             </header>
             {/* <img src={require('./img/user.png')} alt='user' className='items-center h-[76px]'/> */}
         </div>
@@ -254,6 +259,7 @@ function ManagerPage({resetPagination}) {
             </div>
             <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
             <ItProcessModal isOpen={showITModal} onClose={() => setShowITModal(false)} onConfirm={handleConfirmIT} formData={formData} setFormData={setFormData}/>
+            <ManagerApproveModal isOpen={showManagerApproveModal} onClose={() => setShowManagerApproveModal(false)} onConfirm={handleConfirmManager} formData={formData} setFormData={setFormData}/>
             <DeleteModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleConfirmDelete} />
         </div>
         </>
