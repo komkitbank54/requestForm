@@ -58,7 +58,7 @@ app.post('/add', (req, res) => {
             @headDepaDate, @headITName, 'Pending', @headITEsti, @headITEstiComment, @headITDate, @auditName,
             'Pending', @auditComment, @auditDate, @refITName1, @refITName2, @refITName3, 'Pending',
             @refITComment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,
-            @userChangeDate, @changeResName, 'รอผู้ดำเนินการ'
+            @userChangeDate, @changeResName, 'Pending'
         )`;
 
     // List all fields and their types
@@ -131,7 +131,7 @@ app.put('/itprocess', async (req, res) => {
     }
 
     // Set approveStatus based on headDepaApprove
-    const approveStatus = req.body.headDepaApprove === 'Deny' ? 'ไม่ได้รับการอนุมัติ' : 'รอหัวหน้าฝ่ายอนุมัติ';
+    const approveStatus = req.body.headDepaApprove === 'Deny' ? 'Deny' : 'Pending';
 
     const updateQuery = `
         UPDATE [dbo].[changeform]
@@ -208,7 +208,7 @@ app.put('/mngapprove', async (req, res) => {
         request.input('headITDate', sql.Date, req.body.headITDate);
 
         // Set approveStatus based on headITApprove
-        const approveStatus = req.body.headITApprove === 'Deny' ? 'ไม่ได้รับการอนุมัติ' : 'รอฝ่ายกำกับภายในอนุมัติ';
+        const approveStatus = req.body.headITApprove === 'Deny' ? 'Deny' : 'Pending';
         request.input('approveStatus', sql.VarChar, approveStatus);
 
         const updateQuery = `
@@ -243,7 +243,7 @@ app.put('/auditapprove', async (req, res) => {
     }
 
     // Set approveStatus based on auditApprove
-    const approveStatus = req.body.auditApprove === 'Deny' ? 'ไม่ได้รับการอนุมัติ' : 'รอคณะกรรมการอนุมัติ';
+    const approveStatus = req.body.auditApprove === 'Deny' ? 'Deny' : 'Pending';
 
     const updateQuery = `
         UPDATE [dbo].[changeform]

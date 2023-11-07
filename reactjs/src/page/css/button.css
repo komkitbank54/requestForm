@@ -7,10 +7,10 @@
     padding-bottom: 8px;
     padding-left: 16px;
     padding-right: 16px;
-    border-radius: 0.5rem; /* Adjust to match Tailwind's 'rounded-lg' */
-    border-width: 2px;
-    border-color: #22543d; /* This is the Tailwind green-800 color */
-    background-color: #63df96; /* This is the Tailwind green-400 color */
+    border-radius: 0.5rem;
+    border-width: 1px;
+    border-color: #22543d; 
+    background-color: #63df96; 
   }
   
   .loginAddBtn{
@@ -23,7 +23,7 @@
     padding-bottom: 8px;
     padding-left: 16px;
     padding-right: 16px;
-    background-color: #0e235c; /* This is the Tailwind green-400 color */
+    background-color: #0e235c;
     color: #f1c40f;
     font-weight: 600;
     border-radius: 4px;

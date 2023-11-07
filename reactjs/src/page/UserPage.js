@@ -15,13 +15,53 @@ function UserPage({resetPagination}) {
     const [data, setData] = useState([]);
     const [expandedRows, setExpandedRows] = useState({});
 
-    //Show fetch data
+    //ประกาศค่าก่อนนับ = 0
+    const [totalCount, setTotalCount] = useState(0);
+    const [approvedCount, setApprovedCount] = useState(0);
+    const [pendingCount, setPendingCount] = useState(0);
+    const [deniedCount, setDeniedCount] = useState(0);
+
+    // โชว์ข้อมูล
     useEffect(() => {
-      fetch('http://localhost:3000/show')
+    fetch('http://localhost:3000/show')
         .then(response => response.json())
-        .then(data => setData(data))
+        .then(fetchedData => {
+        // อัพเดต approveStatus ตามสถานะล่าสุด
+        const updatedData = fetchedData.map(item => ({
+            ...item,
+            approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove),
+        }));
+
+        // โหลดข้อมูล
+        setData(updatedData);
+
+        // กำหนดค่าเริ่มต้น
+        let approved = 0;
+        let pending = 0;
+        let denied = 0;
+
+        // นับข้อมูลตามดาต้าจากเงื่อนไข
+        updatedData.forEach(item => {
+            if (item.headITApprove === 'Approve' && item.headDepaApprove === 'Approve' && item.auditApprove === 'Approve') {
+            approved++;
+            }
+            if (['รอหัวหน้าฝ่ายอนุมัติ', 'รอฝ่ายกำกับภายในอนุมัติ', 'รอคณะกรรมการอนุมัติ', 'รอผู้ดำเนินการ', 'กำลังดำเนินการ'].includes(item.approveStatus)) {
+                pending++;
+            }
+            if (item.headITApprove === 'Deny' || item.headDepaApprove === 'Deny' || item.auditApprove === 'Deny') {
+            denied++;
+            }
+        });
+
+        // อัพเดตจำนวนหลังนับ
+        setTotalCount(approved+pending+denied);
+        setApprovedCount(approved);
+        setPendingCount(pending); // Total pending count
+        setDeniedCount(denied);
+        })
         .catch(err => console.error('Error fetching data:', err));
     }, []);
+
 
     const [formData, setFormData] = useState({
         requestDate: '',
@@ -128,34 +168,32 @@ function UserPage({resetPagination}) {
 
     // โชว์ข้อมูล row ต่างๆ
     const DetailRow = ({ item }) => {
-        // Here you can return a JSX layout for your detailed row
         return (
             <div className="detailRow">
-                {/* Include more data fields from the item as needed */}
+                {/* รายละเอียดหลังจากคลิก row */}
                 <div className="detailCell">
-                    <p>อุปกรณ์ที่จะเปลี่ยนแปลง: {item.changeTool}</p>
-                    <p>รายละเอียด: {item.changeToolInfo}</p> 
-                    <p>โปรแกรม/ซอร์ดโค้ด: {item.scodeName}</p>
-                    <p>จากเวอร์ชั่น {item.scodeFromVersion} เป็น {item.scodeToVersion}</p>            
+                    <p><label className='font-bold'>อุปกรณ์ที่จะเปลี่ยนแปลง</label> {item.changeTool}</p>
+                    <p><label className='font-bold'>รายละเอียด</label> {item.changeToolInfo}</p> 
+                    <p><label className='font-bold'>โปรแกรม/ซอร์ดโค้ด</label> {item.scodeName}</p>
+                    <p><label className='font-bold'>จากเวอร์ชั่น</label> {item.scodeFromVersion} <label className='font-bold'>เป็น</label> {item.scodeToVersion}</p>            
                 </div>
                 <div className="detailCell">
-                    <p>สาเหตุเปลี่ยนแปลง: {item.changeCoz}</p>
-                    <p>โครงงานเกี่ยวข้อง: {item.researchRel}</p>
-                    <p>อ้างอิง: {item.researchRef}</p>
-                    <p>ผลกระทบที่อาจเกิด: {item.changeEff}</p>
+                    <p><label className='font-bold'>สาเหตุเปลี่ยนแปลง</label> {item.changeCoz}</p>
+                    <p><label className='font-bold'>ผลกระทบที่อาจเกิด</label> {item.changeEff}</p>
                 </div>
                 <div className="detailCell">
-                    <p>อื่นๆ: {item.etc}</p>
+                    <p><label className='font-bold'>โครงงานเกี่ยวข้อง</label> {item.researchRel}</p>
+                    <p><label className='font-bold'>อ้างอิง</label> {item.researchRef}</p>
+                    <p><label className='font-bold'>อื่นๆ</label> {item.etc}</p>
                 </div>
                 <div className="detailCell">
-                    <p>ผู้ช่วยดำเนินการ: {item.mana2Name}</p>
+                    <p><label className='font-bold'>ผู้ช่วยดำเนินการ</label> {item.mana2Name}</p>
                 </div>
                 <div className="detailCell text-right">
-                    <p>ผู้ดำเนินการ: {item.headDepaApprove}</p>
-                    <p>หัวหน้าฝ่ายเทคโนโลยี: {item.headITApprove}</p>
-                    <p>ฝ่ายกำกับภายใน: {item.auditApprove}</p>
+                    <p><label className='font-bold'>ผู้ดำเนินการ</label> {item.headDepaApprove}</p>
+                    <p><label className='font-bold'>หัวหน้าฝ่ายเทคโนโลยี</label> {item.headITApprove}</p>
+                    <p><label className='font-bold'>ฝ่ายกำกับภายใน</label> {item.auditApprove}</p>
                 </div>
-                {/* ...other fields */}
             </div>
         );
     };
@@ -168,6 +206,29 @@ function UserPage({resetPagination}) {
         }));
     };
 
+    // Check Approve
+    function determineApproveStatus(headDepaApprove, headITApprove, auditApprove) {
+        // If ค่าอะไรก็ตาม = 'Deny', ในตารางจะโชว์ 'ไม่อนุมัติ'
+        if (headDepaApprove === 'Deny' || headITApprove === 'Deny' || auditApprove === 'Deny') {
+          return 'ไม่ได้รับการอนุมัติ';
+        }
+        // If Approve ทั้งหมดแล้ว 'รอกรรมการ'
+        if (headDepaApprove === 'Approve' && headITApprove === 'Approve' && auditApprove === 'Approve') {
+          return 'รอคณะกรรมการอนุมัติ';
+        }
+        // If ถ้ารอดำเนินการ 'Pending', จะขึ้นว่ารอดำเนินการ
+        if (headDepaApprove === 'Pending') {
+          return 'รอผู้ดำเนินการ';
+        }
+        if (headITApprove === 'Pending') {
+          return 'รอหัวหน้าฝ่ายอนุมัติ';
+        }
+        if (auditApprove === 'Pending') {
+          return 'รอฝ่ายกำกับอนุมัติ';
+        }
+        // Default to pending if none of the above conditions are met
+        return 'กำลังดำเนินการ';
+      }
 
     return (
         <>
@@ -178,31 +239,31 @@ function UserPage({resetPagination}) {
                 <button className="loginAddBtn items-center" onClick={() => handleLoginClick()}>
                     Login
                 </button>
-            </div>
+                </div>
             <div className='flex my-8 relative'>
                 <div className='bg-green-500  p-3 shadow-lg m-4 w-[150px] text-center'>
-                    <label className='font-semibold text-[20px]'>Total Request</label>
+                    <label className='font-semibold text-[20px]'>คำร้องทั้งหมด</label>
                     <br/>
-                    <label className='font-bold text-[32px] text-white'>32</label>
+                    <label className='font-bold text-[32px] text-white'>{totalCount}</label>
                 </div>
                 <div className='bg-green-200  p-3 shadow-lg m-4 w-[150px] text-center'>
-                    <label className='font-semibold text-[20px]'>Approved</label>
+                    <label className='font-semibold text-[20px]'>อนุมัติแล้ว</label>
                     <br/>
-                    <label className='font-bold text-[32px] text-green-600'>10</label>
+                    <label className='font-bold text-[32px] text-green-600'>{approvedCount}</label>
                 </div>
                 <div className='bg-amber-100  p-3 shadow-lg m-4 w-[150px] text-center'>
-                    <label className='font-semibold text-[20px]'>Pending</label>
+                    <label className='font-semibold text-[19px]'>กำลังดำเนินการ</label>
                     <br/>
-                    <label className='font-bold text-[32px] text-amber-600'>12</label>
+                    <label className='font-bold text-[32px] text-amber-600'>{pendingCount}</label>
                 </div>
                 <div className='bg-red-100  p-3 shadow-lg m-4 w-[150px] text-center'>
-                    <label className='font-semibold text-[20px]'>Denied</label>
+                    <label className='font-semibold text-[20px]'>ไม่อนุมัติ</label>
                     <br/>
-                    <label className='font-bold text-[32px] text-red-600'>10</label>
+                    <label className='font-bold text-[32px] text-red-600'>{deniedCount}</label>
                 </div>
                 <div className='absolute right-4 bottom-0'>
                     <button className="userAddBtn items-center" onClick={() => handleAddClick()}>
-                        <img src={require('./img/add.png')} className='h-[22px] w-[22px]' alt="add" />
+                        <img src={require('./img/add.png')} className='h-[22px] w-[22px] mr-1' alt="add" />
                         กรอกข้อมูลร้องขอการเปลี่ยนแปลง
                     </button>
                 </div>
@@ -233,7 +294,7 @@ function UserPage({resetPagination}) {
                                     </span>
                                 </div>
                             </div>
-                            {/* Detail row - shown/hidden based on state */}
+                            {/* Detail row - โชว์/ซ่อน based on state */}
                             {expandedRows[item.id] && <DetailRow item={item} />}
                         </>
                     ))}
