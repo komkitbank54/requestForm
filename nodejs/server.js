@@ -43,8 +43,8 @@ app.post('/add', (req, res) => {
             [researchRel], [researchRef], [changeEff], [manaName], [manaRank], [mana2Name], [mana2Rank],
             [reqFinishDate], [implementPlan], [changeTest], [testInfo], [rollbackPlan], [rollbackInfo],
             [userContact], [headDepaName], [headDepaApprove], [headDepaComment],
-            [headDepaDate], [headITName], [headITApprove], [headITEsti], [headITEstiComment], [headITDate], [divisionName],
-            [divisionComment], [divisionDate], [refITName1], [refITName2], [refITName3], [refITApprove],
+            [headDepaDate], [headITName], [headITApprove], [headITEsti], [headITEstiComment], [headITDate], [auditName],
+            [auditApprove], [auditComment], [auditDate], [refITName1], [refITName2], [refITName3], [refITApprove],
             [refITComment], [actualDate], [finishDate], [changeStatue], [changeResult], [userChange],
             [userChangeDate], [changeResName], [approveStatus]
         )
@@ -52,11 +52,11 @@ app.post('/add', (req, res) => {
             @requestDate, @requestName, @requestSurname, @jobRank, @jobGroup, @requestPhone,
             @requestEmail, @useDate, @changeLengh, @changeType, @changeTool,
             @changeToolInfo, @scodeName, @scodeFromVersion, @scodeToVersion, @etc, @changeCoz,
-            @researchRel, @researchRef, @changeEff, @manaName, @manaRank, @mana2Name, @mana2Rank,
+            @researchRel, @researchRef, @changeEff, 'รอผู้ดำเนินการ', @manaRank, 'ไม่มี', @mana2Rank,
             @reqFinishDate, @implementPlan, @changeTest, @testInfo, @rollbackPlan, @rollbackInfo,
             @userContact, @headDepaName, 'Pending', @headDepaComment,
-            @headDepaDate, @headITName, @headITApprove, @headITEsti, @headITEstiComment, @headITDate, @divisionName,
-            @divisionComment, @divisionDate, @refITName1, @refITName2, @refITName3, @refITApprove,
+            @headDepaDate, @headITName, 'Pending', @headITEsti, @headITEstiComment, @headITDate, @auditName,
+            'Pending', @auditComment, @auditDate, @refITName1, @refITName2, @refITName3, 'Pending',
             @refITComment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,
             @userChangeDate, @changeResName, 'รอผู้ดำเนินการ'
         )`;
@@ -76,8 +76,8 @@ app.post('/add', (req, res) => {
         rollbackInfo: sql.VarChar, userContact: sql.VarChar,
         headDepaName: sql.VarChar, headDepaApprove: sql.VarChar, headDepaComment: sql.VarChar,
         headDepaDate: sql.DateTime, headITName: sql.VarChar, headITApprove: sql.VarChar, headITEsti: sql.VarChar,
-        headITEstiComment: sql.VarChar, headITDate: sql.DateTime, divisionName: sql.VarChar,
-        divisionComment: sql.VarChar, divisionDate: sql.VarChar, refITName1: sql.VarChar,
+        headITEstiComment: sql.VarChar, headITDate: sql.DateTime, auditName: sql.VarChar,
+        auditApprove: sql.VarChar, auditComment: sql.VarChar, auditDate: sql.VarChar, refITName1: sql.VarChar,
         refITName2: sql.VarChar, refITName3: sql.VarChar, refITApprove: sql.VarChar,
         refITComment: sql.VarChar, actualDate: sql.DateTime, finishDate: sql.DateTime,
         changeStatue: sql.VarChar, changeResult: sql.VarChar, userChange: sql.VarChar,
@@ -95,6 +95,33 @@ app.post('/add', (req, res) => {
     });
 });
 
+// Update approveStatus based on Deny conditions
+app.put('/update-approve-status', async (req, res) => {
+    const updateQuery = `
+        UPDATE [dbo].[changeform]
+        SET approveStatus = 'Deny'
+        WHERE headDepaApprove = 'Deny'
+           OR headITApprove = 'Deny'
+           OR auditApprove = 'Deny'
+           OR refITApprove = 'Deny'
+    `;
+
+    try {
+        const pool = await poolPromise;
+        const request = new sql.Request(pool);
+        
+        const result = await request.query(updateQuery);
+
+        if (result.rowsAffected[0] > 0) {
+            res.status(200).send({ message: 'Approve status updated successfully!' });
+        } else {
+            res.status(404).send({ message: 'No records found to update' });
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
 // IT Process
 app.put('/itprocess', async (req, res) => {
     const id = req.body.id;
@@ -102,6 +129,9 @@ app.put('/itprocess', async (req, res) => {
     if (!id) {
         return res.status(400).send({ message: 'id is required in request body.' });
     }
+
+    // Set approveStatus based on headDepaApprove
+    const approveStatus = req.body.headDepaApprove === 'Deny' ? 'ไม่ได้รับการอนุมัติ' : 'รอหัวหน้าฝ่ายอนุมัติ';
 
     const updateQuery = `
         UPDATE [dbo].[changeform]
@@ -120,7 +150,7 @@ app.put('/itprocess', async (req, res) => {
             [headDepaDate] = @headDepaDate,
             [headDepaApprove] = @headDepaApprove,
             [headDepaComment] = @headDepaComment,
-            [approveStatus] = 'รอหัวหน้าฝ่ายอนุมัติ'
+            [approveStatus] = @approveStatus
         WHERE id = @id`;
 
     try {
@@ -142,7 +172,8 @@ app.put('/itprocess', async (req, res) => {
         request.input('headDepaDate', sql.Date, req.body.headDepaDate);
         request.input('headDepaApprove', sql.VarChar, req.body.headDepaApprove);
         request.input('headDepaComment', sql.VarChar, req.body.headDepaComment);
-        request.input('approveStatus', sql.VarChar, req.body.approveStatus);
+        request.input('approveStatus', sql.VarChar, approveStatus);
+    
         
         const result = await request.query(updateQuery);
 
@@ -164,15 +195,64 @@ app.put('/mngapprove', async (req, res) => {
         return res.status(400).send({ message: 'id is required in request body.' });
     }
 
+    try {
+        const pool = await poolPromise;
+        const request = new sql.Request(pool);
+
+        // First, we update the headITApprove status
+        request.input('id', sql.Int, id);
+        request.input('headITName', sql.VarChar, req.body.headITName);
+        request.input('headITApprove', sql.VarChar, req.body.headITApprove);
+        request.input('headITEsti', sql.VarChar, req.body.headITEsti);
+        request.input('headITEstiComment', sql.VarChar, req.body.headITEstiComment);
+        request.input('headITDate', sql.Date, req.body.headITDate);
+
+        // Set approveStatus based on headITApprove
+        const approveStatus = req.body.headITApprove === 'Deny' ? 'ไม่ได้รับการอนุมัติ' : 'รอฝ่ายกำกับภายในอนุมัติ';
+        request.input('approveStatus', sql.VarChar, approveStatus);
+
+        const updateQuery = `
+            UPDATE [dbo].[changeform]
+            SET 
+                [headITName] = @headITName,
+                [headITApprove] = @headITApprove,
+                [headITEsti] = @headITEsti,
+                [headITEstiComment] = @headITEstiComment,
+                [headITDate] = @headITDate,
+                [approveStatus] = @approveStatus
+            WHERE id = @id`;
+
+        const result = await request.query(updateQuery);
+
+        if (result.rowsAffected[0] === 0) {
+            res.status(404).send({ message: 'Record not found' });
+        } else {
+            res.status(200).send({ message: 'Record updated successfully!' });
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+// Audit Approve
+app.put('/auditapprove', async (req, res) => {
+    const id = req.body.id;
+
+    if (!id) {
+        return res.status(400).send({ message: 'id is required in request body.' });
+    }
+
+    // Set approveStatus based on auditApprove
+    const approveStatus = req.body.auditApprove === 'Deny' ? 'ไม่ได้รับการอนุมัติ' : 'รอคณะกรรมการอนุมัติ';
+
     const updateQuery = `
         UPDATE [dbo].[changeform]
         SET 
-            [headITName] = @headITName,
-            [headITApprove] = @headITApprove,
-            [headITEsti] = @headITEsti,
-            [headITEstiComment] = @headITEstiComment,
-            [headITDate] = @headITDate,
-            [approveStatus] = 'รอฝ่ายกำกับภายในอนุมัติ'
+            [auditName] = @auditName,
+            [auditApprove] = @auditApprove,
+            [auditComment] = @auditComment,
+            [auditDate] = @auditDate,
+            [approveStatus] = @approveStatus
         WHERE id = @id`;
 
     try {
@@ -180,12 +260,12 @@ app.put('/mngapprove', async (req, res) => {
         const request = new sql.Request(pool);
         
         request.input('id', sql.Int, id);
-        request.input('headITName', sql.VarChar, req.body.headITName);
-        request.input('headITApprove', sql.VarChar, req.body.headITApprove);
-        request.input('headITEsti', sql.VarChar, req.body.headITEsti);
-        request.input('headITEstiComment', sql.VarChar, req.body.headITEstiComment);
-        request.input('headITDate', sql.Date, req.body.headITDate);
-        request.input('approveStatus', sql.VarChar, req.body.approveStatus);
+        request.input('auditName', sql.VarChar, req.body.auditName);
+        request.input('auditApprove', sql.VarChar, req.body.auditApprove);
+        request.input('auditComment', sql.VarChar, req.body.auditComment);
+        request.input('auditDate', sql.Date, req.body.auditDate);
+        request.input('approveStatus', sql.VarChar, approveStatus);
+
         
         const result = await request.query(updateQuery);
 
@@ -249,9 +329,9 @@ app.put('/edit', async (req, res) => {
             [headITEsti] = @headITEsti,
             [headITEstiComment] = @headITEstiComment,
             [headITDate] = @headITDate,
-            [divisionName] = @divisionName,
-            [divisionComment] = @divisionComment,
-            [divisionDate] = @divisionDate,
+            [auditName] = @auditName,
+            [auditComment] = @auditComment,
+            [auditDate] = @auditDate,
             [refITName1] = @refITName1,
             [refITName2] = @refITName2,
             [refITName3] = @refITName3,
@@ -310,9 +390,9 @@ app.put('/edit', async (req, res) => {
         request.input('headITEsti', sql.VarChar, req.body.headITEsti);
         request.input('headITEstiComment', sql.VarChar, req.body.headITEstiComment);
         request.input('headITDate', sql.Date, req.body.headITDate);
-        request.input('divisionName', sql.VarChar, req.body.divisionName);
-        request.input('divisionComment', sql.VarChar, req.body.divisionComment);
-        request.input('divisionDate', sql.Date, req.body.divisionDate);
+        request.input('auditName', sql.VarChar, req.body.auditName);
+        request.input('auditComment', sql.VarChar, req.body.auditComment);
+        request.input('auditDate', sql.Date, req.body.auditDate);
         request.input('refITName1', sql.VarChar, req.body.refITName1);
         request.input('refITName2', sql.VarChar, req.body.refITName2);
         request.input('refITName3', sql.VarChar, req.body.refITName3);

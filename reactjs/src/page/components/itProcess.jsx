@@ -194,7 +194,7 @@ function ItProcessModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                 {/* Page 5 */}
                 {currentStep === 2 && (
                     <>
-                        <header className='font-semibold mt-1'>ส่วนที่ 1 - รายละเอียดการดำเนินการ</header>
+                        <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการดำเนินการ</header>
                         <div className='mt-4'>
                             {defaultInput("ขั้นตอนการนำระบบกลับคืน(Rollback Plan) ในกรณีที่การเปลี่ยนแปลงไม่สำเร็จ", "rollbackPlan", "รายละเอียดอ้างอิง", "inputLarge",)}
                         </div>

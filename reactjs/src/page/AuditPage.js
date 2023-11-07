@@ -1,18 +1,16 @@
-//ManagerPage.js
+//AuditPage.js
 
 import React, { useEffect, useState } from 'react';
-import DeleteModal from './components/deleteModal';
 import Pagination from './components/pagination';
 import AddModal from './components/addModal';
-import ItProcessModal from './components/itProcess';
-import ManagerApproveModal from './components/managerApprove';
+import AuditApproveModal from './components/auditApprove';
 import moment from 'moment';
 
 //Import css
 import './css/table.css';
 import './fonts/fonts.css';
 
-function ManagerPage({resetPagination}) {
+function AuditPage({resetPagination}) {
     const [data, setData] = useState([]);
     //Show fetch data
     useEffect(() => {
@@ -88,45 +86,16 @@ function ManagerPage({resetPagination}) {
         .catch(err => console.error('Error:', err));
     }
 
-    // It Process
-    const [showITModal, setShowITModal] = useState(false);
-
-    const handleITClick = (item) => {
-        setFormData(item);
-        setShowITModal(true);
-    };
-
-    const handleConfirmIT = () => {
-        fetch('http://localhost:3000/itprocess', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.message === 'Record updated successfully!') {
-                // Update the data state with the new edited data
-                setData(prevData => prevData.map(i => i.id === formData.id ? formData : i));
-                setShowITModal(false);
-            } else {
-                console.error('Failed to edit record.', result.message);
-            }
-        })
-        .catch(err => console.error('Error:', err));
-    };
-
-    // Manager Approve
-    const [showManagerApproveModal, setShowManagerApproveModal] = useState(false);
+    // Audit Approve
+    const [showAuditApproveModal, setShowAuditApproveModal] = useState(false);
 
     const handleApproveClick = (item) => {
         setFormData(item);
-        setShowManagerApproveModal(true);
+        setShowAuditApproveModal(true);
     };
 
-    const handleConfirmManager = () => {
-        fetch('http://localhost:3000/mngapprove', {
+    const handleConfirmAudit = () => {
+        fetch('http://localhost:3000/auditapprove', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -138,40 +107,19 @@ function ManagerPage({resetPagination}) {
             if (result.message === 'Record updated successfully!') {
                 // Update the data state with the new edited data
                 setData(prevData => prevData.map(i => i.id === formData.id ? formData : i));
-                setShowManagerApproveModal(false);
+                setShowAuditApproveModal(false);
             } else {
                 console.error('Failed to edit record.', result.message);
             }
         })
         .catch(err => console.error('Error:', err));
-    };
-
-    // Delete
-    const [showModal, setShowModal] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState(null);
-
-    const handleDeleteClick = (item) => {
-        setItemToDelete(item);
-        setShowModal(true);
-    };
-
-    const handleConfirmDelete = () => {
-        fetch(`http://localhost:3000/delete?id=${itemToDelete.id}`, { method: 'DELETE' })
-        .then(response => {
-            if (response.ok) {
-                setShowModal(false);
-                setData(prevData => prevData.filter(i => i.id !== itemToDelete.id));
-            } else {
-                console.error('Failed to delete item.');
-            }
-        });
     };
 
     return (
         <>
         <div className='flex justify-between shadow-lg bg-[#0e235c] text-[#f1c40f]'>
             <header className='m-4 font-bold text-[28px]'>
-                การร้องขอการเปลี่ยนแปลง (Manager)
+                การร้องขอการเปลี่ยนแปลง (Audit)
             </header>
             {/* <img src={require('./img/user.png')} alt='user' className='items-center h-[76px]'/> */}
         </div>
@@ -217,7 +165,7 @@ function ManagerPage({resetPagination}) {
             <div className="tableBody shadow-lg">
                 {currentItems.map(item => (
                     <div className="tableRow" key={item.id}>
-                        {/* {item.id} */}
+                        {item.id}
                         <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
                         <div className="tableBodyCell">{item.jobRank}</div>
                         <div className="tableBodyCell">{item.changeType}</div>
@@ -233,14 +181,8 @@ function ManagerPage({resetPagination}) {
                             </span>
                         </div>
                         <div className="tableBodyCell flex justify-center space-x-6">
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)}>
-                                <img src={require('./img/submit.png')} className='icon' alt="submit" />
-                            </button>
                             <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
                                 <img src={require('./img/approve.png')} className='icon' alt="approve" />
-                            </button>
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleDeleteClick(item)}>
-                                <img src={require('./img/bin.png')} className='icon' alt="delete" />
                             </button>
                         </div>
                     </div>
@@ -258,12 +200,10 @@ function ManagerPage({resetPagination}) {
                 />
             </div>
             <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
-            <ItProcessModal isOpen={showITModal} onClose={() => setShowITModal(false)} onConfirm={handleConfirmIT} formData={formData} setFormData={setFormData}/>
-            <ManagerApproveModal isOpen={showManagerApproveModal} onClose={() => setShowManagerApproveModal(false)} onConfirm={handleConfirmManager} formData={formData} setFormData={setFormData}/>
-            <DeleteModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleConfirmDelete} />
+            <AuditApproveModal isOpen={showAuditApproveModal} onClose={() => setShowAuditApproveModal(false)} onConfirm={handleConfirmAudit} formData={formData} setFormData={setFormData}/>
         </div>
         </>
     );
 }
 
-export default ManagerPage;
+export default AuditPage  ;

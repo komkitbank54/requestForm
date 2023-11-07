@@ -63,8 +63,8 @@ function Login({ isOpen, onClose, onConfirm }) {
           navigate('/it');
         } else if (user.position === 'manager') {
           navigate('/manager');
-        } else if (user.position === 'supervision') {
-          navigate('/supervision');
+        } else if (user.position === 'audit') {
+          navigate('/audit');
         } else if (user.position === 'director') {
           navigate('/director');
         } else {
@@ -82,12 +82,18 @@ function Login({ isOpen, onClose, onConfirm }) {
   return (
     <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center' onClick={handleOutsideClick}>
       <div className='relative bg-white p-4 rounded-md'>
-        <button className='absolute top-3 right-4' onClick={onCloseHandle}>X</button>
+        <div className='flex justify-between'>
+          <span className='text-[20px]'>ล็อคอินเข้าสู่ระบบ</span>
+          <button className='' onClick={onCloseHandle}>X</button>
+        </div>
         <form onSubmit={handleSubmit}>
-          <div className='items-center m-4'>
+          <div className='items-center pb-12 pt-4 pr-3'>
             <input className='inputfield' type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} /><br/>
             <input className='inputfield' type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} /><br/>
-            <button type="submit" className=''>Login</button>
+            <div className='absolute right-0 bottom-0 flex items-center mr-2 space-x-1'>
+              <button className='' onClick={onCloseHandle}>Cancel</button>
+              <button type="submit" className='loginAddBtn2'>Login</button>
+            </div>
           </div>
         </form>
       </div>

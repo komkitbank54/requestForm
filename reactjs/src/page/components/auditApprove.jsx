@@ -11,7 +11,7 @@ import 'moment/locale/th';
 import '../css/add.css';
 import "react-datepicker/dist/react-datepicker.css";
 
-function ManagerApproveModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
+function AuditApproveModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     const [currentStep, setCurrentStep] = useState(1);
 
     // กด ESC เพื่อปิด add-modal
@@ -55,8 +55,8 @@ function ManagerApproveModal({ isOpen, onClose, onConfirm, formData, setFormData
         setFormData(prevState => ({
             ...prevState,
             [name]: value,
-            headITName: `${firstName} ${lastName}`,
-            headITDate: currentDateFormat
+            auditName: `${firstName} ${lastName}`,
+            auditDate: currentDateFormat
             
         }));
     };
@@ -121,13 +121,13 @@ function ManagerApproveModal({ isOpen, onClose, onConfirm, formData, setFormData
                 {currentStep === 1 && (
                     <>
                         <div className=''>
-                            <header className='font-semibold mt-1'>ส่วนที่ 1 - หัวหน้าฝ่ายเทคโนโลยีสารสนเทศให้การอนุมัติ</header>
+                            <header className='font-semibold mt-1'>ส่วนที่ 1 - ฝ่ายกำกับภายในตรวจสอบและให้การอนุมัติ</header>
                             <div className='mt-4'>
                                 <header>
-                                    หัวหน้าฝ่ายเทคโนโลยีสารสนเทศ
+                                    ฝ่ายกำกับภายใน
                                 </header>
                                 <div className='flex space-x-2'>
-                                    {manageInput("", "headITName")}
+                                    {manageInput("", "auditName", "ชื่อ-นามสกุล",)}
                                     <button className="relative inputfield flex items-center justify-center" disabled>
                                         <div className='absolute left-2'>
                                             <img src={require('../img/calendar.png')} className='icon' alt="edit" />
@@ -137,18 +137,12 @@ function ManagerApproveModal({ isOpen, onClose, onConfirm, formData, setFormData
                                         </div>
                                     </button>
                                 </div>
-                                <div className='ml-2 mt-2 flex items-center'>
-                                    <header>ประเมินความเสี่ยง</header>
-                                    {presetRadio("headITEsti", "headITEsti", "ต่ำ", "low")}
-                                    {presetRadio("headITEsti", "headITEsti", "กลาง", "Medium")}
-                                    {presetRadio("headITEsti", "headITEsti", "สูง", "high")}
+                                <div className='mt-2 flex items-center'>
+                                    {presetRadio("auditApprove", "auditApprove", "อนุมัติ", "Approve")}
+                                    {presetRadio("auditApprove", "auditApprove", "ไม่อนุมัติ", "Deny")}
                                 </div>
                                 <div className='mt-2 flex items-center'>
-                                    {presetRadio("headITApprove", "headITApprove", "อนุมัติ", "Approve")}
-                                    {presetRadio("headITApprove", "headITApprove", "ไม่อนุมัติ", "Deny")}
-                                </div>
-                                <div className='mt-2 flex items-center'>
-                                    {defaultInput("", "headITEstiComment", "ความคิดเห็นเพิ่มเติม", "inputLarge")}
+                                    {defaultInput("", "auditComment", "ความคิดเห็นเพิ่มเติม", "inputLarge")}
                                 </div>
                             </div>
                         </div>
@@ -176,4 +170,4 @@ function ManagerApproveModal({ isOpen, onClose, onConfirm, formData, setFormData
     );
 }
 
-export default ManagerApproveModal;
+export default AuditApproveModal;

@@ -5,7 +5,7 @@ import { UserProvider, UserContext } from './context/UserContext'; // แก้�
 import Login from './components/Login';
 import UserPage from './page/UserPage';
 import ManagerPage from './page/ManagerPage';
-import SuperVisionPage from './page/SuperVisionPage';
+import AuditPage from './page/AuditPage';
 import DirectorPage from './page/DirectorPage';
 import ITPage from './page/ITPage';
 
@@ -17,7 +17,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/it" element={<PrivateRoute role="it" component={ITPage} />} />
           <Route path="/manager" element={<PrivateRoute role="manager" component={ManagerPage} />} />
-          <Route path="/supervision" element={<PrivateRoute role="supervision" component={SuperVisionPage} />} />
+          <Route path="/audit" element={<PrivateRoute role="audit" component={AuditPage} />} />
           <Route path="/director" element={<PrivateRoute role="director" component={DirectorPage} />} />
           <Route path="/" element={<UserPage />} />
         </Routes>

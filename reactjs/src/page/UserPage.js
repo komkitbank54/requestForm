@@ -1,4 +1,4 @@
-// table.jsx
+// UserPage.js
 
 import React, { useEffect, useState } from 'react';
 import Pagination from './components/pagination';
@@ -13,6 +13,8 @@ import './css/button.css'
 
 function UserPage({resetPagination}) {
     const [data, setData] = useState([]);
+    const [expandedRows, setExpandedRows] = useState({});
+
     //Show fetch data
     useEffect(() => {
       fetch('http://localhost:3000/show')
@@ -21,16 +23,6 @@ function UserPage({resetPagination}) {
         .catch(err => console.error('Error fetching data:', err));
     }, []);
 
-    // const RefreshData = () => {
-    //     useEffect(() => {
-    //         fetch('http://localhost:3000/show')
-    //           .then(response => response.json())
-    //           .then(data => setData(data))
-    //           .catch(err => console.error('Error fetching data:', err));
-    //       }, []);
-    // }
-
-    // value
     const [formData, setFormData] = useState({
         requestDate: '',
         requestName: '',
@@ -61,10 +53,8 @@ function UserPage({resetPagination}) {
         changeTest: '',
         testInfo: '',
         rollbackPlan: '',
-        // rollbackInfo: '',
         userContact: '',
         headDepaName: '',
-        // headDepaApprove: '',
         headDepaComment: '',
         headDepaDate: '',
         headITName: '',
@@ -72,21 +62,13 @@ function UserPage({resetPagination}) {
         headITEsti: '',
         headITEstiComment: '',
         headITDate: '',
-        divisionName: '',
-        divisionComment: '',
-        divisionDate: '',
+        auditName: '',
+        auditComment: '',
+        auditDate: '',
         refITName1: '',
         refITName2: '',
         refITName3: '',
         refITApprove: ''
-        // refITComment: ''
-        // actualDate: '',
-        // finishDate: '',
-        // changeStatue: '',
-        // changeResult: '',
-        // userChange: '',
-        // userChangeDate: '',
-        // changeResName: ''
     });
     
 
@@ -144,6 +126,49 @@ function UserPage({resetPagination}) {
         .catch(err => console.error('Error:', err));
     }
 
+    // โชว์ข้อมูล row ต่างๆ
+    const DetailRow = ({ item }) => {
+        // Here you can return a JSX layout for your detailed row
+        return (
+            <div className="detailRow">
+                {/* Include more data fields from the item as needed */}
+                <div className="detailCell">
+                    <p>อุปกรณ์ที่จะเปลี่ยนแปลง: {item.changeTool}</p>
+                    <p>รายละเอียด: {item.changeToolInfo}</p> 
+                    <p>โปรแกรม/ซอร์ดโค้ด: {item.scodeName}</p>
+                    <p>จากเวอร์ชั่น {item.scodeFromVersion} เป็น {item.scodeToVersion}</p>            
+                </div>
+                <div className="detailCell">
+                    <p>สาเหตุเปลี่ยนแปลง: {item.changeCoz}</p>
+                    <p>โครงงานเกี่ยวข้อง: {item.researchRel}</p>
+                    <p>อ้างอิง: {item.researchRef}</p>
+                    <p>ผลกระทบที่อาจเกิด: {item.changeEff}</p>
+                </div>
+                <div className="detailCell">
+                    <p>อื่นๆ: {item.etc}</p>
+                </div>
+                <div className="detailCell">
+                    <p>ผู้ช่วยดำเนินการ: {item.mana2Name}</p>
+                </div>
+                <div className="detailCell text-right">
+                    <p>ผู้ดำเนินการ: {item.headDepaApprove}</p>
+                    <p>หัวหน้าฝ่ายเทคโนโลยี: {item.headITApprove}</p>
+                    <p>ฝ่ายกำกับภายใน: {item.auditApprove}</p>
+                </div>
+                {/* ...other fields */}
+            </div>
+        );
+    };
+    // คลิก row
+    const toggleRow = (id) => {
+        // Toggles the expanded state for a given row
+        setExpandedRows(prevRows => ({
+            ...prevRows,
+            [id]: !prevRows[id]
+        }));
+    };
+
+
     return (
         <>
             <div className='flex justify-between shadow-lg bg-[#0e235c] text-[#f1c40f]'>
@@ -186,27 +211,31 @@ function UserPage({resetPagination}) {
                 {/* Table Header */}
                 <div className="tableHeader">
                     <div className="tableHRow">
-                        {['ชื่อผู้ร้องขอ', 'ฝ่ายงาน', 'วันที่ขอใช้งาน', 'วันที่ต้องการใช้งาน', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
+                        {['ชื่อผู้ร้องขอ', 'ฝ่ายงาน', 'วันที่ต้องการใช้งาน', 'ผู้ดำเนินการ', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
                     </div>
                 </div>
 
                 {/* Table Body */}
                 <div className="tableBody shadow-lg">
                     {currentItems.map(item => (
-                        <div className="tableRow" key={item.id}>
-                            {/* {item.id} */}
-                            <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
-                            <div className="tableBodyCell">{item.jobGroup}</div>
-                            <div className="tableBodyCell">{moment(item.requestDate).format('DD/MM/YYYY')}</div>
-                            <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
-                            <div className="tableBodyCell flex justify-center relative">
-                                {/* <img src={require(item.headDepaApprove === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='icon' 
-                                alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Denied'} /> */}
-                                <span className=''>
-                                    {item.approveStatus}
-                                </span>
+                        <>
+                            <div className="tableRow" key={item.id} onClick={() => toggleRow(item.id)}>
+                                {/* {item.id} */}
+                                <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
+                                <div className="tableBodyCell">{item.jobGroup}</div>
+                                <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
+                                <div className="tableBodyCell">{item.manaName}</div>
+                                <div className="tableBodyCell flex justify-center relative">
+                                    {/* <img src={require(item.headDepaApprove === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='icon' 
+                                    alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Denied'} /> */}
+                                    <span className=''>
+                                        {item.approveStatus}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                            {/* Detail row - shown/hidden based on state */}
+                            {expandedRows[item.id] && <DetailRow item={item} />}
+                        </>
                     ))}
                 </div>
 

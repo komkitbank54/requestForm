@@ -17,7 +17,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
         reqFinishDate: formData.reqFinishDate || new Date(),
         // headDepaDate: formData.headDepaDate || new Date(),
         // headITDate: formData.headITDate || new Date(),
-        // divisionDate: formData.divisionDate || new Date(),
+        // auditDate: formData.auditDate || new Date(),
         // refITApproveDate: formData.refITApproveDate || new Date()
     });
     const [currentStep, setCurrentStep] = useState(1);
@@ -68,7 +68,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
             requestDate: currentDateFormat,
             headDepaDate: currentDateFormat,
             headITDate: currentDateFormat,
-            divisionDate: currentDateFormat,
+            auditDate: currentDateFormat,
             refITApproveDate: currentDateFormat
         }));
     };
@@ -229,7 +229,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                 {currentStep === 3 && (
                     <>
                         <div className=''>
-                            <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
+                            <header className='font-semibold mt-1'>ส่วนที่ 3 - รายละเอียดการขอเปลี่ยนแปลง</header>
                             <div className='flex space-x-[46px] mt-4'>
                                 {defaultInput("สาเหตุที่ต้องเปลี่ยนแปลง", "changeCoz", "( . . ใช้งานไม่ได้ . . )", "inputLarge",)}
                             </div>
@@ -243,65 +243,11 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                         </div>
                     </>
                 )}
-                {/* Page 5 */}
+                {/* Page 6 */}
                 {currentStep === 4 && (
                     <>
                         <div className=''>
                             <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
-                            <div className='mt-4'>
-                                <header>
-                                    หัวหน้าฝ่ายเทคโนโลยีสารสนเทศ
-                                </header>
-                                <div className='flex space-x-2'>
-                                    {defaultInput("", "headITName", "ชื่อ-นามสกุล",)}
-                                    <button className="relative inputfield flex items-center justify-center" disabled>
-                                        <div className='absolute left-2'>
-                                            <img src={require('../img/calendar.png')} className='icon' alt="edit" />
-                                        </div>
-                                        <div className='font-semibold'>
-                                            {currentDateTime}
-                                        </div>
-                                    </button>
-                                </div>
-                                <div className='ml-2 mt-2 flex items-center'>
-                                    <header>ประเมินความเสี่ยง</header>
-                                    {presetRadio("headITEsti", "headITEsti", "ต่ำ", "low")}
-                                    {presetRadio("headITEsti", "headITEsti", "กลาง", "Medium")}
-                                    {presetRadio("headITEsti", "headITEsti", "สูง", "high")}
-                                </div>
-                                <div className='mt-2 flex items-center'>
-                                    {presetRadio("headITApprove", "headITApprove", "อนุมัติ", "Approve")}
-                                    {presetRadio("headITApprove", "headITApprove", "ไม่อนุมัติ", "Deny")}
-                                    {defaultInput("", "headITEstiComment", "เพิ่มเติม",)}
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
-                {/* Page 6 */}
-                {currentStep === 5 && (
-                    <>
-                        <div className=''>
-                            <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
-                            <div className='mt-4'>
-                                <header>
-                                    ฝ่ายกำกับภายใน
-                                </header>
-                                <div className='flex space-x-2'>
-                                    {defaultInput("", "divisionName", "ชื่อ-นามสกุล",)}
-                                    <button className="relative inputfield flex items-center justify-center" disabled>
-                                        <div className='absolute left-2'>
-                                            <img src={require('../img/calendar.png')} className='icon' alt="edit" />
-                                        </div>
-                                        <div className='font-semibold'>
-                                            {currentDateTime}
-                                        </div>
-                                    </button>
-                                </div>
-                                <div className='mt-2 flex items-center'>
-                                    {defaultInput("", "divisionComment", "ความเห็น", "inputLarge")}
-                                </div>
-                            </div>
                             <div className='mt-4'>
                                 <header>
                                     คณะกรรมการด้านความมั่นคงปลอดภัยเทคโนโลยีสารสนเทศ<br/>
@@ -339,7 +285,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                             ย้อนกลับ
                         </button>
                     )}
-                    {currentStep < 5 ? (
+                    {currentStep < 4     ? (
                         <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
                             ต่อไป
                         </button>
