@@ -197,8 +197,8 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                                 ประเภทการเปลี่ยนแปลง
                             </header>
                             <div className='flex space-x-[46px]'>
-                                {presetRadio("changeType", "changeType", "การเปลี่ยนแปลงแบบปกติ", "normal")}
-                                {presetRadio("changeType", "changeType", "การเปลี่ยนแปลงแบบฉุกเฉิน", "urgency")}
+                                {presetRadio("changeType", "changeType", "การเปลี่ยนแปลงแบบปกติ", "ปกติ")}
+                                {presetRadio("changeType", "changeType", "การเปลี่ยนแปลงแบบฉุกเฉิน", "ฉุกเฉิน")}
                             </div>
                             <header className='input-bew'>
                                 อุปกรณ์ที่จะเปลี่ยนแปลง
@@ -243,41 +243,6 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                         </div>
                     </>
                 )}
-                {/* Page 6 */}
-                {currentStep === 4 && (
-                    <>
-                        <div className=''>
-                            <header className='font-semibold mt-1'>ส่วนที่ 2 - รายละเอียดการขอเปลี่ยนแปลง</header>
-                            <div className='mt-4'>
-                                <header>
-                                    คณะกรรมการด้านความมั่นคงปลอดภัยเทคโนโลยีสารสนเทศ<br/>
-                                    <label className='font-semibold'>(กรณีที่มีความเสี่ยงด้านความมั่นคงปลอดภัยเทคโนโลยีสารสนเทศในระดับสูง)</label>
-                                </header>
-                                <div className='flex space-x-2 items-center'>
-                                    <div className='flex pr-20'>
-                                        {presetRadio("refITApprove", "refITApprove", "อนุมัติ", "Approve")}
-                                        {presetRadio("refITApprove", "refITApprove", "ไม่อนุมัติ", "Deny")}
-                                    </div>
-                                    <button className="relative inputfield flex items-center justify-center" disabled>
-                                        <div className='absolute left-2'>
-                                            <img src={require('../img/calendar.png')} className='icon' alt="edit" />
-                                        </div>
-                                        <div className='font-semibold'>
-                                            {currentDateTime}
-                                        </div>
-                                    </button>
-                                </div>
-                                <div className='flex'>
-                                    <div className='space-y-1'>
-                                        {defaultInput("ชื่อ", "refITName1", "1.", "inputSmall")}
-                                        {defaultInput("", "refITName2", "2.", "inputSmall")}
-                                        {defaultInput("", "refITName3", "3-.", "inputSmall")}
-                                    </div>        
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
                 {/* Footer */}
                 <div className='absolute bottom-2 right-2 flex space-x-1'>
                     {currentStep > 1 && (
@@ -285,7 +250,7 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
                             ย้อนกลับ
                         </button>
                     )}
-                    {currentStep < 4     ? (
+                    {currentStep < 3     ? (
                         <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
                             ต่อไป
                         </button>

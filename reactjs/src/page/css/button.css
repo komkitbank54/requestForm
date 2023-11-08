@@ -54,3 +54,9 @@
     transition: all 0.25s;
     filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
   }
+
+  .smicon {
+    height: 12px;
+    width: 12px;
+    margin-left: 3px;
+  }
