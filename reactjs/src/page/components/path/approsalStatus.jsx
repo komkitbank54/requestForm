@@ -1,19 +1,23 @@
-// Approval status constants
-const APPROVE = 'Approve';
-const DENY = 'Deny';
-const PENDING = 'Pending';
-const STATUS_MAP = {
-  [`${APPROVE},${APPROVE},${APPROVE}`]: 'รอคณะกรรมการอนุมัติ',
-  [`${DENY},*,*`]: 'ไม่ได้รับการอนุมัติ',
-  [`${PENDING},*,*`]: 'รอผู้ดำเนินการ',
-  [`*,${PENDING},*`]: 'รอหัวหน้าฝ่ายอนุมัติ',
-  [`*,*,${PENDING}`]: 'รอฝ่ายกำกับอนุมัติ',
-};
-
-export function determineApproveStatus(item) {
-  const key = [item.headDepaApprove, item.headITApprove, item.auditApprove]
-    .map(status => status === DENY ? DENY : status === PENDING ? PENDING : '*')
-    .join(',');
-
-  return STATUS_MAP[key] || 'กำลังดำเนินการ';
-}
+    // approsalStatus.jsx
+    export const determineApproveStatus = (headDepaApprove, headITApprove, auditApprove) => {
+        // If ค่าอะไรก็ตาม = 'Deny', ในตารางจะโชว์ 'ไม่อนุมัติ'
+        if (headDepaApprove === 'Deny' || headITApprove === 'Deny' || auditApprove === 'Deny') {
+          return 'ไม่ได้รับการอนุมัติ';
+        }
+        // If Approve ทั้งหมดแล้ว 'รอกรรมการ'
+        if (headDepaApprove === 'Approve' && headITApprove === 'Approve' && auditApprove === 'Approve') {
+          return 'รอคณะกรรมการอนุมัติ';
+        }
+        // If ถ้ารอดำเนินการ 'Pending', จะขึ้นว่ารอดำเนินการ
+        if (headDepaApprove === 'Pending') {
+          return 'รอผู้ดำเนินการ';
+        }
+        if (headITApprove === 'Pending') {
+          return 'รอหัวหน้าฝ่ายอนุมัติ';
+        }
+        if (auditApprove === 'Pending') {
+          return 'รอฝ่ายกำกับอนุมัติ';
+        }
+        // Default to pending if none of the above conditions are met
+        return 'กำลังดำเนินการ';
+      }

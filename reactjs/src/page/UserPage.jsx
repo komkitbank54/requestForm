@@ -28,7 +28,7 @@ function UserPage({resetPagination}) {
         // อัพเดต approveStatus ตามสถานะล่าสุด
         const updatedData = fetchedData.map(item => ({
             ...item,
-            approveStatus: determineApproveStatus(item),
+            approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove),
         }));
 
         // โหลดข้อมูล
@@ -150,6 +150,8 @@ function UserPage({resetPagination}) {
             [id]: !prevRows[id]
         }));
     };
+
+
 
     return (
         <>
