@@ -5,10 +5,36 @@ const bodyParser = require('body-parser');
 const { sql, poolPromise } = require('./db');
 const cors = require('cors');
 const app = express();
+const nodemailer = require('nodemailer');
 
 // Middlewares
 app.use(bodyParser.json());
 app.use(cors());
+
+
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: 'gcapit0001@gmail.com', // อีเมล์ของคุณ
+//     pass: 'Gcapit123' // รหัสผ่านของคุณ
+//   }
+// });
+
+// const mailOptions = {
+//   from: 'gcapit0001@gmail.com',
+//   to: 'bank16211@gmail.com',
+//   subject: 'Sending Email using Node.js',
+//   text: 'That was easy!'
+// };
+
+// transporter.sendMail(mailOptions, function(error, info){
+//   if (error) {
+//     console.log(error);
+//   } else {
+//     console.log('Email sent: ' + info.response);
+//   }
+// });
+
 
 // Show
 app.get('/show', async (req, res) => {

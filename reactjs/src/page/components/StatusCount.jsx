@@ -12,7 +12,7 @@ const StatusCount = ({ data }) => {
     // โชว์ข้อมูล
     useEffect(() => {
         let approved = 0;
-        let pending = 0;
+        let pending = -1;
         let denied = 0;
     
         data.forEach(item => {

@@ -31,7 +31,6 @@ function ManagerPage({resetPagination}) {
             ...item,
             approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove),
           }));
-    
           // โหลดข้อมูล
           setData(updatedData);
         })
@@ -192,6 +191,27 @@ function ManagerPage({resetPagination}) {
       }));
   };
 
+// ส่งเมลล์
+const sendEmail = async () => {
+    const response = await fetch('/send-email', { // endpoint nodejs
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        // ข้อมูลเพิ่มเติม...
+      }),
+    });
+  
+    const responseData = await response.json();
+    if (response.ok) {
+      console.log('Email sent successfully:', responseData);
+    } else {
+      console.error('Failed to send email:', responseData);
+    }
+  };
+  
+
     return (
         <>
         <div className='flex justify-between shadow-lg bg-[#0e235c] text-[#f1c40f]'>
@@ -246,6 +266,10 @@ function ManagerPage({resetPagination}) {
                             <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
                                 <img src={require('./img/approve.png')} className='icon' alt="approve" />
                             </button>
+                            {item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve' ?
+                            (<button className="cursor-pointer" onClick={sendEmail}><img src={require('./img/send.png')} className='icon' alt="send" /></button>):
+                            (<button className="cursor-default"><img src={require('./img/nosend.png')} className='icon' alt="nosend" /></button>)
+                            }
                             <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleDeleteClick(item)}>
                                 <img src={require('./img/bin.png')} className='icon' alt="delete" />
                             </button>

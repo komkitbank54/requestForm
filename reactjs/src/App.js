@@ -19,7 +19,7 @@ function App() {
           <Route path="/manager" element={<PrivateRoute role="manager" component={ManagerPage} />} />
           <Route path="/audit" element={<PrivateRoute role="audit" component={AuditPage} />} />
           <Route path="/director" element={<PrivateRoute role="director" component={DirectorPage} />} />
-          <Route path="/" element={<UserPage />} />
+          <Route  path="/" element={<UserPage />} />
         </Routes>
       </Router>
     </UserProvider>
