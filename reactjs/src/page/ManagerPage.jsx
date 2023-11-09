@@ -16,6 +16,7 @@ import { determineApproveStatus } from './components/path/approsalStatus';
 // Import CSS
 import './css/table.css';
 import './fonts/fonts.css';
+import './css/tooltip.css';
 
 function ManagerPage({resetPagination}) {
     const [data, setData] = useState([]);
@@ -211,91 +212,96 @@ const sendEmail = async () => {
     }
   };
   
-
+  
     return (
         <>
-        <div className='flex justify-between shadow-lg bg-[#0e235c] text-[#f1c40f]'>
-            <header className='m-4 font-bold text-[28px]'>
-                การร้องขอการเปลี่ยนแปลง (Manager)
-            </header>
-            {/* <img src={require('./img/user.png')} alt='user' className='items-center h-[76px]'/> */}
-        </div>
-        <div className='flex my-8 relative'>
-            <StatusCount  data={data}/>
-            <div className='absolute right-4 bottom-0'>
-                <button className="userAddBtn items-center" onClick={() => handleAddClick()}>
-                    <img src={require('./img/add.png')} className='h-[22px] w-[22px] mr-1' alt="add" />
-                    กรอกข้อมูลร้องขอการเปลี่ยนแปลง
-                </button>
+            <div className='flex justify-between shadow-lg bg-[#0e235c] text-[#f1c40f]'>
+                <header className='m-4 font-bold text-[28px]'>
+                    การร้องขอการเปลี่ยนแปลง (Manager)
+                </header>
+                {/* <img src={require('./img/user.png')} alt='user' className='items-center h-[76px]'/> */}
             </div>
-        </div>
-        <div className="table">
-            {/* Table Header */}
-            <div className="tableHeader">
-                <div className="tableHRow">
-                    {['ชื่อผู้ร้องขอ', 'ฝ่าย', 'ประเภทการเปลี่ยนแปลง', 'วันที่ต้องการใช้งาน', 'ผู้ดำเนินงาน', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
-                    <div className='tableCell flex justify-center'>
-                    </div>
+            <div className='flex my-8 relative'>
+                <StatusCount  data={data}/>
+                <div className='absolute right-4 bottom-0'>
+                    <button className="userAddBtn items-center" onClick={() => handleAddClick()}>
+                        <img src={require('./img/add.png')} className='h-[22px] w-[22px] mr-1' alt="add" />
+                        กรอกข้อมูลร้องขอการเปลี่ยนแปลง
+                    </button>
                 </div>
             </div>
-
-            {/* Table Body */}
-            <div className="tableBody shadow-lg">
-                {currentItems.map(item => (
-                  <>
-                    <div className="tableRow" key={item.id} onClick={() => toggleRow(item.id)}>
-                        {/* {item.id} */}
-                        <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
-                        <div className="tableBodyCell">{item.jobGroup}</div>
-                        <div className="tableBodyCell">{item.changeType}</div>
-                        <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
-                            <div className="tableBodyCell">{item.manaName}</div>
-                        <div className="tableBodyCell flex justify-center relative">
-                            <button className="cursor-pointer icon absolute left-2" onClick={() => handleApproveClick(item)}>
-                              {/* <img src={require(item.approveStatus === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='' 
-                                alt={item.approveStatus === 'Approved' ? 'Approved' : 'Denied'} /> */}
-                            </button>
-                            <span className=''>
-                                {item.approveStatus}
-                            </span>
-                        </div>
-                        <div className="tableBodyCell flex justify-center space-x-6">
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)}>
-                                <img src={require('./img/submit.png')} className='icon' alt="submit" />
-                            </button>
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
-                                <img src={require('./img/approve.png')} className='icon' alt="approve" />
-                            </button>
-                            {item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve' ?
-                            (<button className="cursor-pointer" onClick={sendEmail}><img src={require('./img/send.png')} className='icon' alt="send" /></button>):
-                            (<button className="cursor-default"><img src={require('./img/nosend.png')} className='icon' alt="nosend" /></button>)
-                            }
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleDeleteClick(item)}>
-                                <img src={require('./img/bin.png')} className='icon' alt="delete" />
-                            </button>
+            <div className="table">
+                {/* Table Header */}
+                <div className="tableHeader">
+                    <div className="tableHRow">
+                        {['ชื่อผู้ร้องขอ', 'ฝ่าย', 'ประเภทการเปลี่ยนแปลง', 'วันที่ต้องการใช้งาน', 'ผู้ดำเนินงาน', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
+                        <div className='tableCell flex justify-center'>
+                            
                         </div>
                     </div>
-                    {/* Detail row - โชว์/ซ่อน based on state */}
-                    {expandedRows[item.id] && <DetailRow item={item} />}
-                  </>
-                ))}
-            </div>
+                </div>
 
-            {/* Table Footer */}
-            <div className='tableFooter'>
-                <Pagination 
-                    currentPage={currentPage} 
-                    totalPages={totalPages} 
-                    handlePrevPage={handlePrevPage}
-                    handleNextPage={handleNextPage}
-                    handlePageClick={handlePageClick}
-                />
+                {/* Table Body */}
+                <div className="tableBody shadow-lg">
+                    {currentItems.map(item => (
+                    <>
+                        <div className="tableRow" key={item.id} onClick={() => toggleRow(item.id)}>
+                            {/* {item.id} */}
+                            <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
+                            <div className="tableBodyCell">{item.jobGroup}</div>
+                            <div className="tableBodyCell">{item.changeType}</div>
+                            <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
+                                <div className="tableBodyCell">{item.manaName}</div>
+                            <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
+                            <div className="tableBodyCell flex justify-center space-x-6">
+                                <div className="tooltip">
+                                    <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)}>
+                                        <img src={require('./img/submit.png')} className='icon' alt="submit" />
+                                    </button>
+                                    <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
+                                </div>
+                                <div className="tooltip">
+                                    <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
+                                        <img src={require('./img/approve.png')} className='icon' alt="approve" />
+                                    </button>
+                                    <span className="tooltiptext">ลงชื่ออนุมัติ</span>
+                                </div>
+                                {item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve' ?
+                                (<div className="tooltip">
+                                    <button className="cursor-pointer" onClick={sendEmail}><img src={require('./img/send.png')} className='icon' alt="send" /></button>
+                                <span className="tooltiptext">ยืนยันส่งเมล์ให้กรรมการ</span>
+                                </div>):
+                                (<button className="cursor-default"><img src={require('./img/nosend.png')} className='icon' alt="nosend" /></button>)
+                                }
+                                <div className="tooltip">
+                                    <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleDeleteClick(item)}>
+                                        <img src={require('./img/bin.png')} className='icon' alt="delete" />
+                                    </button>
+                                    <span className="tooltiptext">ลบ</span>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Detail row - โชว์/ซ่อน based on state */}
+                        {expandedRows[item.id] && <DetailRow item={item} />}
+                    </>
+                    ))}
+                </div>
+
+                {/* Table Footer */}
+                <div className='tableFooter'>
+                    <Pagination 
+                        currentPage={currentPage} 
+                        totalPages={totalPages} 
+                        handlePrevPage={handlePrevPage}
+                        handleNextPage={handleNextPage}
+                        handlePageClick={handlePageClick}
+                    />
+                </div>
+                <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
+                <ItProcessModal isOpen={showITModal} onClose={() => setShowITModal(false)} onConfirm={handleConfirmIT} formData={formData} setFormData={setFormData}/>
+                <ManagerApproveModal isOpen={showManagerApproveModal} onClose={() => setShowManagerApproveModal(false)} onConfirm={handleConfirmManager} formData={formData} setFormData={setFormData}/>
+                <DeleteModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleConfirmDelete} />
             </div>
-            <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
-            <ItProcessModal isOpen={showITModal} onClose={() => setShowITModal(false)} onConfirm={handleConfirmIT} formData={formData} setFormData={setFormData}/>
-            <ManagerApproveModal isOpen={showManagerApproveModal} onClose={() => setShowManagerApproveModal(false)} onConfirm={handleConfirmManager} formData={formData} setFormData={setFormData}/>
-            <DeleteModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleConfirmDelete} />
-        </div>
         </>
     );
 }

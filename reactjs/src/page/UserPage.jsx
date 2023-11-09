@@ -189,13 +189,7 @@ function UserPage({resetPagination}) {
                                 <div className="tableBodyCell">{item.jobGroup}</div>
                                 <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
                                 <div className="tableBodyCell">{item.manaName}</div>
-                                <div className="tableBodyCell flex justify-center relative">
-                                    {/* <img src={require(item.headDepaApprove === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='icon' 
-                                    alt={item.headDepaApprove === 'Approved' ? 'Approved' : 'Denied'} /> */}
-                                    <span className=''>
-                                        {item.approveStatus}
-                                    </span>
-                                </div>
+                                <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
                             </div>
                             {/* Detail row - โชว์/ซ่อน based on state */}
                             {expandedRows[item.id] && <DetailRowUser item={item} />}

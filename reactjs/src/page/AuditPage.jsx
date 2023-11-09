@@ -178,19 +178,14 @@ function AuditPage({resetPagination}) {
                         <div className="tableBodyCell">{item.changeType}</div>
                         <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
                             <div className="tableBodyCell">{item.manaName}</div>
-                        <div className="tableBodyCell flex justify-center relative">
-                            <button className="cursor-pointer icon absolute left-2" onClick={() => handleApproveClick(item)}>
-                              {/* <img src={require(item.approveStatus === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='' 
-                                alt={item.approveStatus === 'Approved' ? 'Approved' : 'Denied'} /> */}
-                            </button>
-                            <span className=''>
-                                {item.approveStatus}
-                            </span>
-                        </div>
+                        <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
                         <div className="tableBodyCell flex justify-center space-x-6">
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
-                                <img src={require('./img/approve.png')} className='icon' alt="approve" />
-                            </button>
+                            <div className='tooltip'>
+                                <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
+                                    <img src={require('./img/approve.png')} className='icon' alt="approve" />
+                                </button>
+                                <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
+                            </div>
                         </div>
                     </div>
                     {/* Detail row - โชว์/ซ่อน based on state */}

@@ -5,35 +5,65 @@ const bodyParser = require('body-parser');
 const { sql, poolPromise } = require('./db');
 const cors = require('cors');
 const app = express();
-const nodemailer = require('nodemailer');
+const express = require('express');
+const { google } = require('googleapis');
+const bodyParser = require('body-parser');
 
 // Middlewares
 app.use(bodyParser.json());
 app.use(cors());
 
+// Email Send
+const oauth2Client = new google.auth.OAuth2(
+  '435295783755-8kgge5hb607uvmktjvjrhoo2761suhnl.apps.googleusercontent.com', // ClientID
+  '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', // Client Secret
+  'https://localhost:3001' // Redirect URL
+);
 
-// const transporter = nodemailer.createTransport({
-//   service: 'gmail',
-//   auth: {
-//     user: 'gcapit0001@gmail.com', // อีเมล์ของคุณ
-//     pass: 'Gcapit123' // รหัสผ่านของคุณ
-//   }
-// });
 
-// const mailOptions = {
-//   from: 'gcapit0001@gmail.com',
-//   to: 'bank16211@gmail.com',
-//   subject: 'Sending Email using Node.js',
-//   text: 'That was easy!'
-// };
+const app = express();
+app.use(bodyParser.json());
 
-// transporter.sendMail(mailOptions, function(error, info){
-//   if (error) {
-//     console.log(error);
-//   } else {
-//     console.log('Email sent: ' + info.response);
-//   }
-// });
+// This route is where the user gets redirected to after they have authenticated with Google
+app.get('/auth/google/callback', async (req, res) => {
+  const { code } = req.query;
+
+  if (code) {
+    try {
+      // Get the access token from the authorization code
+      const { tokens } = await oauth2Client.getToken(code);
+      oauth2Client.setCredentials(tokens);
+
+      // Save the tokens to your database, session, or cache
+      // ...
+
+      res.send('Authentication successful!');
+    } catch (error) {
+      console.error('Error obtaining access tokens', error);
+      res.status(500).send('Authentication failed');
+    }
+  } else {
+    res.status(400).send('Invalid request: no code provided');
+  }
+});
+
+// Your endpoint to initiate sending email
+app.post('/send-email', async (req, res) => {
+  // Here, retrieve the stored access token for the user from your storage
+  const { to, subject, text } = req.body;
+  // ...
+
+  // Use the access token to authenticate the email send request
+  // ...
+
+  res.send('Email send endpoint');
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
 
 
 // Show

@@ -76,31 +76,6 @@ function ITPage({resetPagination}) {
         setCurrentPage(pageNum);
     };
 
-
-    // Approve
-    const handleApproveClick = (item) => {
-        let approveValue = item.headDepaApprove === 'Approved' ? 'Denied' : 'Approved';
-        fetch('http://localhost:3000/approve', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                id: item.id,
-                headDepaApprove: approveValue,
-            }),
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.message === 'Record updated successfully!') {
-                setData(prevData => prevData.map(i => i.id === item.id ? { ...i, headDepaApprove: approveValue } : i));
-            } else {
-                console.error('Failed to approve item.', result.message);
-            }
-        })
-        .catch(err => console.error('Error:', err));
-    };
-
     // Add
     const [showAddModal, setShowAddModal] = useState(false);
 
@@ -201,19 +176,14 @@ function ITPage({resetPagination}) {
                             <div className="tableBodyCell">{item.changeType}</div>
                             <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
                             <div className="tableBodyCell">{item.manaName}</div>
-                            <div className="tableBodyCell flex justify-center relative">
-                                <button className="cursor-pointer icon absolute left-2" onClick={() => handleApproveClick(item)}>
-                                {/* <img src={require(item.approveStatus === 'Approved' ? './img/approved.png' :'./img/unapproved.png')} className='' 
-                                    alt={item.approveStatus === 'Approved' ? 'Approved' : 'Denied'} /> */}
-                                </button>
-                                <span className=''>
-                                    {item.approveStatus}
-                                </span>
-                            </div>
+                            <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
                             <div className="tableBodyCell flex justify-center space-x-6">
-                                <button className="cursor-pointer flex items-center" onClick={() => handleITClick(item)}>
-                                    <img src={require('./img/submit.png')} className='icon ml-1' alt="submit" />
-                                </button>
+                                <div className="tooltip">
+                                    <button className="cursor-pointer flex items-center" onClick={() => handleITClick(item)}>
+                                        <img src={require('./img/submit.png')} className='icon ml-1' alt="submit" />
+                                    </button>
+                                    <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
+                                </div>
                             </div>
                         </div>
                         {/* Detail row - โชว์/ซ่อน based on state */}

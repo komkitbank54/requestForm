@@ -3,8 +3,10 @@
 }
 
 .icon {
+    display: inline-block;
     height: auto;
     width: 26px;
+    max-width: 26px;
     transition: all 0.3s;
 }
 
@@ -46,6 +48,7 @@
     /* cursor: pointer; */
     white-space: nowrap;  
     transition: 0.3s ease-out;
+    align-items: center;
 }
 
 .tableRow:nth-child(odd) {
@@ -90,7 +93,7 @@
 }
 
 .tableBodyCell {
-    overflow: hidden;
+    overflow: visible;
     text-overflow: ellipsis;
 }
 
