@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'; // นำเข้า useNavigat
 import { UserContext } from '../context/UserContext';
 
 //import css
+import '../page/css/add.css'
 import '../page/css/input.css'
 import '../page/css/button.css'
 
@@ -80,8 +81,8 @@ function Login({ isOpen, onClose, onConfirm }) {
   };
 
   return (
-    <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center' onClick={handleOutsideClick}>
-      <div className='relative bg-white p-4 rounded-md'>
+    <div className='overlay' onClick={handleOutsideClick}>
+      <div className='login-modal'>
         <div className='flex justify-between'>
           <span className='text-[20px]'>ล็อคอินเข้าสู่ระบบ</span>
           <button className='' onClick={onCloseHandle}>X</button>

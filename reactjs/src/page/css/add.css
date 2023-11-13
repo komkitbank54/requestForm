@@ -1,3 +1,58 @@
+/* Modal CSS */
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    position: relative;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    width: 550px;
+    height: 500px;
+    animation: modal 0.45s;
+}
+  
+.login-modal {
+    position: relative;
+    background-color: white;
+    padding: 16px;
+    border-radius: 0.375rem;
+    animation: modal 0.45s;
+}
+
+@keyframes modal {
+    0%{
+      transform: scale(0);
+    }
+    100%{
+      transform: scale(1);
+    }
+}
+
+.modal-closing {
+    animation: closeModal 0.45s;
+  }  
+
+@keyframes closeModal {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(0);
+    }
+  }
+  
+
+/* Input CSS */
 .input-bew {
     margin-top: 16px;
     display: flex; /* ใช้ flexbox สำหรับการจัดวาง */

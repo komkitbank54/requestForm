@@ -3,6 +3,9 @@ import React from 'react';
 import displayStatus from './path/displayStatus';
 import moment from 'moment';
 
+// Import CSS
+import '../css/table.css'
+
 export const DetailRowUser = ({ item }) => {
     return (
     <div className="detailRow">

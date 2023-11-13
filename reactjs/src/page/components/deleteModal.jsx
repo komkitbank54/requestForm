@@ -7,8 +7,8 @@ function DeleteModal({ isOpen, onClose, onConfirm }) {
     }
 
     return (
-        <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center'>
-            <div className='bg-white p-4 rounded-md'>
+        <div className='overlay'>
+            <div className='login-modal'>
                 <p>ต้องการที่จะลบข้อมูลไหม?</p>
                 <div className='flex justify-end mt-4'>
                     <button onClick={onClose} className='mr-2'>Cancel</button>

@@ -253,7 +253,7 @@ const sendEmail = async () => {
                             <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
                                 <div className="tableBodyCell">{item.manaName}</div>
                             <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
-                            <div className="tableBodyCell flex justify-center space-x-6">
+                            <div className="tableBodyCell flex justify-center space-x-5">
                                 <div className="tooltip">
                                     <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)}>
                                         <img src={require('./img/submit.png')} className='icon' alt="submit" />
@@ -269,7 +269,7 @@ const sendEmail = async () => {
                                 {item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve' ?
                                 (<div className="tooltip">
                                     <button className="cursor-pointer" onClick={sendEmail}><img src={require('./img/send.png')} className='icon' alt="send" /></button>
-                                <span className="tooltiptext">ยืนยันส่งเมล์ให้กรรมการ</span>
+                                    <span className="tooltiptext">ยืนยันส่งเมล์ให้กรรมการ</span>
                                 </div>):
                                 (<button className="cursor-default"><img src={require('./img/nosend.png')} className='icon' alt="nosend" /></button>)
                                 }

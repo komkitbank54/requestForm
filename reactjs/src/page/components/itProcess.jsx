@@ -147,8 +147,8 @@ function ItProcessModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     }
 
     return (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center' onClick={handleOutsideClick}>
-            <div className='relative bg-white p-4 rounded-md w-[550px] h-[500px]'>
+        <div className='overlay' onClick={handleOutsideClick}>
+            <div className='modal'>
                 {/* Header */}
                 <button className='absolute top-3 right-4' onClick={onCloseHandle}>X</button>
                 <div className="flex justify-between font-bold text-[20px]">

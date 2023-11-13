@@ -35,7 +35,7 @@
   position: absolute;
   top: 50%;
   left: 100%; /* Arrow is right-aligned with the tooltip */
-  margin-top: -5px;
+  margin-top: -7px;
   border-width: 5px;
   border-style: solid;
   border-color: transparent transparent transparent black; /* Arrow pointing to the right */

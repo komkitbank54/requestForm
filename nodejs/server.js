@@ -5,42 +5,10 @@ const bodyParser = require('body-parser');
 const { sql, poolPromise } = require('./db');
 const cors = require('cors');
 const app = express();
-const { google } = require('googleapis');
 
 // Middlewares
 app.use(bodyParser.json());
 app.use(cors());
-
-// Email Send
-const oauth2Client = new google.auth.OAuth2(
-  '435295783755-8kgge5hb607uvmktjvjrhoo2761suhnl.apps.googleusercontent.com', // ClientID
-  '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', // Client Secret
-  'https://localhost:3001' // Redirect URL
-);
-
-async function getAccessToken() {
-    try {
-      const url = oauth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: ['https://www.googleapis.com/auth/gmail.send']
-      });
-  
-      // Redirect the user to this URL
-      // ...
-  
-      // Assuming 'code' is the authorization code you received from the redirect URI
-      const { tokens } = await oauth2Client.getToken(code);
-      oauth2Client.setCredentials(tokens);
-  
-      console.log(tokens.refresh_token);
-      // You can now use these tokens to send emails
-    } catch (error) {
-      console.error('Error obtaining access tokens', error);
-    }
-  }
-  
-  // Call the function to get the access token
-  getAccessToken();
 
 
 // Show
