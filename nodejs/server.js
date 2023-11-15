@@ -1,15 +1,41 @@
 // server.js
-
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const { sql, poolPromise } = require('./db');
 const cors = require('cors');
 const app = express();
+const nodemailer = require('nodemailer');
 
 // Middlewares
 app.use(bodyParser.json());
 app.use(cors());
 
+// Mail
+const transporter = nodemailer.createTransport({
+    service: 'SendinBlue',
+    auth: {
+        user: 'gcapit0002@gmail.com',
+        pass: process.env.SENDINBLUE_API_KEY
+    }
+});
+app.post('/send-email', (req, res) => {
+    const { to = 'bank16211@gmail.com', subject, text } = req.body;
+    const mailOptions = {
+        from: 'gcapit0002@gmail.com',
+        to,
+        subject,
+        text
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            res.status(500).send(error.toString());
+        } else {
+            res.status(200).send('Email sent: ' + info.response);
+        }
+    });
+});
 
 // Show
 app.get('/show', async (req, res) => {
@@ -32,6 +58,18 @@ app.get('/user', async (req, res) => {
         res.status(500).send(err.message);
     }
 });
+
+// Show Mail
+app.get('/showmail', async (req, res) => {
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request().query('SELECT * FROM [dbo].[mailsend]');
+        res.status(200).send(result.recordset);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
 
 // Add
 app.post('/add', (req, res) => {

@@ -2,11 +2,6 @@
   "short_name": "Request Website",
   "name": "Request for Change Website",
   "icons": [
-    {
-      "src": "logo.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
   ],
   "start_url": ".",
   "display": "standalone",

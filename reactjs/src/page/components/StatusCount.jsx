@@ -41,32 +41,32 @@ const StatusCount = ({ data }) => {
                 <label className='font-semibold text-[20px]'>คำร้องทั้งหมด</label>
                 <br/>
                 <label className='font-bold text-[32px] text-white'>{totalCount}</label>
-                <div class="glow-wrap">
-                  <i class="glow"></i>
+                <div className="glow-wrap">
+                  <i className="glow"></i>
                 </div>
             </div>
             <div className='status bg-green-200 shadow-lg w-[150px] text-center'>
                 <label className='font-semibold text-[20px]'>อนุมัติแล้ว</label>
                 <br/>
                 <label className='font-bold text-[32px] text-green-600'>{approvedCount}</label>
-                <div class="glow-wrap">
-                  <i class="glow"></i>
+                <div className="glow-wrap">
+                  <i className="glow"></i>
                 </div>
             </div>
             <div className='status bg-amber-100  shadow-lg w-[150px] text-center'>
                 <label className='font-semibold text-[19px]'>กำลังดำเนินการ</label>
                 <br/>
                 <label className='font-bold text-[32px] text-amber-600'>{pendingCount}</label>
-                <div class="glow-wrap">
-                  <i class="glow"></i>
+                <div className="glow-wrap">
+                  <i className="glow"></i>
                 </div>
             </div>
             <div className='status bg-red-100 shadow-lg w-[150px] text-center'>
                 <label className='font-semibold text-[20px]'>ไม่อนุมัติ</label>
                 <br/>
                 <label className='font-bold text-[32px] text-red-600'>{deniedCount}</label>
-                <div class="glow-wrap">
-                  <i class="glow"></i>
+                <div className="glow-wrap">
+                  <i className="glow"></i>
                 </div>
             </div>
     </>

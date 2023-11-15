@@ -1,7 +1,8 @@
 // ManagerPage.js
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import moment from 'moment';
+import emailjs from 'emailjs-com';
 
 // Import Components
 import DeleteModal from './components/deleteModal';
@@ -24,16 +25,17 @@ function ManagerPage({resetPagination}) {
 
     // โชว์ข้อมูล
     useEffect(() => {
-      fetch('http://localhost:3000/show')
+        emailjs.init('iA61oT4iJ5dTzO0Ql');
+        fetch('http://localhost:3000/show')
         .then(response => response.json())
         .then(fetchedData => {
-          // อัพเดต approveStatus ตามสถานะล่าสุด
-          const updatedData = fetchedData.map(item => ({
+            // อัพเดต approveStatus ตามสถานะล่าสุด
+            const updatedData = fetchedData.map(item => ({
             ...item,
             approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove),
-          }));
-          // โหลดข้อมูล
-          setData(updatedData);
+            }));
+            // โหลดข้อมูล
+            setData(updatedData);
         })
         .catch(err => console.error('Error fetching data:', err));
     }, []);
@@ -193,25 +195,22 @@ function ManagerPage({resetPagination}) {
   };
 
 // ส่งเมลล์
-const sendEmail = async () => {
-    const response = await fetch('/send-email', { // endpoint nodejs
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        // ข้อมูลเพิ่มเติม...
-      }),
-    });
-  
-    const responseData = await response.json();
-    if (response.ok) {
-      console.log('Email sent successfully:', responseData);
-    } else {
-      console.error('Failed to send email:', responseData);
-    }
-  };
-  
+const sendEmail = (item) => {
+    const templateParams = {
+        fromEmail:  'gcapit0002@gmail.com',
+        toEmail: 'gcapit0002@gmail.com',
+        message:    'ชื่อผู้ร้องขอ: ' + item.requestName + ' ' + item.requestSurname + 
+                    '\nฝ่าย:' + item.jobGroup
+    };
+
+    emailjs.send('service_yi0i5bn', 'template_6s6b257', templateParams)
+        .then((response) => {
+            console.log('Email successfully sent!', response.status, response.text);
+        })
+        .catch((err) => {
+            console.error('Failed to send email. Error:', err);
+        });
+};
   
     return (
         <>
@@ -268,7 +267,7 @@ const sendEmail = async () => {
                                 </div>
                                 {item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve' ?
                                 (<div className="tooltip">
-                                    <button className="cursor-pointer" onClick={sendEmail}><img src={require('./img/send.png')} className='icon' alt="send" /></button>
+                                    <button className="cursor-pointer" onClick={() => sendEmail(item)}><img src={require('./img/send.png')} className='icon' alt="send" /></button>
                                     <span className="tooltiptext">ยืนยันส่งเมล์ให้กรรมการ</span>
                                 </div>):
                                 (<button className="cursor-default"><img src={require('./img/nosend.png')} className='icon' alt="nosend" /></button>)

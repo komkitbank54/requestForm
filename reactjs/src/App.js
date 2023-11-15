@@ -8,6 +8,7 @@ import ManagerPage from './page/ManagerPage';
 import AuditPage from './page/AuditPage';
 import DirectorPage from './page/DirectorPage';
 import ITPage from './page/ITPage';
+import MailSend from './page/MailSend';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/audit" element={<PrivateRoute role="audit" component={AuditPage} />} />
           <Route path="/director" element={<PrivateRoute role="director" component={DirectorPage} />} />
           <Route  path="/" element={<UserPage />} />
+          <Route  path="/mail" element={<MailSend />} />
         </Routes>
       </Router>
     </UserProvider>
