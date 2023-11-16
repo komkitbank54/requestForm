@@ -35,7 +35,7 @@
 .tableHRow, .tableRow, .tableFRow, .detailRow {
     display: flex;
     width: auto;
-    min-width: 210mm;
+    min-width: 700px;
 }
 
 .detailRow {

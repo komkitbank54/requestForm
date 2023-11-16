@@ -25,7 +25,6 @@ function ManagerPage({resetPagination}) {
 
     // โชว์ข้อมูล
     useEffect(() => {
-        emailjs.init('iA61oT4iJ5dTzO0Ql');
         fetch('http://localhost:3000/show')
         .then(response => response.json())
         .then(fetchedData => {

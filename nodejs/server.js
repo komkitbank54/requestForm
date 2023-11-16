@@ -5,55 +5,83 @@ const bodyParser = require('body-parser');
 const { sql, poolPromise } = require('./db');
 const cors = require('cors');
 const app = express();
-const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
+const axios = require('axios');
+// const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
+
 
 // Middlewares
 app.use(bodyParser.json());
 app.use(cors());
 
-// Mailersend
-const fs = require('fs');
-const path = require('path');
-const mailerSend = new MailerSend({
-    apiKey: process.env.API_KEY,
-  });
-const sentFrom = new Sender("gcap0001@gcapgold.com", "GCAP IT");
+// TaxiMail
 app.post('/sendmail', async (req, res) => {
-  try {
-    const { emails, pdfs, subject, htmlContent, textContent } = req.body;
+    try {
+      for (const emailData of req.body) {
+        const payload = {
+          to: emailData.email,
+          template_key: '178746555923d0bc71',
+          custom_fields: {
+            // CF_ename: emailData.ename
+            CF_ename: 'ทดสอบการส่งอีเมลล์'
+          },
+        };
+  
+        await axios.post('https://api.taximail.com/v2/transactional/send', payload, {
+          headers: {
+            'Authorization': `Bearer ${process.env.TAXIMAIL_API_KEY}`
+          }
+        });
+      }
+      res.send({ message: 'Emails sent successfully' });
+    } catch (error) {
+      console.error('Error sending emails:', error);
+      res.status(500).send({ message: 'Error sending emails' });
+    }
+  });
 
-    const mailerRecipients = emails.map(email => new Recipient(email));
-    const attachments = pdfs.map(pdfName => {
-      const filePath = path.join(__dirname, '/pdfsave', pdfName);
-      if (!fs.existsSync(filePath)) {
-        // จัดการกรณีที่ไฟล์ไม่มีอยู่
-        console.log('File not found:', filePath);
-        return;
-      };
-      return {
-        content: fs.readFileSync(filePath).toString('base64'),
-        filename: pdfName,
-        id: 'attachment_id', // แต่ละไฟล์ควรมี id ที่ไม่ซ้ำกัน
-        disposition: 'attachment',
-      };
-    });
+// Mailersend
+// const fs = require('fs');
+// const path = require('path');
+// const mailerSend = new MailerSend({
+//     apiKey: process.env.API_KEY,
+//   });
+// const sentFrom = new Sender("gcap0001@gcapgold.com", "GCAP IT");
+// app.post('/sendmail', async (req, res) => {
+//   try {
+//     const { emails, pdfs, subject, htmlContent, textContent } = req.body;
 
-    const emailParams = new EmailParams()
-      .setFrom(sentFrom)
-      .setTo(mailerRecipients)
-      .setSubject(subject)
-      .setHtml(htmlContent)
-      .setText(textContent)
-      .setAttachments(attachments); // แนบไฟล์ PDF
+//     const mailerRecipients = emails.map(email => new Recipient(email));
+//     const attachments = pdfs.map(pdfName => {
+//       const filePath = path.join(__dirname, '/pdfsave', pdfName);
+//       if (!fs.existsSync(filePath)) {
+//         // จัดการกรณีที่ไฟล์ไม่มีอยู่
+//         console.log('File not found:', filePath);
+//         return;
+//       };
+//       return {
+//         content: fs.readFileSync(filePath).toString('base64'),
+//         filename: pdfName,
+//         id: 'attachment_id', // แต่ละไฟล์ควรมี id ที่ไม่ซ้ำกัน
+//         disposition: 'attachment',
+//       };
+//     });
 
-    // ส่งอีเมล
-    await mailerSend.email.send(emailParams);
-    res.json({ message: 'Email sent successfully' });
-  } catch (error) {
-    console.error('Failed to send email:', error);
-    res.status(500).json({ message: 'Failed to send email' });
-  }
-});
+//     const emailParams = new EmailParams()
+//       .setFrom(sentFrom)
+//       .setTo(mailerRecipients)
+//       .setSubject(subject)
+//       .setHtml(htmlContent)
+//       .setText(textContent)
+//       .setAttachments(attachments); // แนบไฟล์ PDF
+
+//     // ส่งอีเมล
+//     await mailerSend.email.send(emailParams);
+//     res.json({ message: 'Email sent successfully' });
+//   } catch (error) {
+//     console.error('Failed to send email:', error);
+//     res.status(500).json({ message: 'Failed to send email' });
+//   }
+// });
 
 // Show
 app.get('/show', async (req, res) => {
