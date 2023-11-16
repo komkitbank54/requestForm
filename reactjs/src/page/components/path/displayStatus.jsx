@@ -18,7 +18,7 @@ import React from 'react'
           case 'Pending':
             return (
                 <div className='flex items-center text-yellow-700'>
-                    รอดำเนินการ<img src={require('./img/pending.png')} className='smicon' alt="pending" />
+                    รออนุมัติ..<img src={require('./img/pending.png')} className='smicon' alt="pending" />
                 </div>
         )
           default:

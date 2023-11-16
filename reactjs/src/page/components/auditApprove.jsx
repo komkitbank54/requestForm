@@ -98,16 +98,6 @@ function AuditApproveModal({ isOpen, onClose, onConfirm, formData, setFormData }
     const currentDateTime = moment().format('DD MMMM YYYY');
     const currentDateFormat = moment().format('YYYY-MM-DD');
 
-    // หน้าต่อไป
-    const nextPage = () => {
-        setCurrentStep(prev => prev + 1);
-    }
-
-    // หน้าก่อน
-    const prevPage = () => {
-        setCurrentStep(prev => prev - 1);
-    }
-
     return (
         <div className='overlay' onClick={handleOutsideClick}>
             <div className='modal'>
@@ -150,20 +140,9 @@ function AuditApproveModal({ isOpen, onClose, onConfirm, formData, setFormData }
                 )}
                 {/* Footer */}
                 <div className='absolute bottom-2 right-2 flex space-x-1'>
-                    {currentStep > 1 && (
-                        <button onClick={prevPage} className='px-2 py-2 bg-blue-500 text-white rounded-md'>
-                            ย้อนกลับ
-                        </button>
-                    )}
-                    {currentStep < 1 ? (
-                        <button onClick={nextPage} className='px-3 py-2 bg-blue-500 text-white rounded-md'>
-                            ต่อไป
-                        </button>
-                    ) : (
-                        <button onClick={onConfirm} className='px-2 py-2 bg-green-500 text-white rounded-md'>
-                            ยืนยัน
-                        </button>
-                    )}
+                    <button onClick={onConfirm} className='px-2 py-2 bg-green-500 text-white rounded-md'>
+                        ยืนยัน
+                    </button>
                 </div>
             </div>
         </div>

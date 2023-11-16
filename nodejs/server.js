@@ -5,36 +5,54 @@ const bodyParser = require('body-parser');
 const { sql, poolPromise } = require('./db');
 const cors = require('cors');
 const app = express();
-const nodemailer = require('nodemailer');
+const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 
 // Middlewares
 app.use(bodyParser.json());
 app.use(cors());
 
-// Mail
-const transporter = nodemailer.createTransport({
-    service: 'SendinBlue',
-    auth: {
-        user: 'gcapit0002@gmail.com',
-        pass: process.env.SENDINBLUE_API_KEY
-    }
-});
-app.post('/send-email', (req, res) => {
-    const { to = 'bank16211@gmail.com', subject, text } = req.body;
-    const mailOptions = {
-        from: 'gcapit0002@gmail.com',
-        to,
-        subject,
-        text
-    };
+// Mailersend
+const fs = require('fs');
+const path = require('path');
+const mailerSend = new MailerSend({
+    apiKey: process.env.API_KEY,
+  });
+const sentFrom = new Sender("gcap0001@gcapgold.com", "GCAP IT");
+app.post('/sendmail', async (req, res) => {
+  try {
+    const { emails, pdfs, subject, htmlContent, textContent } = req.body;
 
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-            res.status(500).send(error.toString());
-        } else {
-            res.status(200).send('Email sent: ' + info.response);
-        }
+    const mailerRecipients = emails.map(email => new Recipient(email));
+    const attachments = pdfs.map(pdfName => {
+      const filePath = path.join(__dirname, '/pdfsave', pdfName);
+      if (!fs.existsSync(filePath)) {
+        // จัดการกรณีที่ไฟล์ไม่มีอยู่
+        console.log('File not found:', filePath);
+        return;
+      };
+      return {
+        content: fs.readFileSync(filePath).toString('base64'),
+        filename: pdfName,
+        id: 'attachment_id', // แต่ละไฟล์ควรมี id ที่ไม่ซ้ำกัน
+        disposition: 'attachment',
+      };
     });
+
+    const emailParams = new EmailParams()
+      .setFrom(sentFrom)
+      .setTo(mailerRecipients)
+      .setSubject(subject)
+      .setHtml(htmlContent)
+      .setText(textContent)
+      .setAttachments(attachments); // แนบไฟล์ PDF
+
+    // ส่งอีเมล
+    await mailerSend.email.send(emailParams);
+    res.json({ message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Failed to send email:', error);
+    res.status(500).json({ message: 'Failed to send email' });
+  }
 });
 
 // Show
@@ -83,8 +101,8 @@ app.post('/add', (req, res) => {
             [reqFinishDate], [implementPlan], [changeTest], [testInfo], [rollbackPlan], [rollbackInfo],
             [userContact], [headDepaName], [headDepaApprove], [headDepaComment],
             [headDepaDate], [headITName], [headITApprove], [headITEsti], [headITEstiComment], [headITDate], [auditName],
-            [auditApprove], [auditComment], [auditDate], [refITName1], [refITName2], [refITName3], [refITApprove],
-            [refITComment], [actualDate], [finishDate], [changeStatue], [changeResult], [userChange],
+            [auditApprove], [auditComment], [auditDate], [ceoName], [ceoApprove],
+            [ceoComment], [actualDate], [finishDate], [changeStatue], [changeResult], [userChange],
             [userChangeDate], [changeResName], [approveStatus]
         )
         VALUES(
@@ -95,8 +113,8 @@ app.post('/add', (req, res) => {
             @reqFinishDate, @implementPlan, @changeTest, @testInfo, @rollbackPlan, @rollbackInfo,
             @userContact, @headDepaName, 'Pending', @headDepaComment,
             @headDepaDate, @headITName, 'Pending', @headITEsti, @headITEstiComment, @headITDate, @auditName,
-            'Pending', @auditComment, @auditDate, @refITName1, @refITName2, @refITName3, 'Pending',
-            @refITComment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,
+            'Pending', @auditComment, @auditDate, @ceoName, 'Pending',
+            @ceoComment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,
             @userChangeDate, @changeResName, 'Pending'
         )`;
 
@@ -116,9 +134,9 @@ app.post('/add', (req, res) => {
         headDepaName: sql.VarChar, headDepaApprove: sql.VarChar, headDepaComment: sql.VarChar,
         headDepaDate: sql.DateTime, headITName: sql.VarChar, headITApprove: sql.VarChar, headITEsti: sql.VarChar,
         headITEstiComment: sql.VarChar, headITDate: sql.DateTime, auditName: sql.VarChar,
-        auditApprove: sql.VarChar, auditComment: sql.VarChar, auditDate: sql.VarChar, refITName1: sql.VarChar,
-        refITName2: sql.VarChar, refITName3: sql.VarChar, refITApprove: sql.VarChar,
-        refITComment: sql.VarChar, actualDate: sql.DateTime, finishDate: sql.DateTime,
+        auditApprove: sql.VarChar, auditComment: sql.VarChar, auditDate: sql.VarChar, ceoName: sql.VarChar,
+        ceoApprove: sql.VarChar,
+        ceoComment: sql.VarChar, actualDate: sql.DateTime, finishDate: sql.DateTime,
         changeStatue: sql.VarChar, changeResult: sql.VarChar, userChange: sql.VarChar,
         userChangeDate: sql.DateTime, changeResName: sql.VarChar, approveStatus: sql.VarChar
     };
@@ -318,6 +336,51 @@ app.put('/auditapprove', async (req, res) => {
     }
 });
 
+// CEO Approve
+app.put('/ceoapprove', async (req, res) => {
+    const id = req.body.id;
+
+    if (!id) {
+        return res.status(400).send({ message: 'id is required in request body.' });
+    }
+
+    // Set approveStatus based on auditApprove
+    const approveStatus = req.body.ceoApprove === 'Deny' ? 'Deny' : 'Pending';
+
+    const updateQuery = `
+        UPDATE [dbo].[changeform]
+        SET 
+            [ceoName] = @ceoName,
+            [ceoApprove] = @ceoApprove,
+            [ceoComment] = @ceoComment,
+            [ceoDate] = @ceoDate,
+            [approveStatus] = 'Approve'
+        WHERE id = @id`;
+
+    try {
+        const pool = await poolPromise;
+        const request = new sql.Request(pool);
+        
+        request.input('id', sql.Int, id);
+        request.input('ceoName', sql.VarChar, req.body.ceoName);
+        request.input('ceoApprove', sql.VarChar, req.body.ceoApprove);
+        request.input('ceoComment', sql.VarChar, req.body.ceoComment);
+        request.input('ceoDate', sql.Date, req.body.ceoDate);
+        request.input('approveStatus', sql.VarChar, approveStatus);
+
+        
+        const result = await request.query(updateQuery);
+
+        if (result.rowsAffected[0] === 0) {
+            res.status(404).send({ message: 'Record not found' });
+        } else {
+            res.status(200).send({ message: 'Record updated successfully!' });
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
 // Edit
 app.put('/edit', async (req, res) => {
     const id = req.body.id;
@@ -371,11 +434,9 @@ app.put('/edit', async (req, res) => {
             [auditName] = @auditName,
             [auditComment] = @auditComment,
             [auditDate] = @auditDate,
-            [refITName1] = @refITName1,
-            [refITName2] = @refITName2,
-            [refITName3] = @refITName3,
-            [refITApprove] = @refITApprove,
-            [refITComment] = @refITComment,
+            [ceoName] = @ceoName,
+            [ceoApprove] = @ceoApprove,
+            [ceoComment] = @ceoComment,
             [actualDate] = @actualDate,
             [finishDate] = @finishDate,
             [changeStatue] = @changeStatue,
@@ -432,11 +493,9 @@ app.put('/edit', async (req, res) => {
         request.input('auditName', sql.VarChar, req.body.auditName);
         request.input('auditComment', sql.VarChar, req.body.auditComment);
         request.input('auditDate', sql.Date, req.body.auditDate);
-        request.input('refITName1', sql.VarChar, req.body.refITName1);
-        request.input('refITName2', sql.VarChar, req.body.refITName2);
-        request.input('refITName3', sql.VarChar, req.body.refITName3);
-        request.input('refITApprove', sql.VarChar, req.body.refITApprove);
-        request.input('refITComment', sql.VarChar, req.body.refITComment);
+        request.input('ceoName', sql.VarChar, req.body.refITName1);
+        request.input('ceoApprove', sql.VarChar, req.body.refITApprove);
+        request.input('ceoComment', sql.VarChar, req.body.refITComment);
         request.input('actualDate', sql.Date, req.body.actualDate);
         request.input('finishDate', sql.Date, req.body.finishDate);
         request.input('changeStatue', sql.VarChar, req.body.changeStatue);

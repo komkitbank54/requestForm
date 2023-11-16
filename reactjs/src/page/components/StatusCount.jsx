@@ -13,17 +13,17 @@ const StatusCount = ({ data }) => {
     // โชว์ข้อมูล
     useEffect(() => {
         let approved = 0;
-        let pending = -1;
+        let pending = 0;
         let denied = 0;
     
         data.forEach(item => {
-            if (item.headITApprove === 'Approve' && item.headDepaApprove === 'Approve' && item.auditApprove === 'Approve') {
+            if (item.approveStatus === 'ได้รับการอนุมัติ') {
               approved++;
             }
-            if (['รอหัวหน้าฝ่ายอนุมัติ', 'รอฝ่ายกำกับภายในอนุมัติ', 'รอคณะกรรมการอนุมัติ', 'รอผู้ดำเนินการ', 'กำลังดำเนินการ'].includes(item.approveStatus)) {
-                pending++;
+            if (item.approveStatus === 'กำลังดำเนินการ'|| item.approveStatus === 'รอผู้ดำเนินการ'|| item.approveStatus === 'รอหัวหน้าฝ่ายอนุมัติ' || item.approveStatus === 'รอฝ่ายกำกับอนุมัติ' || item.approveStatus === 'รอคณะกรรมการอนุมัติ') {
+              pending++;
             }
-            if (item.headITApprove === 'Deny' || item.headDepaApprove === 'Deny' || item.auditApprove === 'Deny') {
+            if (item.approveStatus === 'ไม่ได้รับการอนุมัติ') {
               denied++;
             }
         });

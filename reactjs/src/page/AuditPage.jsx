@@ -27,7 +27,7 @@ function AuditPage({resetPagination}) {
           // อัพเดต approveStatus ตามสถานะล่าสุด
           const updatedData = fetchedData.map(item => ({
             ...item,
-            approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove),
+            approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove, item.ceoApprove),
           }));
     
           // โหลดข้อมูล
@@ -111,7 +111,7 @@ function AuditPage({resetPagination}) {
     };
 
     const handleConfirmAudit = () => {
-        fetch('http://localhost:3000/auditapprove', {
+        fetch('http://localhost:3000/ceoapprove', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

@@ -32,6 +32,7 @@ export const DetailRowUser = ({ item }) => {
             <p className='flex space-x-2'><label className='font-bold'>ผู้ดำเนินการ</label> {displayStatus(item.headDepaApprove)}</p>
             <p className='flex space-x-2'><label className='font-bold'>หัวหน้าฝ่ายเทคโนโลยี</label> {displayStatus(item.headITApprove)}</p>
             <p className='flex space-x-2'><label className='font-bold'>ฝ่ายกำกับภายใน</label> {displayStatus(item.auditApprove)}</p>
+            <p className='flex space-x-2'><label className='font-bold'>คณะกรรมการ</label> {displayStatus(item.ceoApprove)}</p>
         </div>
     </div>
     );
@@ -71,6 +72,7 @@ export const DetailRow = ({ item }) => {
                   <p className='flex space-x-2'><label className='font-bold'>ผู้ดำเนินการ</label> {displayStatus(item.headDepaApprove)}</p>
                   <p className='flex space-x-2'><label className='font-bold'>หัวหน้าฝ่ายเทคโนโลยี</label> {displayStatus(item.headITApprove)}</p>
                   <p className='flex space-x-2'><label className='font-bold'>ฝ่ายกำกับภายใน</label> {displayStatus(item.auditApprove)}</p>
+                  <p className='flex space-x-2'><label className='font-bold'>คณะกรรมการ</label> {displayStatus(item.ceoApprove)}</p>
             </div>
             <div className='detailCell'>
             </div>

@@ -3,6 +3,7 @@ import './css/mailtable.css';
 
 function MailSend() {
     const [data, setData] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
 
     useEffect(() => {
         fetch('http://localhost:3000/showmail')
@@ -17,6 +18,7 @@ function MailSend() {
         .catch(err => console.error('Error fetching data:', err));
     }, []);
 
+    // checkbox เลือก id ของ row นั้นๆ
     const handleCheck = (id) => {
         const newData = data.map(item => {
             if (item.id === id) {
@@ -25,11 +27,55 @@ function MailSend() {
             return item;
         });
         setData(newData);
+        setSelectAll(newData.every(item => item.isChecked));
     };
 
-    const handleAlert = () => {
-        const selectedIds = data.filter(item => item.isChecked).map(item => item.id);
-        alert("Selected IDs: " + selectedIds.join(", "));
+    // Action กดปุ่มยืนยัน
+    const handleSendMail = () => {
+        const selectedRecipients = data.filter(item => item.isChecked).map(item => item.email);
+        const selectedItems = data.filter(item => item.isChecked);
+        const selectedEmails = selectedItems.map(item => item.email);
+        const pdfFiles = selectedItems.map(item => item.epdf);
+      
+        if (selectedRecipients.length === 0) {
+          alert("No recipients selected");
+          return;
+        }
+      
+        fetch('http://localhost:3000/sendmail', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            emails: selectedEmails,
+            pdfs: pdfFiles,
+            recipients: selectedRecipients,
+            subject: "This is a Subject",
+            htmlContent: "<strong>This is the HTML content</strong>",
+            textContent: "This is the text content"
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+        })
+        .catch(err => {
+          console.error('Error sending email:', err);
+          alert('Failed to send email');
+        });
+      };
+      
+
+    // เลือกทั้งหมด
+    const handleSelectAll = () => {
+        const newSelectAll = !selectAll;
+        const newData = data.map(item => ({
+            ...item,
+            isChecked: newSelectAll
+        }));
+        setData(newData);
+        setSelectAll(newSelectAll);
     };
 
     return (
@@ -37,8 +83,16 @@ function MailSend() {
             <div className='table'>
                 <div className='thead'>
                     <div className='trow'>
-                        <div className='thcell'>Check</div>
+                        <div className='thcell'>
+                            <input
+                                type="checkbox"
+                                checked={selectAll}
+                                onChange={handleSelectAll}
+                            />
+                            All
+                        </div>
                         <div className='thcell'>ID</div>
+                        <div className='thcell'>Code</div>
                         <div className='thcell'>Name</div>
                         <div className='thcell'>Email</div>
                     </div>
@@ -54,13 +108,14 @@ function MailSend() {
                                 />
                             </div>
                             <div className='tdcell'>{item.id}</div>
+                            <div className='tdcell'>{item.ecode}</div>
                             <div className='tdcell'>{item.ename}</div>
                             <div className='tdcell'>{item.email}</div>
                         </div>
                     ))}
                 </div>
             </div>
-            <button onClick={handleAlert}>Show Selected IDs</button>
+            <button className='justify-center sendbtn' onClick={handleSendMail}>Send Email</button>
         </div>
     );
 }
