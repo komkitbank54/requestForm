@@ -51,42 +51,6 @@ function MailSend() {
           });
       };
       
-    // Action กดปุ่มยืนยัน (MailerSend)
-    // const handleSendMail = () => {
-    //     const selectedRecipients = data.filter(item => item.isChecked).map(item => item.email);
-    //     const selectedItems = data.filter(item => item.isChecked);
-    //     const selectedEmails = selectedItems.map(item => item.email);
-    //     const pdfFiles = selectedItems.map(item => item.epdf);
-      
-    //     if (selectedRecipients.length === 0) {
-    //       alert("No recipients selected");
-    //       return;
-    //     }
-      
-    //     fetch('http://localhost:3000/sendmail', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify({
-    //         emails: selectedEmails,
-    //         pdfs: pdfFiles,
-    //         recipients: selectedRecipients,
-    //         subject: "This is a Subject",
-    //         htmlContent: "<strong>This is the HTML content</strong>",
-    //         textContent: "This is the text content"
-    //       }),
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //       alert(data.message);
-    //     })
-    //     .catch(err => {
-    //       console.error('Error sending email:', err);
-    //       alert('Failed to send email');
-    //     });
-    //   };
-
     // เลือกทั้งหมด
     const handleSelectAll = () => {
         const newSelectAll = !selectAll;

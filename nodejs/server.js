@@ -38,51 +38,7 @@ app.post('/sendmail', async (req, res) => {
       res.status(500).send({ message: 'Error sending emails' });
     }
   });
-
-// Mailersend
-// const fs = require('fs');
-// const path = require('path');
-// const mailerSend = new MailerSend({
-//     apiKey: process.env.API_KEY,
-//   });
-// const sentFrom = new Sender("gcap0001@gcapgold.com", "GCAP IT");
-// app.post('/sendmail', async (req, res) => {
-//   try {
-//     const { emails, pdfs, subject, htmlContent, textContent } = req.body;
-
-//     const mailerRecipients = emails.map(email => new Recipient(email));
-//     const attachments = pdfs.map(pdfName => {
-//       const filePath = path.join(__dirname, '/pdfsave', pdfName);
-//       if (!fs.existsSync(filePath)) {
-//         // จัดการกรณีที่ไฟล์ไม่มีอยู่
-//         console.log('File not found:', filePath);
-//         return;
-//       };
-//       return {
-//         content: fs.readFileSync(filePath).toString('base64'),
-//         filename: pdfName,
-//         id: 'attachment_id', // แต่ละไฟล์ควรมี id ที่ไม่ซ้ำกัน
-//         disposition: 'attachment',
-//       };
-//     });
-
-//     const emailParams = new EmailParams()
-//       .setFrom(sentFrom)
-//       .setTo(mailerRecipients)
-//       .setSubject(subject)
-//       .setHtml(htmlContent)
-//       .setText(textContent)
-//       .setAttachments(attachments); // แนบไฟล์ PDF
-
-//     // ส่งอีเมล
-//     await mailerSend.email.send(emailParams);
-//     res.json({ message: 'Email sent successfully' });
-//   } catch (error) {
-//     console.error('Failed to send email:', error);
-//     res.status(500).json({ message: 'Failed to send email' });
-//   }
-// });
-
+  
 // Show
 app.get('/show', async (req, res) => {
     try {

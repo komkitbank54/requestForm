@@ -176,7 +176,7 @@ function UserPage({resetPagination}) {
                 {/* Table Header */}
                 <div className="tableHeader">
                     <div className="tableHRow">
-                        {['ชื่อผู้ร้องขอ', 'ฝ่ายงาน', 'วันที่ต้องการใช้งาน', 'ผู้ดำเนินการ', 'สถานะ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
+                        {['ชื่อผู้ร้องขอ', 'ฝ่ายงาน', 'วันที่ต้องการใช้งาน', 'ชื่อผู้ดำเนินงาน', 'สถานะดำเนินการ', 'สถานะการอนุมัติ'].map(header => <div className="tableCell" key={header}>{header}</div>)}
                     </div>
                 </div>
                 {/* Table Body */}
@@ -189,6 +189,7 @@ function UserPage({resetPagination}) {
                                 <div className="tableBodyCell">{item.jobGroup}</div>
                                 <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
                                 <div className="tableBodyCell">{item.manaName}</div>
+                                <div className="tableBodyCell">{item.changeStatue}</div>
                                 <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
                             </div>
                             {/* Detail row - โชว์/ซ่อน based on state */}
