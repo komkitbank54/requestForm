@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const { sql, poolPromise } = require('./db');
 const cors = require('cors');
 const app = express();
-const axios = require('axios');
 // const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 
 

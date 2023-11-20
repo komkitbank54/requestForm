@@ -1,6 +1,8 @@
+// SendMail.jsx
 import React, { useState, useEffect } from 'react';
 import './css/mailtable.css';
-import axios from 'axios';
+import moment from 'moment';
+import 'moment/locale/th';
 
 function MailSend() {
     const [data, setData] = useState([]);
@@ -31,25 +33,39 @@ function MailSend() {
         setSelectAll(newData.every(item => item.isChecked));
     };
 
+    moment.locale('th');
+    const currentDate = moment().add(543, 'years').format('DD/MM/YYYY');
+    const currentMonth = moment().add(543, 'years').format('MMMM YYYY');
+
     // Action กดปุ่มยืนยัน (Taximail)
-    const handleSendMail = () => {
-        const selectedData = data.filter(item => item.isChecked).map(item => {
-          return {
-            email: item.email,
+    const handleSendMail = async () => {
+        const selectedData = data.filter(item => item.isChecked).map(item => ({
             ename: item.ename,
-            templateKey: '178746555923d0bc71', // แทนที่ด้วย Template Key ของคุณ
-            // ... ข้อมูลอื่นๆ ที่จำเป็น
-          };
-        });
-      
-        axios.post('http://localhost:3000/sendmail', selectedData)
-          .then(response => {
-            console.log('Emails sent:', response);
-          })
-          .catch(error => {
-            console.error('Error sending emails:', error);
-          });
-      };
+            email: item.email,
+            epdf: item.epdf,
+            edate: currentDate,
+            emonth: currentMonth,
+            attachment: {
+                filename: item.epdf,
+                path: `http://localhost:8080/pdf/${item.epdf}`
+            }
+        }));
+        try {
+            for (const emailDetails of selectedData) {
+                await fetch('http://localhost:8080/send_email.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(emailDetails) // Send only emailDetails
+                });
+            }
+            console.log("Emails sent");
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
       
     // เลือกทั้งหมด
     const handleSelectAll = () => {

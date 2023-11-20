@@ -28,6 +28,11 @@ export const DetailRowUser = ({ item }) => {
         <div className="detailCell">
             <p><label className='font-bold'>ผู้ช่วยดำเนินการ</label> {item.mana2Name}</p>
         </div>
+        <div className='detailCell'>
+            <p><label className='font-bold'>วันที่เริ่มดำเนินการ</label> {item.userChangeDate}</p>
+            <p><label className='font-bold'>วันที่คาดว่าจะเสร็จ</label> {item.finishDate}</p>
+            <p><label className='font-bold'>ผลการเปลี่ยนแปลง</label> {item.changeResult}</p>
+        </div>
         <div className="detailCell text-right">
             <p className='flex space-x-2'><label className='font-bold'>ผู้ดำเนินการ</label> {displayStatus(item.headDepaApprove)}</p>
             <p className='flex space-x-2'><label className='font-bold'>หัวหน้าฝ่ายเทคโนโลยี</label> {displayStatus(item.headITApprove)}</p>
@@ -67,6 +72,11 @@ export const DetailRow = ({ item }) => {
                 <p><label className='font-bold'>ผู้ช่วยดำเนินการ</label> {item.mana2Name}</p>
                 <p><label className='font-bold'>วันที่คาดว่าจะดำเนินการ</label> {moment(item.reqFinishDate).format('DD/MM/YYYY')}</p>
                 <p><label className='font-bold'>แผนดำเนินการ</label> {item.implementPlan}</p>
+            </div>
+            <div className='detailCell'>
+                <p><label className='font-bold'>วันที่เริ่มดำเนินการ</label> {item.userChangeDate}</p>
+                <p><label className='font-bold'>วันที่คาดว่าจะเสร็จ</label> {item.finishDate}</p>
+                <p><label className='font-bold'>ผลการเปลี่ยนแปลง</label> {item.changeResult}</p>
             </div>
             <div className="detailCellA">
                   <p className='flex space-x-2'><label className='font-bold'>ผู้ดำเนินการ</label> {displayStatus(item.headDepaApprove)}</p>
