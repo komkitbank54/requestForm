@@ -151,7 +151,21 @@ function UserPage({resetPagination}) {
         }));
     };
 
-
+    const TableBody = currentItems.map(item => (
+        <React.Fragment key={item.id}>
+            <div className="tableRow" onClick={() => toggleRow(item.id)}>
+                {/* {item.id} */}
+                <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
+                <div className="tableBodyCell">{item.jobGroup}</div>
+                <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
+                <div className="tableBodyCell">{item.manaName}</div>
+                <div className="tableBodyCell">{item.changeStatue}</div>
+                <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
+            </div>
+            {/* Detail row - โชว์/ซ่อน based on state */}
+            {expandedRows[item.id] && <DetailRowUser item={item} />} {/* DetailRow doesn't need key */}
+        </React.Fragment>   
+    ));
 
     return (
         <>
@@ -181,22 +195,7 @@ function UserPage({resetPagination}) {
                 </div>
                 {/* Table Body */}
                 <div className="tableBody shadow-lg">
-                    {currentItems.map(item => (
-                        <>
-                            <div className="tableRow" key={item.id} onClick={() => toggleRow(item.id)}>
-                                {/* {item.id} */}
-                                <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
-                                <div className="tableBodyCell">{item.jobGroup}</div>
-                                <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
-                                <div className="tableBodyCell">{item.manaName}</div>
-                                <div className="tableBodyCell">{item.changeStatue}</div>
-                                <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
-
-                            </div>
-                            {/* Detail row - โชว์/ซ่อน based on state */}
-                            {expandedRows[item.id] && <DetailRowUser item={item} />}
-                        </>
-                    ))}
+                    {TableBody}
                 </div>
 
                 {/* Table Footer */}

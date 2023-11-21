@@ -140,6 +140,39 @@ function AuditPage({resetPagination}) {
       }));
   };
 
+  const TableBody = currentItems.map(item => (
+    <React.Fragment key={item.id}>
+        <div className="tableRow" onClick={() => toggleRow(item.id)}>
+        {/* {item.id} */}
+            <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
+            <div className="tableBodyCell">{item.jobGroup}</div>
+            <div className="tableBodyCell">{item.changeType}</div>
+            <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
+            <div className="tableBodyCell">{item.manaName}</div>
+            <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
+            <div className="tableBodyCell flex justify-center space-x-6">
+                <div className='tooltip'>
+                    {item.headITApprove === 'Pending' ? 
+                        (<div>
+                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
+                                <img src={require('./img/approve.png')} className='icon' alt="approve" />
+                            </button>
+                            <span className="tooltiptext">ลงชื่ออนุมัติ</span>
+                        </div>):
+                        (<div>
+                            <button className="icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)} disabled>
+                                <img src={require('./img/noapprove.png')} className='icon' alt="approve" />
+                            </button>
+                        </div>)
+                    }
+                </div>
+            </div>
+        </div>
+        {/* Detail row - โชว์/ซ่อน based on state */}
+        {expandedRows[item.id] && <DetailRow item={item} />} {/* DetailRow doesn't need key */}
+        </React.Fragment>
+    ));
+
     return (
         <>
         <div className='flex justify-between shadow-lg bg-[#0e235c] text-[#f1c40f]'>
@@ -169,38 +202,7 @@ function AuditPage({resetPagination}) {
 
             {/* Table Body */}
             <div className="tableBody shadow-lg">
-                {currentItems.map(item => (
-                  <>
-                    <div className="tableRow" key={item.id} onClick={() => toggleRow(item.id)}>
-                        {item.id}
-                        <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
-                        <div className="tableBodyCell">{item.jobGroup}</div>
-                        <div className="tableBodyCell">{item.changeType}</div>
-                        <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
-                        <div className="tableBodyCell">{item.manaName}</div>
-                        <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
-                        <div className="tableBodyCell flex justify-center space-x-6">
-                            <div className='tooltip'>
-                                {item.headITApprove === 'Pending' ? 
-                                    (<div>
-                                        <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
-                                            <img src={require('./img/approve.png')} className='icon' alt="approve" />
-                                        </button>
-                                        <span className="tooltiptext">ลงชื่ออนุมัติ</span>
-                                    </div>):
-                                    (<div>
-                                        <button className="icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)} disabled>
-                                            <img src={require('./img/noapprove.png')} className='icon' alt="approve" />
-                                        </button>
-                                    </div>)
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    {/* Detail row - โชว์/ซ่อน based on state */}
-                    {expandedRows[item.id] && <DetailRow item={item} />}
-                  </>
-                ))}
+                {TableBody}
             </div>
 
             {/* Table Footer */}

@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const { sql, poolPromise } = require('./db');
 const cors = require('cors');
 const app = express();
+const crypto = require('crypto');
 // const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 
 
@@ -37,7 +38,76 @@ app.post('/sendmail', async (req, res) => {
       res.status(500).send({ message: 'Error sending emails' });
     }
   });
-  
+
+  // Token Generate
+  function generateToken() {
+      return crypto.randomBytes(32).toString('hex');
+  }
+  app.post('/gentoken', async (req, res) => {
+    const { id, emailAddress } = req.body;
+    const token = generateToken();
+
+    try {
+        // อัพเดต token ในฐานข้อมูล
+        const pool = await poolPromise;
+        await pool.request()
+            .input('token', sql.VarChar, token)
+            .input('id', sql.Int, id)
+            .query('UPDATE [dbo].[changeform] SET token = @token WHERE id = @id');
+
+        // สร้าง confirmation link
+        const confirmationLink = `http://localhost:3000/mailapprove?id=${id}&token=${token}`;
+
+        res.json({ confirmationLink, message: 'Token generated successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
+    }
+});
+
+
+// Mail Approve
+app.get('/mailapprove', async (req, res) => {
+    const { token, id } = req.query; // Get 'token' and 'id' from query string
+    if (!id || !token) {
+        return res.status(400).send({ message: 'ID and token are required in query string.' });
+    }
+
+    try {
+        // Verify the token first
+        const pool = await poolPromise;
+        const verificationResult = await pool.request()
+            .input('id', sql.Int, id)
+            .input('token', sql.VarChar, token)
+            .query('SELECT * FROM [dbo].[changeform] WHERE id = @id AND token = @token');
+
+        if (verificationResult.recordset.length === 0) {
+            return res.status(401).send({ message: 'Invalid token or ID' });
+        }
+
+        // Token is valid, proceed to update the ref1Approve field
+        const updateQuery = `
+            UPDATE [dbo].[changeform]
+            SET 
+                ref1Approve = 'Approved'
+            WHERE id = @id`;
+
+        const updateResult = await pool.request()
+            .input('id', sql.Int, id)
+            .query(updateQuery);
+
+        if (updateResult.rowsAffected[0] === 0) {
+            res.status(404).send({ message: 'Record not found' });
+        } else {
+            res.status(200).send({ message: 'Record updated successfully!' });
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+
+
 // Show
 app.get('/show', async (req, res) => {
     try {
@@ -84,7 +154,7 @@ app.post('/add', (req, res) => {
             [reqFinishDate], [implementPlan], [changeTest], [testInfo], [rollbackPlan], [rollbackInfo],
             [userContact], [headDepaName], [headDepaApprove], [headDepaComment],
             [headDepaDate], [headITName], [headITApprove], [headITEsti], [headITEstiComment], [headITDate], [auditName],
-            [auditApprove], [auditComment], [auditDate], [ref1Name], [ref1Approve],
+            [auditApprove], [auditComment], [auditDate], [ref1Name], [ref1Approve], [ref2Approve],
             [ref1Comment], [finishDate], [changeStatue], [changeResult], [userChange],
             [changeResName], [approveStatus]
         )
@@ -96,7 +166,7 @@ app.post('/add', (req, res) => {
             @reqFinishDate, @implementPlan, @changeTest, @testInfo, @rollbackPlan, @rollbackInfo,
             @userContact, @headDepaName, 'Pending', @headDepaComment,
             @headDepaDate, @headITName, 'Pending', @headITEsti, @headITEstiComment, @headITDate, @auditName,
-            'Pending', @auditComment, @auditDate, @ref1Name, 'Pending',
+            'Pending', @auditComment, @auditDate, @ref1Name, 'Pending', 'Pending',
             @ref1Comment, @finishDate, 'อยู่ในระหว่างดำเนินการ..', @changeResult, @userChange,
             @changeResName, 'Pending'
         )`;
@@ -118,7 +188,7 @@ app.post('/add', (req, res) => {
         headDepaDate: sql.DateTime, headITName: sql.VarChar, headITApprove: sql.VarChar, headITEsti: sql.VarChar,
         headITEstiComment: sql.VarChar, headITDate: sql.DateTime, auditName: sql.VarChar,
         auditApprove: sql.VarChar, auditComment: sql.VarChar, auditDate: sql.VarChar, ref1Name: sql.VarChar,
-        ref1Approve: sql.VarChar,
+        ref1Approve: sql.VarChar, ref2Approve: sql.VarChar,
         ref1Comment: sql.VarChar, finishDate: sql.DateTime,
         changeStatue: sql.VarChar, changeResult: sql.VarChar, userChange: sql.VarChar,
         changeResName: sql.VarChar, approveStatus: sql.VarChar

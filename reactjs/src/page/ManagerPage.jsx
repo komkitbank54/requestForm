@@ -166,42 +166,70 @@ function ManagerPage({resetPagination}) {
 
     // Mail Send
     const [showMailModal, setShowMailModal] = useState(false);
-    const [itemToMail, setItemToMail] = useState(null);
 
     const handleMailClick = (item) => {
-        setItemToMail(item);
+        // อัปเดต formData ด้วยข้อมูลของแถวที่เลือก
+        setFormData({
+            ...formData,
+            id: item.id, // ตั้งค่า id ของแถวที่เลือก
+            // คุณอาจต้องการอัปเดตฟิลด์อื่นๆ ที่จำเป็นสำหรับการส่งเมล
+        });
         setShowMailModal(true);
     };
     const handleSendMail = async () => {
-        if (!itemToMail) {
-            console.error('No item selected for sending mail');
-            return;
-        }
-    
-        const emailDetails = {
-            refName: 'Tester Name',  // Replace with actual name
-            refMail: 'bank16211@gmail.com',  // Replace with actual email
-            aid: itemToMail.id  // The ID of the item
-        };
-        
         try {
-            const response = await fetch('http://localhost:8080/approve_mail.php', {
+            // ส่งคำขอเพื่อสร้าง token และอัพเดตฐานข้อมูล
+            const tokenResponse = await fetch('http://localhost:3000/gentoken', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(emailDetails)
+                body: JSON.stringify({ id: formData.id, emailAddress: formData.email }) // ตัวอย่าง
             });
+            const tokenResult = await tokenResponse.json();
     
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+            if (!tokenResponse.ok) {
+                throw new Error(`HTTP error! Status: ${tokenResponse.status}`);
             }
-            console.log("Emails sent");
+    
+            // สร้าง Confirmation Link
+            const confirmationLink = tokenResult.confirmationLink;
+
+            const recipients = [
+                { refName: 'Tester Name', refMail: 'bank16211@gmail.com'},
+                { refName: 'Tester2 Name2', refMail: 'gcapit0001@gmail.com'}
+            ];
+            // Loop through each recipient to send an email
+            for (const recipient of recipients) {
+                const emailDetails = {
+                    refName: recipient.refName,
+                    refMail: recipient.refMail,
+                    aid: formData.id,  // The ID of the item
+                    genlink: confirmationLink
+                };
+                
+                // ส่งอีเมลด้วย API PHP
+                const mailResponse = await fetch('http://localhost:8080/approve_mail.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(emailDetails)
+                });
+    
+                if (!mailResponse.ok) {
+                    throw new Error(`HTTP error! Status: ${mailResponse.status}`);
+                }
+            }
+    
+            console.log("Emails sent!");
+            setShowMailModal(false);
         } catch (error) {
             console.error('Error:', error);
         }
-        setShowMailModal(false);
     };
+    
+    
 
     // Delete
     const [showModal, setShowModal] = useState(false);
@@ -225,7 +253,7 @@ function ManagerPage({resetPagination}) {
     };
 
     const TableBody = currentItems.map(item => (
-        <React.Fragment key={item.id}> {/* Use React.Fragment with key for grouping */}
+        <React.Fragment key={item.id}>
             <div className="tableRow" onClick={() => toggleRow(item.id)}>
                 {/* {item.id} */}
                 <div className="tableBodyCell">{item.requestName} {item.requestSurname}</div>
