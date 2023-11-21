@@ -1,7 +1,7 @@
 // pagination.jsx
 import React from 'react';
 
-function Pagination({ currentPage, totalPages, handlePrevPage, handleNextPage, handlePageClick }) {
+export default function Pagination({ currentPage, totalPages, handlePrevPage, handleNextPage, handlePageClick }) {
     
     // จำนวนหน้าที่แสดง (10 หน้า)
     const renderPaginationNumbers = () => {
@@ -54,6 +54,4 @@ function Pagination({ currentPage, totalPages, handlePrevPage, handleNextPage, h
             </div>
         </div>
     );
-}
-
-export default Pagination;
+};

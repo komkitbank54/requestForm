@@ -85,8 +85,8 @@ app.post('/add', (req, res) => {
             [userContact], [headDepaName], [headDepaApprove], [headDepaComment],
             [headDepaDate], [headITName], [headITApprove], [headITEsti], [headITEstiComment], [headITDate], [auditName],
             [auditApprove], [auditComment], [auditDate], [ref1Name], [ref1Approve],
-            [ref1Comment], [actualDate], [finishDate], [changeStatue], [changeResult], [userChange],
-            [userChangeDate], [changeResName], [approveStatus]
+            [ref1Comment], [finishDate], [changeStatue], [changeResult], [userChange],
+            [changeResName], [approveStatus]
         )
         VALUES(
             @requestDate, @requestName, @requestSurname, @jobRank, @jobGroup, @requestPhone,
@@ -97,8 +97,8 @@ app.post('/add', (req, res) => {
             @userContact, @headDepaName, 'Pending', @headDepaComment,
             @headDepaDate, @headITName, 'Pending', @headITEsti, @headITEstiComment, @headITDate, @auditName,
             'Pending', @auditComment, @auditDate, @ref1Name, 'Pending',
-            @ref1Comment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,
-            @userChangeDate, @changeResName, 'Pending'
+            @ref1Comment, @finishDate, 'อยู่ในระหว่างดำเนินการ..', @changeResult, @userChange,
+            @changeResName, 'Pending'
         )`;
 
     // List all fields and their types
@@ -119,9 +119,9 @@ app.post('/add', (req, res) => {
         headITEstiComment: sql.VarChar, headITDate: sql.DateTime, auditName: sql.VarChar,
         auditApprove: sql.VarChar, auditComment: sql.VarChar, auditDate: sql.VarChar, ref1Name: sql.VarChar,
         ref1Approve: sql.VarChar,
-        ref1Comment: sql.VarChar, actualDate: sql.DateTime, finishDate: sql.DateTime,
+        ref1Comment: sql.VarChar, finishDate: sql.DateTime,
         changeStatue: sql.VarChar, changeResult: sql.VarChar, userChange: sql.VarChar,
-        userChangeDate: sql.DateTime, changeResName: sql.VarChar, approveStatus: sql.VarChar
+        changeResName: sql.VarChar, approveStatus: sql.VarChar
     };
 
     // Add inputs for all fields dynamically
@@ -212,6 +212,53 @@ app.put('/itprocess', async (req, res) => {
         request.input('headDepaDate', sql.Date, req.body.headDepaDate);
         request.input('headDepaApprove', sql.VarChar, req.body.headDepaApprove);
         request.input('headDepaComment', sql.VarChar, req.body.headDepaComment);
+        request.input('approveStatus', sql.VarChar, approveStatus);
+    
+        
+        const result = await request.query(updateQuery);
+
+        if (result.rowsAffected[0] === 0) {
+            res.status(404).send({ message: 'Record not found' });
+        } else {
+            res.status(200).send({ message: 'Record updated successfully!' });
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+// IT Finish
+app.put('/itfinish', async (req, res) => {
+    const id = req.body.id;
+
+    if (!id) {
+        return res.status(400).send({ message: 'id is required in request body.' });
+    }
+
+    // Set approveStatus based on headDepaApprove
+    const approveStatus = req.body.changeStatue === 'เสร็จสิ้น' ? 'Finish' : 'Approve';
+
+    const updateQuery = `
+        UPDATE [dbo].[changeform]
+        SET 
+            [changeStatue] = @changeStatue,
+            [changeResult] = @changeResult,
+            [userChange] = @userChange,
+            [finishDate] = @finishDate,
+            [changeResName] = @changeResName,
+            [approveStatus] = @approveStatus
+        WHERE id = @id`;
+
+    try {
+        const pool = await poolPromise;
+        const request = new sql.Request(pool);
+        
+        request.input('id', sql.Int, id);
+        request.input('changeStatue', sql.VarChar, req.body.changeStatue);
+        request.input('changeResult', sql.VarChar, req.body.changeResult);
+        request.input('userChange', sql.VarChar, req.body.userChange);
+        request.input('finishDate', sql.Date, req.body.finishDate);
+        request.input('changeResName', sql.VarChar, req.body.changeResName);
         request.input('approveStatus', sql.VarChar, approveStatus);
     
         
@@ -420,12 +467,10 @@ app.put('/edit', async (req, res) => {
             [ref1Name] = @ref1Name,
             [ref1Approve] = @ref1Approve,
             [ref1Comment] = @ref1Comment,
-            [actualDate] = @actualDate,
             [finishDate] = @finishDate,
             [changeStatue] = @changeStatue,
             [changeResult] = @changeResult,
             [userChange] = @userChange,
-            [userChangeDate] = @userChangeDate,
             [changeResName] = @changeResName
         WHERE id = @id`;
 
@@ -479,12 +524,10 @@ app.put('/edit', async (req, res) => {
         request.input('ref1Name', sql.VarChar, req.body.refITName1);
         request.input('ref1Approve', sql.VarChar, req.body.refITApprove);
         request.input('ref1Comment', sql.VarChar, req.body.refITComment);
-        request.input('actualDate', sql.Date, req.body.actualDate);
         request.input('finishDate', sql.Date, req.body.finishDate);
         request.input('changeStatue', sql.VarChar, req.body.changeStatue);
         request.input('changeResult', sql.VarChar, req.body.changeResult);
         request.input('userChange', sql.VarChar, req.body.userChange);
-        request.input('userChangeDate', sql.Date, req.body.userChangeDate);
         request.input('changeResName', sql.VarChar, req.body.changeResName);
         
         const result = await request.query(updateQuery);

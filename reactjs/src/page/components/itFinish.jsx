@@ -1,7 +1,6 @@
 
 // itProcess.jsx
 import React, { useState , useEffect } from 'react';
-import { RadioWithoutInput } from './checkbox';
 
 import { InputField, InputDisabled } from './input';
 import moment from 'moment';
@@ -11,7 +10,7 @@ import 'moment/locale/th';
 import '../css/add.css';
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function AuditApproveModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
+export default function ItFinishModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     const [currentStep, setCurrentStep] = useState(1);
 
     // กด ESC เพื่อปิด add-modal
@@ -55,8 +54,9 @@ export default function AuditApproveModal({ isOpen, onClose, onConfirm, formData
         setFormData(prevState => ({
             ...prevState,
             [name]: value,
-            auditName: `${firstName} ${lastName}`,
-            auditDate: currentDateFormat
+            userChange: `${firstName} ${lastName}`,
+            changeStatue: 'เสร็จสิ้น',
+            finishDate: currentDateFormat
             
         }));
     };
@@ -71,6 +71,7 @@ export default function AuditApproveModal({ isOpen, onClose, onConfirm, formData
             onChange={handleChange}
             addClass={addClass} />
     );
+
     const manageInput = (label, name, placeholder, addClass) => (
         <InputDisabled 
             label={label} 
@@ -79,17 +80,6 @@ export default function AuditApproveModal({ isOpen, onClose, onConfirm, formData
             placeholder={placeholder}
             onChange={handleChange}
             addClass={addClass} 
-            />
-    );
-
-    // Checkbox ที่ไม่มี input
-    const presetRadio = (groupName, fieldName, label, value) => (
-        <RadioWithoutInput 
-            groupName={groupName}
-            fieldName={fieldName}
-            label={label}
-            value={value}
-            setFormData={setFormData}
             />
     );
 
@@ -104,20 +94,18 @@ export default function AuditApproveModal({ isOpen, onClose, onConfirm, formData
                 {/* Header */}
                 <button className='absolute top-3 right-4' onClick={onCloseHandle}>X</button>
                 <div className="flex justify-between font-bold text-[20px]">
-                    <p>แบบฟอร์มร้องขอการเปลี่ยนแปลง</p>
+                    <p>ยืนยันสถานะการเปลี่ยนแปลง</p>
                     <p className="mr-5">{currentDateTime}</p>
                 </div>
                 {/* Page 1 */}
                 {currentStep === 1 && (
                     <>
                         <div className=''>
-                            <header className='font-semibold mt-1'>ส่วนที่ 1 - ฝ่ายกำกับภายในตรวจสอบและให้การอนุมัติ</header>
-                            <div className='mt-4'>
-                                <header>
-                                    ฝ่ายกำกับภายใน
-                                </header>
-                                <div className='flex space-x-2'>
-                                    {manageInput("", "auditName", "ชื่อ-นามสกุล",)}
+                            <header className='font-semibold mt-1'>ส่วนที่ 1 - รายละเอียดการดำเนินการ</header>
+                            <div className='input-bew'>
+                                    {manageInput("ชื่อผู้เปลี่ยน", "userChange")}
+                                <div>
+                                    <label>วันที่เสร็จสิ้น</label>
                                     <button className="relative inputfield flex items-center justify-center" disabled>
                                         <div className='absolute left-2'>
                                             <img src={require('../img/calendar.png')} className='icon' alt="edit" />
@@ -127,13 +115,12 @@ export default function AuditApproveModal({ isOpen, onClose, onConfirm, formData
                                         </div>
                                     </button>
                                 </div>
-                                <div className='mt-2 flex items-center'>
-                                    {presetRadio("auditApprove", "auditApprove", "อนุมัติ", "Approve")}
-                                    {presetRadio("auditApprove", "auditApprove", "ไม่อนุมัติ", "Deny")}
-                                </div>
-                                <div className='mt-2 flex items-center'>
-                                    {defaultInput("", "auditComment", "ความคิดเห็นเพิ่มเติม", "inputLarge")}
-                                </div>
+                            </div>
+                            <div className='mt-4'>
+                                {defaultInput("ผลการเปลี่ยนแปลง(ถ้ามี)", "changeResult", "รายละเอียด..", "inputLarge")}
+                            </div>
+                            <div className='mt-4'>
+                                {defaultInput("การปรับปรุงเอกสารสนับสนุนระบบ(ถ้ามี)", "changeResName", "รายละเอียด..", "inputLarge",)}
                             </div>
                         </div>
                     </>

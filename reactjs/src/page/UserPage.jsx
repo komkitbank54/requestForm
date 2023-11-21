@@ -8,7 +8,7 @@ import Pagination from './components/pagination';
 import AddModal from './components/addModal';
 import Login from '../components/Login';
 import { DetailRowUser } from './components/DetailRow';
-import StatusCount from './components/StatusCount';
+import { StatusCount } from './components/StatusCount';
 import { determineApproveStatus } from './components/path/approsalStatus';
 
 // Import CSS
@@ -28,7 +28,7 @@ function UserPage({resetPagination}) {
         // อัพเดต approveStatus ตามสถานะล่าสุด
         const updatedData = fetchedData.map(item => ({
             ...item,
-            approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove, item.ceoApprove),
+            approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove, item.ref1Approve),
         }));
 
         // โหลดข้อมูล
@@ -209,7 +209,7 @@ function UserPage({resetPagination}) {
                         handlePageClick={handlePageClick}
                     />
                 </div>
-                <Login isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
+                <Login isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} formData={formData} setFormData={setFormData}/>
                 <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
             </div>
         </>

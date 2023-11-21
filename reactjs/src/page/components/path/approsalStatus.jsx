@@ -1,9 +1,9 @@
 // approsalStatus.jsx
-export const determineApproveStatus = (headDepaApprove, headITApprove, auditApprove, ceoApprove) => {
+export const determineApproveStatus = (headDepaApprove, headITApprove, auditApprove, ref1Approve) => {
   if (headDepaApprove === 'Deny' || headITApprove === 'Deny' || auditApprove === 'Deny') {
     return 'ไม่ได้รับการอนุมัติ';
   }
-  if (headDepaApprove === 'Approve' && headITApprove === 'Approve' && auditApprove === 'Approve' && ceoApprove === 'Approve') {
+  if (headDepaApprove === 'Approve' && headITApprove === 'Approve' && auditApprove === 'Approve' && ref1Approve === 'Approve') {
     return 'ได้รับการอนุมัติ';
   }
   if (headDepaApprove === 'Pending') {
@@ -15,7 +15,7 @@ export const determineApproveStatus = (headDepaApprove, headITApprove, auditAppr
   if (auditApprove === 'Pending') {
     return 'รอฝ่ายกำกับอนุมัติ..';
   }
-  if (ceoApprove === 'Pending') {
+  if (ref1Approve === 'Pending') {
     return 'รอคณะกรรมการอนุมัติ..';
   }
   return 'กำลังดำเนินการ..';

@@ -7,8 +7,9 @@ import moment from 'moment';
 import Pagination from './components/pagination';
 import AddModal from './components/addModal';
 import ItProcessModal from './components/itProcess';
+import ItFinishModal from './components/itFinish';
 import { DetailRow } from './components/DetailRow';
-import StatusCount from './components/StatusCount';
+import { StatusCount } from './components/StatusCount';
 import { determineApproveStatus } from './components/path/approsalStatus';
 
 // Import CSS
@@ -27,7 +28,7 @@ function ITPage({resetPagination}) {
             // อัพเดต approveStatus ตามสถานะล่าสุด
             const updatedData = fetchedData.map(item => ({
               ...item,
-              approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove, item.ceoApprove),
+              approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove, item.ref1Approve),
             }));
       
             // โหลดข้อมูล
@@ -131,6 +132,35 @@ function ITPage({resetPagination}) {
         .catch(err => console.error('Error:', err));
     };
 
+    // It Finish
+    const [showITFinishModal, setShowITFinishModal] = useState(false);
+
+    const handleITFinishClick = (item) => {
+        setFormData(item);
+        setShowITFinishModal(true);
+    };
+
+    const handleConfirmFinish = () => {
+        fetch('http://localhost:3000/itfinish', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.message === 'Record updated successfully!') {
+                // อัพเดตดาต้าด้วยข้อมูลที่ edit
+                setData(prevData => prevData.map(i => i.id === formData.id ? formData : i));
+                setShowITFinishModal(false);
+            } else {
+                console.error('Failed to edit record.', result.message);
+            }
+        })
+        .catch(err => console.error('Error:', err));
+    };
+
     // คลิก row
     const toggleRow = (id) => {
         // Toggles the expanded state for a given row
@@ -179,10 +209,34 @@ function ITPage({resetPagination}) {
                             <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
                             <div className="tableBodyCell flex justify-center space-x-6">
                                 <div className="tooltip">
-                                    <button className="cursor-pointer flex items-center" onClick={() => handleITClick(item)}>
-                                        <img src={require('./img/submit.png')} className='icon ml-1' alt="submit" />
-                                    </button>
-                                    <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
+                                {item.headDepaApprove === 'Pending' ? 
+                                    (<div>
+                                        <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)}>
+                                            <img src={require('./img/submit.png')} className='icon' alt="submit" />
+                                        </button>
+                                        <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
+                                    </div>):
+                                    (<div>
+                                        <button className="icon hover:shadow-lg hover:rounded-lg" disabled>
+                                            <img src={require('./img/nosubmit.png')} className='icon' alt="submit" />
+                                        </button>
+                                    </div>)
+                                    }
+                                </div>
+                                <div className="tooltip">
+                                {item.changeStatue !== 'เสร็จสิ้น' && item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve'? 
+                                    (<div>
+                                        <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITFinishClick(item)}>
+                                            <img src={require('./img/approve.png')} className='icon' alt="approve" />
+                                        </button>
+                                        <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
+                                    </div>):
+                                    (<div>
+                                        <button className="icon hover:shadow-lg hover:rounded-lg" disabled>
+                                            <img src={require('./img/noapprove.png')} className='icon' alt="noapprove" />
+                                        </button>
+                                    </div>)
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -204,6 +258,7 @@ function ITPage({resetPagination}) {
             </div>
             <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
             <ItProcessModal isOpen={showITModal} onClose={() => setShowITModal(false)} onConfirm={handleConfirmIT} formData={formData} setFormData={setFormData}/>
+            <ItFinishModal isOpen={showITFinishModal} onClose={() => setShowITFinishModal(false)} onConfirm={handleConfirmFinish} formData={formData} setFormData={setFormData}/>
         </div>
         </>
     );

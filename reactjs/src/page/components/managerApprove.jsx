@@ -11,7 +11,7 @@ import 'moment/locale/th';
 import '../css/add.css';
 import "react-datepicker/dist/react-datepicker.css";
 
-function ManagerApproveModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
+export default function ManagerApproveModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     const [currentStep, setCurrentStep] = useState(1);
 
     // กด ESC เพื่อปิด add-modal
@@ -153,6 +153,4 @@ function ManagerApproveModal({ isOpen, onClose, onConfirm, formData, setFormData
             </div>
         </div>
     );
-}
-
-export default ManagerApproveModal;
+};

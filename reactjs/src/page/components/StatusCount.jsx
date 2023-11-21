@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/statushover.css';
 
-const StatusCount = ({ data }) => {
+export const StatusCount = ({ data }) => {
     //ประกาศค่าก่อนนับ = 0
     const [totalCount, setTotalCount] = useState(0);
     const [approvedCount, setApprovedCount] = useState(0);
@@ -70,6 +70,4 @@ const StatusCount = ({ data }) => {
             </div>
     </>
   )
-}
-
-export default StatusCount
+};

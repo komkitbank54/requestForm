@@ -1,7 +1,7 @@
 // DeleteModal.jsx
 import React from 'react';
 
-function DeleteModal({ isOpen, onClose, onConfirm }) {
+export default function DeleteModal({ isOpen, onClose, onConfirm }) {
     if (!isOpen) {
         return null;
     }
@@ -18,6 +18,4 @@ function DeleteModal({ isOpen, onClose, onConfirm }) {
             </div>
         </div>
     );
-}
-
-export default DeleteModal;
+};

@@ -11,7 +11,7 @@ import 'moment/locale/th';
 import '../css/add.css';
 import "react-datepicker/dist/react-datepicker.css";
 
-function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
+export default function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     const [dates, setDates] = useState({
         useDate: formData.useDate || new Date(),
         reqFinishDate: formData.reqFinishDate || new Date(),
@@ -258,6 +258,4 @@ function AddModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
             </div>
         </div>
     );
-}
-
-export default AddModal;
+};

@@ -8,7 +8,7 @@ import Pagination from './components/pagination';
 import AddModal from './components/addModal';
 import AuditApproveModal from './components/auditApprove';
 import { DetailRow } from './components/DetailRow';
-import StatusCount from './components/StatusCount';
+import { StatusCount } from './components/StatusCount';
 import { determineApproveStatus } from './components/path/approsalStatus';
 
 // Import CSS
@@ -27,7 +27,7 @@ function AuditPage({resetPagination}) {
           // อัพเดต approveStatus ตามสถานะล่าสุด
           const updatedData = fetchedData.map(item => ({
             ...item,
-            approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove, item.ceoApprove),
+            approveStatus: determineApproveStatus(item.headDepaApprove, item.headITApprove, item.auditApprove, item.ref1Approve),
           }));
     
           // โหลดข้อมูล
@@ -111,7 +111,7 @@ function AuditPage({resetPagination}) {
     };
 
     const handleConfirmAudit = () => {
-        fetch('http://localhost:3000/ceoapprove', {
+        fetch('http://localhost:3000/ref1Approve', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ function AuditPage({resetPagination}) {
                         <div className="tableBodyCell">{item.jobGroup}</div>
                         <div className="tableBodyCell">{item.changeType}</div>
                         <div className="tableBodyCell">{moment(item.useDate).format('DD/MM/YYYY')}</div>
-                            <div className="tableBodyCell">{item.manaName}</div>
+                        <div className="tableBodyCell">{item.manaName}</div>
                         <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
                         <div className="tableBodyCell flex justify-center space-x-6">
                             <div className='tooltip'>

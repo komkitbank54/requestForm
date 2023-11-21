@@ -1,7 +1,7 @@
 // DeleteModal.jsx
 import React from 'react';
 
-function MailSend({ isOpen, onClose, onConfirm }) {
+export default function MailSend({ isOpen, onClose, onConfirm }) {
     if (!isOpen) {
         return null;
     }
@@ -17,6 +17,4 @@ function MailSend({ isOpen, onClose, onConfirm }) {
             </div>
         </div>
     );
-}
-
-export default MailSend;
+};

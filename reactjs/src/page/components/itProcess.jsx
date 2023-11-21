@@ -12,9 +12,10 @@ import 'moment/locale/th';
 import '../css/add.css';
 import "react-datepicker/dist/react-datepicker.css";
 
-function ItProcessModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
+export default function ItProcessModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
     const [dates, setDates] = useState({
         reqFinishDate: formData.reqFinishDate || new Date(),
+        actualDate: formData.reqFinishDate || new Date(),
         headDepaDate: formData.headDepaDate || new Date(),
     });
     const [currentStep, setCurrentStep] = useState(1);
@@ -253,6 +254,4 @@ function ItProcessModal({ isOpen, onClose, onConfirm, formData, setFormData }) {
             </div>
         </div>
     );
-}
-
-export default ItProcessModal;
+};
