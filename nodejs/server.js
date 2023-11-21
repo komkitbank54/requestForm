@@ -84,8 +84,8 @@ app.post('/add', (req, res) => {
             [reqFinishDate], [implementPlan], [changeTest], [testInfo], [rollbackPlan], [rollbackInfo],
             [userContact], [headDepaName], [headDepaApprove], [headDepaComment],
             [headDepaDate], [headITName], [headITApprove], [headITEsti], [headITEstiComment], [headITDate], [auditName],
-            [auditApprove], [auditComment], [auditDate], [ceoName], [ceoApprove],
-            [ceoComment], [actualDate], [finishDate], [changeStatue], [changeResult], [userChange],
+            [auditApprove], [auditComment], [auditDate], [ref1Name], [ref1Approve],
+            [ref1Comment], [actualDate], [finishDate], [changeStatue], [changeResult], [userChange],
             [userChangeDate], [changeResName], [approveStatus]
         )
         VALUES(
@@ -96,8 +96,8 @@ app.post('/add', (req, res) => {
             @reqFinishDate, @implementPlan, @changeTest, @testInfo, @rollbackPlan, @rollbackInfo,
             @userContact, @headDepaName, 'Pending', @headDepaComment,
             @headDepaDate, @headITName, 'Pending', @headITEsti, @headITEstiComment, @headITDate, @auditName,
-            'Pending', @auditComment, @auditDate, @ceoName, 'Pending',
-            @ceoComment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,
+            'Pending', @auditComment, @auditDate, @ref1Name, 'Pending',
+            @ref1Comment, @actualDate, @finishDate, @changeStatue, @changeResult, @userChange,
             @userChangeDate, @changeResName, 'Pending'
         )`;
 
@@ -117,9 +117,9 @@ app.post('/add', (req, res) => {
         headDepaName: sql.VarChar, headDepaApprove: sql.VarChar, headDepaComment: sql.VarChar,
         headDepaDate: sql.DateTime, headITName: sql.VarChar, headITApprove: sql.VarChar, headITEsti: sql.VarChar,
         headITEstiComment: sql.VarChar, headITDate: sql.DateTime, auditName: sql.VarChar,
-        auditApprove: sql.VarChar, auditComment: sql.VarChar, auditDate: sql.VarChar, ceoName: sql.VarChar,
-        ceoApprove: sql.VarChar,
-        ceoComment: sql.VarChar, actualDate: sql.DateTime, finishDate: sql.DateTime,
+        auditApprove: sql.VarChar, auditComment: sql.VarChar, auditDate: sql.VarChar, ref1Name: sql.VarChar,
+        ref1Approve: sql.VarChar,
+        ref1Comment: sql.VarChar, actualDate: sql.DateTime, finishDate: sql.DateTime,
         changeStatue: sql.VarChar, changeResult: sql.VarChar, userChange: sql.VarChar,
         userChangeDate: sql.DateTime, changeResName: sql.VarChar, approveStatus: sql.VarChar
     };
@@ -319,8 +319,8 @@ app.put('/auditapprove', async (req, res) => {
     }
 });
 
-// CEO Approve
-app.put('/ceoapprove', async (req, res) => {
+// ref1 Approve
+app.put('/ref1approve', async (req, res) => {
     const id = req.body.id;
 
     if (!id) {
@@ -328,15 +328,15 @@ app.put('/ceoapprove', async (req, res) => {
     }
 
     // Set approveStatus based on auditApprove
-    const approveStatus = req.body.ceoApprove === 'Deny' ? 'Deny' : 'Pending';
+    const approveStatus = req.body.ref1Approve === 'Deny' ? 'Deny' : 'Pending';
 
     const updateQuery = `
         UPDATE [dbo].[changeform]
         SET 
-            [ceoName] = @ceoName,
-            [ceoApprove] = @ceoApprove,
-            [ceoComment] = @ceoComment,
-            [ceoDate] = @ceoDate,
+            [ref1Name] = @ref1Name,
+            [ref1Approve] = @ref1Approve,
+            [ref1Comment] = @ref1Comment,
+            [ref1Date] = @ref1Date,
             [approveStatus] = 'Approve'
         WHERE id = @id`;
 
@@ -345,10 +345,10 @@ app.put('/ceoapprove', async (req, res) => {
         const request = new sql.Request(pool);
         
         request.input('id', sql.Int, id);
-        request.input('ceoName', sql.VarChar, req.body.ceoName);
-        request.input('ceoApprove', sql.VarChar, req.body.ceoApprove);
-        request.input('ceoComment', sql.VarChar, req.body.ceoComment);
-        request.input('ceoDate', sql.Date, req.body.ceoDate);
+        request.input('ref1Name', sql.VarChar, req.body.ref1Name);
+        request.input('ref1Approve', sql.VarChar, req.body.ref1Approve);
+        request.input('ref1Comment', sql.VarChar, req.body.ref1Comment);
+        request.input('ref1Date', sql.Date, req.body.ref1Date);
         request.input('approveStatus', sql.VarChar, approveStatus);
 
         
@@ -417,9 +417,9 @@ app.put('/edit', async (req, res) => {
             [auditName] = @auditName,
             [auditComment] = @auditComment,
             [auditDate] = @auditDate,
-            [ceoName] = @ceoName,
-            [ceoApprove] = @ceoApprove,
-            [ceoComment] = @ceoComment,
+            [ref1Name] = @ref1Name,
+            [ref1Approve] = @ref1Approve,
+            [ref1Comment] = @ref1Comment,
             [actualDate] = @actualDate,
             [finishDate] = @finishDate,
             [changeStatue] = @changeStatue,
@@ -476,9 +476,9 @@ app.put('/edit', async (req, res) => {
         request.input('auditName', sql.VarChar, req.body.auditName);
         request.input('auditComment', sql.VarChar, req.body.auditComment);
         request.input('auditDate', sql.Date, req.body.auditDate);
-        request.input('ceoName', sql.VarChar, req.body.refITName1);
-        request.input('ceoApprove', sql.VarChar, req.body.refITApprove);
-        request.input('ceoComment', sql.VarChar, req.body.refITComment);
+        request.input('ref1Name', sql.VarChar, req.body.refITName1);
+        request.input('ref1Approve', sql.VarChar, req.body.refITApprove);
+        request.input('ref1Comment', sql.VarChar, req.body.refITComment);
         request.input('actualDate', sql.Date, req.body.actualDate);
         request.input('finishDate', sql.Date, req.body.finishDate);
         request.input('changeStatue', sql.VarChar, req.body.changeStatue);
@@ -531,6 +531,39 @@ app.put('/approve', async (req, res) => {
         res.status(500).send(err.message);
     }
 });
+
+// Mail Approve
+app.put('/mailapprove', async (req, res) => {
+    const id = req.query.id;  // Get 'id' from query string
+
+    if (!id) {
+        return res.status(400).send({ message: 'id is required in query string.' });
+    }
+
+    const updateQuery = `
+        UPDATE [dbo].[changeform]
+        SET 
+            [ref1Approve] = 'Approve'
+        WHERE id = @id`;
+
+    try {
+        const pool = await poolPromise;
+        const request = new sql.Request(pool);
+        
+        request.input('id', sql.Int, id);  // Use 'id' from query string
+
+        const result = await request.query(updateQuery);
+
+        if (result.rowsAffected[0] === 0) {
+            res.status(404).send({ message: 'Record not found' });
+        } else {
+            res.status(200).send({ message: 'Record updated successfully!' });
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
 
 // Delete
 app.delete('/delete', async (req, res) => {

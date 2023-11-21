@@ -1,5 +1,4 @@
 // StatusCount.jsx
-
 import React, { useState, useEffect } from 'react';
 import '../css/statushover.css';
 
@@ -20,7 +19,7 @@ const StatusCount = ({ data }) => {
             if (item.approveStatus === 'ได้รับการอนุมัติ') {
               approved++;
             }
-            if (item.approveStatus === 'กำลังดำเนินการ'|| item.approveStatus === 'รอผู้ดำเนินการ'|| item.approveStatus === 'รอหัวหน้าฝ่ายอนุมัติ' || item.approveStatus === 'รอฝ่ายกำกับอนุมัติ' || item.approveStatus === 'รอคณะกรรมการอนุมัติ') {
+            if (item.approveStatus === 'กำลังดำเนินการ..'|| item.approveStatus === 'รอผู้ดำเนินการ..'|| item.approveStatus === 'รอหัวหน้าฝ่ายอนุมัติ..' || item.approveStatus === 'รอฝ่ายกำกับอนุมัติ..' || item.approveStatus === 'รอคณะกรรมการอนุมัติ..') {
               pending++;
             }
             if (item.approveStatus === 'ไม่ได้รับการอนุมัติ') {

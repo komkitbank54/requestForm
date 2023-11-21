@@ -181,10 +181,19 @@ function AuditPage({resetPagination}) {
                         <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
                         <div className="tableBodyCell flex justify-center space-x-6">
                             <div className='tooltip'>
-                                <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
-                                    <img src={require('./img/approve.png')} className='icon' alt="approve" />
-                                </button>
-                                <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
+                                {item.headITApprove === 'Pending' ? 
+                                    (<div>
+                                        <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
+                                            <img src={require('./img/approve.png')} className='icon' alt="approve" />
+                                        </button>
+                                        <span className="tooltiptext">ลงชื่ออนุมัติ</span>
+                                    </div>):
+                                    (<div>
+                                        <button className="icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)} disabled>
+                                            <img src={require('./img/noapprove.png')} className='icon' alt="approve" />
+                                        </button>
+                                    </div>)
+                                }
                             </div>
                         </div>
                     </div>

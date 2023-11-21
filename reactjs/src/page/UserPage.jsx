@@ -191,6 +191,7 @@ function UserPage({resetPagination}) {
                                 <div className="tableBodyCell">{item.manaName}</div>
                                 <div className="tableBodyCell">{item.changeStatue}</div>
                                 <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
+
                             </div>
                             {/* Detail row - โชว์/ซ่อน based on state */}
                             {expandedRows[item.id] && <DetailRowUser item={item} />}

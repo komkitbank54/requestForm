@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState} from 'react';
 import moment from 'moment';
-import emailjs from 'emailjs-com';
 
 // Import Components
 import DeleteModal from './components/deleteModal';
@@ -13,11 +12,13 @@ import ManagerApproveModal from './components/managerApprove';
 import { DetailRow } from './components/DetailRow';
 import StatusCount from './components/StatusCount';
 import { determineApproveStatus } from './components/path/approsalStatus';
+import MailSend from './components/mailSend';
 
 // Import CSS
 import './css/table.css';
 import './fonts/fonts.css';
 import './css/tooltip.css';
+
 
 function ManagerPage({resetPagination}) {
     const [data, setData] = useState([]);
@@ -163,6 +164,48 @@ function ManagerPage({resetPagination}) {
         .catch(err => console.error('Error:', err));
     };
 
+    // Mail Send
+    const [showMailModal, setShowMailModal] = useState(false);
+    const [itemToMail, setItemToMail] = useState(null);
+
+    const handleMailClick = (item) => {
+        setItemToMail(item);
+        setShowMailModal(true);
+    };
+    const handleSendMail = async () => {
+        if (!itemToMail) {
+            console.error('No item selected for sending mail');
+            return;
+        }
+    
+        const emailDetails = {
+            ref1Name: 'Tester Name',  // Replace with actual name
+            ref1Mail: 'bank16211@gmail.com',  // Replace with actual email
+            aid: itemToMail.id  // The ID of the item
+        };
+    
+        try {
+            const response = await fetch('http://localhost:8080/approve_mail.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(emailDetails)
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const result = await response.json();
+            console.log("Email sent for item with ID:", itemToMail.id, "Response:", result);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+    
+    
+
     // Delete
     const [showModal, setShowModal] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
@@ -184,33 +227,15 @@ function ManagerPage({resetPagination}) {
         });
     };
 
-  // คลิก row
-  const toggleRow = (id) => {
-      // Toggles the expanded state for a given row
-      setExpandedRows(prevRows => ({
-          ...prevRows,
-          [id]: !prevRows[id]
-      }));
-  };
-
-// ส่งเมลล์
-const sendEmail = (item) => {
-    const templateParams = {
-        fromEmail:  'gcapit0002@gmail.com',
-        toEmail: 'gcapit0002@gmail.com',
-        message:    'ชื่อผู้ร้องขอ: ' + item.requestName + ' ' + item.requestSurname + 
-                    '\nฝ่าย:' + item.jobGroup
+    // คลิก row
+    const toggleRow = (id) => {
+        // Toggles the expanded state for a given row
+        setExpandedRows(prevRows => ({
+            ...prevRows,
+            [id]: !prevRows[id]
+        }));
     };
-
-    emailjs.send('service_yi0i5bn', 'template_6s6b257', templateParams)
-        .then((response) => {
-            console.log('Email successfully sent!', response.status, response.text);
-        })
-        .catch((err) => {
-            console.error('Failed to send email. Error:', err);
-        });
-};
-  
+    
     return (
         <>
             <div className='flex justify-between shadow-lg bg-[#0e235c] text-[#f1c40f]'>
@@ -253,24 +278,46 @@ const sendEmail = (item) => {
                             <div className="tableBodyCell flex justify-center relative">{item.approveStatus}</div>
                             <div className="tableBodyCell flex justify-center space-x-5">
                                 <div className="tooltip">
-                                    <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)}>
-                                        <img src={require('./img/submit.png')} className='icon' alt="submit" />
-                                    </button>
-                                    <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
+                                    {item.headDepaApprove === 'Pending' ? 
+                                    (<div>
+                                        <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)}>
+                                            <img src={require('./img/submit.png')} className='icon' alt="submit" />
+                                        </button>
+                                        <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
+                                    </div>):
+                                    (<div>
+                                        <button className="icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)} disabled>
+                                            <img src={require('./img/nosubmit.png')} className='icon' alt="submit" />
+                                        </button>
+                                    </div>)
+                                    }
                                 </div>
                                 <div className="tooltip">
-                                    <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
-                                        <img src={require('./img/approve.png')} className='icon' alt="approve" />
-                                    </button>
-                                    <span className="tooltiptext">ลงชื่ออนุมัติ</span>
+                                    {item.headITApprove === 'Pending' ? 
+                                    (<div>
+                                        <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
+                                            <img src={require('./img/approve.png')} className='icon' alt="approve" />
+                                        </button>
+                                        <span className="tooltiptext">ลงชื่ออนุมัติ</span>
+                                    </div>):
+                                    (<div>
+                                        <button className="icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)} disabled>
+                                            <img src={require('./img/noapprove.png')} className='icon' alt="approve" />
+                                        </button>
+                                    </div>)
+                                    }
                                 </div>
+                                <div className="tooltip">
                                 {item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve' ?
-                                (<div className="tooltip">
-                                    <button className="cursor-pointer" onClick={() => sendEmail(item)}><img src={require('./img/send.png')} className='icon' alt="send" /></button>
-                                    <span className="tooltiptext">ยืนยันส่งเมล์ให้กรรมการ</span>
-                                </div>):
-                                (<button className="cursor-default"><img src={require('./img/nosend.png')} className='icon' alt="nosend" /></button>)
+                                    (<div>
+                                        <button className="cursor-pointer" onClick={() => handleMailClick(item)}><img src={require('./img/send.png')} className='icon' alt="send" /></button>
+                                        <span className="tooltiptext">ยืนยันส่งเมล์ให้กรรมการ</span>
+                                    </div>):
+                                    (<div>
+                                        <button className="cursor-default"><img src={require('./img/nosend.png')} className='icon' alt="nosend" /></button>
+                                    </div>)
                                 }
+                                </div>
                                 <div className="tooltip">
                                     <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleDeleteClick(item)}>
                                         <img src={require('./img/bin.png')} className='icon' alt="delete" />
@@ -298,6 +345,7 @@ const sendEmail = (item) => {
                 <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
                 <ItProcessModal isOpen={showITModal} onClose={() => setShowITModal(false)} onConfirm={handleConfirmIT} formData={formData} setFormData={setFormData}/>
                 <ManagerApproveModal isOpen={showManagerApproveModal} onClose={() => setShowManagerApproveModal(false)} onConfirm={handleConfirmManager} formData={formData} setFormData={setFormData}/>
+                <MailSend  isOpen={showMailModal} onClose={() => setShowMailModal(false)} onConfirm={handleSendMail} />
                 <DeleteModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleConfirmDelete} />
             </div>
         </>
