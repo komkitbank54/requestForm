@@ -12,7 +12,7 @@ import ManagerApproveModal from './components/managerApprove';
 import { DetailRow } from './components/DetailRow';
 import { StatusCount } from './components/StatusCount';
 import { determineApproveStatus } from './components/path/approsalStatus';
-import MailSend from './components/MailApprove';
+import MailSend from './components/MailModal';
 
 // Import CSS
 import './css/table.css';
@@ -40,23 +40,7 @@ function ManagerPage({resetPagination}) {
         .catch(err => console.error('Error fetching data:', err));
     }, []);
 
-    const [formData, setFormData] = useState({
-        manaName: '',
-        manaRank: '',
-        mana2Name: '',
-        mana2Rank: '',
-        reqFinishDate: '',
-        implementPlan: '',
-        changeTest: '',
-        testInfo: '',
-        rollbackPlan: '',
-        userContact: '',
-        headDepaName: '',
-        headDepaComment: '',
-        headDepaDate: '',
-        approveStatus: ''
-    });
-    
+    const [formData, setFormData] = useState({});
 
     const ITEMS_PER_PAGE = 10;
     // Page
@@ -166,70 +150,10 @@ function ManagerPage({resetPagination}) {
 
     // Mail Send
     const [showMailModal, setShowMailModal] = useState(false);
-
     const handleMailClick = (item) => {
-        // อัปเดต formData ด้วยข้อมูลของแถวที่เลือก
-        setFormData({
-            ...formData,
-            id: item.id, // ตั้งค่า id ของแถวที่เลือก
-            // คุณอาจต้องการอัปเดตฟิลด์อื่นๆ ที่จำเป็นสำหรับการส่งเมล
-        });
+        setFormData({ ...formData, id: item.id });
         setShowMailModal(true);
     };
-    const handleSendMail = async () => {
-        try {
-            // ส่งคำขอเพื่อสร้าง token และอัพเดตฐานข้อมูล
-            const tokenResponse = await fetch('http://localhost:3000/gentoken', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: formData.id, emailAddress: formData.email }) // ตัวอย่าง
-            });
-            const tokenResult = await tokenResponse.json();
-    
-            if (!tokenResponse.ok) {
-                throw new Error(`HTTP error! Status: ${tokenResponse.status}`);
-            }
-    
-            // สร้าง Confirmation Link
-            const confirmationLink = tokenResult.confirmationLink;
-
-            const recipients = [
-                { refName: 'Tester Name', refMail: 'bank16211@gmail.com'},
-                { refName: 'Tester2 Name2', refMail: 'gcapit0001@gmail.com'}
-            ];
-            // Loop through each recipient to send an email
-            for (const recipient of recipients) {
-                const emailDetails = {
-                    refName: recipient.refName,
-                    refMail: recipient.refMail,
-                    aid: formData.id,  // The ID of the item
-                    genlink: confirmationLink
-                };
-                
-                // ส่งอีเมลด้วย API PHP
-                const mailResponse = await fetch('http://localhost:8080/approve_mail.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(emailDetails)
-                });
-    
-                if (!mailResponse.ok) {
-                    throw new Error(`HTTP error! Status: ${mailResponse.status}`);
-                }
-            }
-    
-            console.log("Emails sent!");
-            setShowMailModal(false);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-    
-    
 
     // Delete
     const [showModal, setShowModal] = useState(false);
@@ -238,18 +162,6 @@ function ManagerPage({resetPagination}) {
     const handleDeleteClick = (item) => {
         setItemToDelete(item);
         setShowModal(true);
-    };
-
-    const handleConfirmDelete = () => {
-        fetch(`http://localhost:3000/delete?id=${itemToDelete.id}`, { method: 'DELETE' })
-        .then(response => {
-            if (response.ok) {
-                setShowModal(false);
-                setData(prevData => prevData.filter(i => i.id !== itemToDelete.id));
-            } else {
-                console.error('Failed to delete item.');
-            }
-        });
     };
 
     const TableBody = currentItems.map(item => (
@@ -294,7 +206,7 @@ function ManagerPage({resetPagination}) {
                         }
                     </div>
                     <div className="tooltip">
-                    {item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve' && item.ref1Approve !== 'Approve' ?
+                    {item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve'  ?
                         (<div>
                             <button className="cursor-pointer" onClick={() => handleMailClick(item)}><img src={require('./img/send.png')} className='icon' alt="send" /></button>
                             <span className="tooltiptext">ยืนยันส่งเมล์ให้กรรมการ</span>
@@ -371,8 +283,8 @@ function ManagerPage({resetPagination}) {
                 <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
                 <ItProcessModal isOpen={showITModal} onClose={() => setShowITModal(false)} onConfirm={handleConfirmIT} formData={formData} setFormData={setFormData}/>
                 <ManagerApproveModal isOpen={showManagerApproveModal} onClose={() => setShowManagerApproveModal(false)} onConfirm={handleConfirmManager} formData={formData} setFormData={setFormData}/>
-                <MailSend  isOpen={showMailModal} onClose={() => setShowMailModal(false)} onConfirm={handleSendMail} />
-                <DeleteModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleConfirmDelete} />
+                <MailSend isOpen={showMailModal} onClose={() => setShowMailModal(false)} formData={formData} />
+                <DeleteModal item={itemToDelete} isOpen={showModal} onClose={() => setShowModal(false)} onDataDeleted={(deletedId) => {setData(prevData => prevData.filter(i => i.id !== deletedId));}}/>
             </div>
         </>
     );

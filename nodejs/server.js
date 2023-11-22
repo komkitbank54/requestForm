@@ -13,7 +13,7 @@ const crypto = require('crypto');
 app.use(bodyParser.json());
 app.use(cors());
 
-// TaxiMail
+// TaxiMail ใช้กับ (MailSend.jsx)
 app.post('/sendmail', async (req, res) => {
     try {
       for (const emailData of req.body) {
@@ -39,26 +39,44 @@ app.post('/sendmail', async (req, res) => {
     }
   });
 
-  // Token Generate
+  // Token Generate 
   function generateToken() {
       return crypto.randomBytes(32).toString('hex');
   }
+  // เก็บค่า Token ไว้ใน table และ expire ใน 2 ชั่วโมง
+  // Gen API link ของ /mailapprove
+  // ใช้ใน requestform
   app.post('/gentoken', async (req, res) => {
-    const { id, emailAddress } = req.body;
+    const { id, emailAddress, aprf } = req.body;
     const token = generateToken();
 
     try {
-        // อัพเดต token ในฐานข้อมูล
+        // Update token in the database
         const pool = await poolPromise;
         await pool.request()
             .input('token', sql.VarChar, token)
             .input('id', sql.Int, id)
+            .input('aprf', sql.VarChar, aprf)
             .query('UPDATE [dbo].[changeform] SET token = @token WHERE id = @id');
 
-        // สร้าง confirmation link
-        const confirmationLink = `http://localhost:3000/mailapprove?id=${id}&token=${token}`;
+        // Create confirmation link
+        const confirmationLink = `http://localhost:3000/mailapprove?id=${id}&aprf=${aprf}&token=${token}`;
 
+        // Respond with confirmation link
         res.json({ confirmationLink, message: 'Token generated successfully.' });
+
+        // Schedule to clear the token after 2 hours
+        setTimeout(async () => {
+            try {
+                const pool = await poolPromise;
+                await pool.request()
+                    .input('id', sql.Int, id)
+                    .query("UPDATE [dbo].[changeform] SET token = '' WHERE id = @id");
+            } catch (error) {
+                console.error('Error clearing token:', error);
+            }
+        }, 24 * 60 * 60 * 1000); // 2 hours in milliseconds
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
@@ -66,9 +84,11 @@ app.post('/sendmail', async (req, res) => {
 });
 
 
-// Mail Approve
+
+// Mail Approve กดยืนยันตอบรับจากอีเมลล์ (ในเมลล์จะได้รับการยืนยันในรูปแบบ link)
+// ถ้า id และ token ตรงกับในตาราง จะทำการอัพเดต Approve ใน Table
 app.get('/mailapprove', async (req, res) => {
-    const { token, id } = req.query; // Get 'token' and 'id' from query string
+    const { token, id, aprf } = req.query; // Get 'token' and 'id' from query string
     if (!id || !token) {
         return res.status(400).send({ message: 'ID and token are required in query string.' });
     }
@@ -79,17 +99,18 @@ app.get('/mailapprove', async (req, res) => {
         const verificationResult = await pool.request()
             .input('id', sql.Int, id)
             .input('token', sql.VarChar, token)
+            .input('aprf', sql.VarChar, aprf)
             .query('SELECT * FROM [dbo].[changeform] WHERE id = @id AND token = @token');
 
         if (verificationResult.recordset.length === 0) {
             return res.status(401).send({ message: 'Invalid token or ID' });
         }
 
-        // Token is valid, proceed to update the ref1Approve field
+        // อัพเดต table (aprf คือ ชื่อ field ที่กำหนดในฝั่ง client(frontend))
         const updateQuery = `
             UPDATE [dbo].[changeform]
             SET 
-                ref1Approve = 'Approved'
+                ${aprf} = 'Approve'
             WHERE id = @id`;
 
         const updateResult = await pool.request()
@@ -105,8 +126,6 @@ app.get('/mailapprove', async (req, res) => {
         res.status(500).send(err.message);
     }
 });
-
-
 
 // Show
 app.get('/show', async (req, res) => {

@@ -2,7 +2,7 @@ const sql = require('mssql');
 
 const config = {
     user: 'stbank',
-    password: 'Bankit2023',
+    password: 'BankGcap@it2023',
     server: '192.168.10.29',
     database: 'db_traning',
     options: {
