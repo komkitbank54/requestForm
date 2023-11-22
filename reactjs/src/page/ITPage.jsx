@@ -184,7 +184,7 @@ function ITPage({resetPagination}) {
                     <div className="tooltip">
                     {item.headDepaApprove === 'Pending' ? 
                         (<div>
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)}>
+                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={(e) => {e.stopPropagation(); handleITClick(item)}}>
                                 <img src={require('./img/submit.png')} className='icon' alt="submit" />
                             </button>
                             <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
@@ -199,7 +199,7 @@ function ITPage({resetPagination}) {
                     <div className="tooltip">
                     {item.changeStatue !== 'เสร็จสิ้น' && item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve'? 
                         (<div>
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITFinishClick(item)}>
+                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={(e) => {e.stopPropagation(); handleITFinishClick(item)}}>
                                 <img src={require('./img/approve.png')} className='icon' alt="approve" />
                             </button>
                             <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>

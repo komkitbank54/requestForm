@@ -151,7 +151,36 @@ function ManagerPage({resetPagination}) {
     // Mail Send
     const [showMailModal, setShowMailModal] = useState(false);
     const handleMailClick = (item) => {
-        setFormData({ ...formData, id: item.id });
+        const formattedRequestDate = moment(item.requestDate).format('DD/MM/YYYY');
+        const formattedReqFinishDate = moment(item.reqFinishDate).format('DD/MM/YYYY');
+        const formattedTimeShow = moment().add(543, 'years').add(1, 'days').format('k:mm วันที่ DD MMMM YYYY');
+        setFormData({ ...formData, 
+            id: item.id,
+            requestName: item.requestName,
+            requestDate: formattedRequestDate,
+            changeLengh: item.changeLengh,
+            jobGroup: item.jobGroup,
+            jobRank: item.jobRank,
+            requestPhone: item.requestPhone,
+            requestMail: item.requestMail,
+            changeTool: item.changeTool,
+            changeToolInfo: item.changeToolInfo,
+            scodeName: item.scodeName,
+            scodeFromVersion: item.scodeFromVersion,
+            scodeToVersion: item.scodeToVersion,
+            changeCoz: item.changeCoz,
+            changeEff: item.changeEff,
+            manaName: item.manaName,
+            reqFinishDate: formattedReqFinishDate,
+            implementPlan: item.testInfo,
+            rollbackPlan: item.rollbackPlan,
+            headITName: item.headITName,
+            headITEsti: item.headITEsti,
+            headITEstiComment: item.headITEstiComment,
+            auditName: item.auditName,
+            auditComment: item.auditComment,
+            timeshow: formattedTimeShow
+        });
         setShowMailModal(true);
     };
 
@@ -178,13 +207,13 @@ function ManagerPage({resetPagination}) {
                     <div className="tooltip">
                         {item.headDepaApprove === 'Pending' ? 
                         (<div>
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)}>
+                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={(e) => {e.stopPropagation(); handleITClick(item);}}>
                                 <img src={require('./img/submit.png')} className='icon' alt="submit" />
                             </button>
                             <span className="tooltiptext">ลงชื่อผู้ดำเนินการ</span>
                         </div>):
                         (<div>
-                            <button className="icon hover:shadow-lg hover:rounded-lg" onClick={() => handleITClick(item)} disabled>
+                            <button className="icon hover:shadow-lg hover:rounded-lg" disabled>
                                 <img src={require('./img/nosubmit.png')} className='icon' alt="submit" />
                             </button>
                         </div>)
@@ -193,13 +222,13 @@ function ManagerPage({resetPagination}) {
                     <div className="tooltip">
                         {item.headITApprove === 'Pending' ? 
                         (<div>
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
+                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={(e) => {e.stopPropagation(); handleApproveClick(item)}}>
                                 <img src={require('./img/approve.png')} className='icon' alt="approve" />
                             </button>
                             <span className="tooltiptext">ลงชื่ออนุมัติ</span>
                         </div>):
                         (<div>
-                            <button className="icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)} disabled>
+                            <button className="icon hover:shadow-lg hover:rounded-lg" disabled>
                                 <img src={require('./img/noapprove.png')} className='icon' alt="approve" />
                             </button>
                         </div>)
@@ -208,7 +237,7 @@ function ManagerPage({resetPagination}) {
                     <div className="tooltip">
                     {item.headDepaApprove === 'Approve' && item.headITApprove === 'Approve' && item.auditApprove === 'Approve'  ?
                         (<div>
-                            <button className="cursor-pointer" onClick={() => handleMailClick(item)}><img src={require('./img/send.png')} className='icon' alt="send" /></button>
+                            <button className="cursor-pointer" onClick={(e) => {e.stopPropagation(); handleMailClick(item)}}><img src={require('./img/send.png')} className='icon' alt="send" /></button>
                             <span className="tooltiptext">ยืนยันส่งเมล์ให้กรรมการ</span>
                         </div>):
                         (<div>
@@ -217,7 +246,7 @@ function ManagerPage({resetPagination}) {
                     }
                     </div>
                     <div className="tooltip">
-                        <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleDeleteClick(item)}>
+                        <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={(e) => {e.stopPropagation(); handleDeleteClick(item)}}>
                             <img src={require('./img/bin.png')} className='icon' alt="delete" />
                         </button>
                         <span className="tooltiptext">ลบ</span>

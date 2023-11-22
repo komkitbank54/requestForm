@@ -19,7 +19,8 @@
 }
 
 .inputfield:disabled {
-    background: #dfdfdf;
+    background: #e4e4e4;
+    color: #4d4d4d;
 }
 
 .inputRadioSize {

@@ -154,13 +154,13 @@ function AuditPage({resetPagination}) {
                 <div className='tooltip'>
                     {item.headITApprove === 'Pending' ? 
                         (<div>
-                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)}>
+                            <button className="cursor-pointer icon hover:shadow-lg hover:rounded-lg" onClick={(e) => {e.stopPropagation(); handleApproveClick(item)}}>
                                 <img src={require('./img/approve.png')} className='icon' alt="approve" />
                             </button>
                             <span className="tooltiptext">ลงชื่ออนุมัติ</span>
                         </div>):
                         (<div>
-                            <button className="icon hover:shadow-lg hover:rounded-lg" onClick={() => handleApproveClick(item)} disabled>
+                            <button className="icon hover:shadow-lg hover:rounded-lg" disabled>
                                 <img src={require('./img/noapprove.png')} className='icon' alt="approve" />
                             </button>
                         </div>)

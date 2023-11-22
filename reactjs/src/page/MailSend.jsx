@@ -7,6 +7,8 @@ import 'moment/locale/th';
 
 function MailSend() {
     const [data, setData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [recordsPerPage] = useState(2);
     const [selectAll, setSelectAll] = useState(false);
 
     useEffect(() => {
@@ -21,6 +23,20 @@ function MailSend() {
             })
             .catch(err => console.error('Error fetching data:', err));
     }, []);
+
+    // แบ่งหน้า (Page)
+    const indexOfLastRecord = currentPage * recordsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+    const currentRecords = data.slice(indexOfFirstRecord, indexOfLastRecord);
+    const totalPages = Math.ceil(data.length / recordsPerPage);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) setCurrentPage(prev => prev - 1);
+    };
 
     // checkbox เลือก id ของ row นั้นๆ
     const handleCheck = (id) => {
@@ -99,7 +115,7 @@ function MailSend() {
                     </div>
                 </div>
                 <div className='tbody'>
-                    {data.map((item, index) => (
+                    {currentRecords.map((item, index) => (
                         <div className='trow' key={index}>
                             <div className='tdcell'>
                                 <input
@@ -115,6 +131,11 @@ function MailSend() {
                         </div>
                     ))}
                 </div>
+            </div>
+            <div className='pagination my-4'>
+                <button onClick={handlePrevPage} disabled={currentPage === 1}>Prev</button>
+                <span className='border-2 border-black rounded p-1 mx-4'> {currentPage} of {totalPages} </span>
+                <button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</button>
             </div>
             <button className='justify-center sendbtn' onClick={handleSendMail}>Send Email</button>
         </div>
