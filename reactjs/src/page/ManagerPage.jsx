@@ -13,6 +13,7 @@ import { DetailRow } from './components/DetailRow';
 import { StatusCount } from './components/StatusCount';
 import { determineApproveStatus } from './components/path/approsalStatus';
 import MailSend from './components/MailModal';
+import AddUser from './components/AddUserModal';
 
 // Import CSS
 import './css/table.css';
@@ -184,6 +185,12 @@ function ManagerPage({resetPagination}) {
         setShowMailModal(true);
     };
 
+    // AddUser
+    const [showAddUserModal, setShowAddUserModal] = useState(false);
+    const handleAddUserClick = (item) => {
+        setShowAddUserModal(true);
+    };
+
     // Delete
     const [showModal, setShowModal] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
@@ -273,6 +280,9 @@ function ManagerPage({resetPagination}) {
                 <header className='m-4 font-bold text-[28px]'>
                     การร้องขอการเปลี่ยนแปลง (Manager)
                 </header>
+                <button className="loginAddBtn items-center" onClick={() => handleAddUserClick()}>
+                    AddUser
+                </button>
                 {/* <img src={require('./img/user.png')} alt='user' className='items-center h-[76px]'/> */}
             </div>
             <div className='flex my-8 relative'>
@@ -309,6 +319,7 @@ function ManagerPage({resetPagination}) {
                         handlePageClick={handlePageClick}
                     />
                 </div>
+                <AddUser isOpen={showAddUserModal} onClose={() => setShowAddUserModal(false)} formData={formData} setFormData={setFormData}/>
                 <AddModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onConfirm={handleConfirmAdd} formData={formData} setFormData={setFormData}/>
                 <ItProcessModal isOpen={showITModal} onClose={() => setShowITModal(false)} onConfirm={handleConfirmIT} formData={formData} setFormData={setFormData}/>
                 <ManagerApproveModal isOpen={showManagerApproveModal} onClose={() => setShowManagerApproveModal(false)} onConfirm={handleConfirmManager} formData={formData} setFormData={setFormData}/>

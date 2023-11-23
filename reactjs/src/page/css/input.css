@@ -38,6 +38,11 @@
     height: 35px;
 }
 
+.inputVerySmall {
+    width: 55px;
+    padding: 0 12px;
+}
+
 .inputScode {
     width: 180px;
     height: 42px;

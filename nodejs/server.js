@@ -189,7 +189,7 @@ app.post('/add', (req, res) => {
             @ref1Comment, @finishDate, 'อยู่ในระหว่างดำเนินการ..', @changeResult, @userChange,
             @changeResName, 'Pending'
         )`;
-
+        
     // List all fields and their types
     const fields = {
         requestDate: sql.SmallDateTime, requestName: sql.VarChar, requestSurname: sql.VarChar,
@@ -222,6 +222,22 @@ app.post('/add', (req, res) => {
         if (err) return res.status(500).send(err);
         res.status(201).send({ message: 'Record added successfully!' });
     });
+});
+
+
+app.post('/adduser', async (req, res) => {
+    try {
+        const request = new sql.Request();
+        const { username, password, prefix, firstname, surname, position } = req.body;
+
+        // สร้างคำสั่ง SQL เพื่อเพิ่มข้อมูล
+        const result = await sql.query`INSERT INTO user_changeform (username, password, prefix, firstname, surname, position) VALUES (${username}, ${password}, ${prefix}, ${firstname}, ${surname}, ${position})`;
+
+        res.status(200).json({ message: 'User added successfully!', result: result });
+    } catch (err) {
+        console.error('SQL error', err);
+        res.status(500).send('Error while adding user');
+    }
 });
 
 // Update approveStatus based on Deny conditions

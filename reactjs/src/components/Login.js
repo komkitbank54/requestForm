@@ -89,8 +89,8 @@ function Login({ isOpen, onClose, onConfirm }) {
         </div>
         <form onSubmit={handleSubmit}>
           <div className='items-center pb-12 pt-4 pr-3'>
-            <input className='inputfield' type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} /><br/>
-            <input className='inputfield' type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} /><br/>
+            <input className='inputfield' type="text" placeholder="Username" value={username} autoComplete="current-password" onChange={(e) => setUsername(e.target.value)} /><br/>
+            <input className='inputfield' type="password" placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /><br/>
             <div className='absolute right-0 bottom-0 flex items-center mr-2 space-x-1'>
               <button className='' onClick={onCloseHandle}>Cancel</button>
               <button type="submit" className='loginAddBtn2'>Login</button>
